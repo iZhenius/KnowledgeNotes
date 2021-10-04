@@ -164,3 +164,9 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Addition
+/.idea
+build/
+.temp
+scripts/
