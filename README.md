@@ -9,6 +9,7 @@
     - [JVM](#jvm)
         - [JVM Architecture](#jvm-architecture)
         - [JVM Memory Model](#jvm-memory-model)
+            - [JVM Stack vs Heap](#jvm-stack-vs-heap)
         - [JVM Useful Links](#jvm-useful-links)
 
 # Git
@@ -135,6 +136,8 @@ JVM is only a specification, and its implementation is different from vendor to 
 
 ![jvm_native_memory](res/images/jvm-native-memory.png)
 
+![jvm_stack_non_heap_heap](res/images/jvm-stack-non-heap-heap.png)
+
 #### 1) Heap Memory
 
 It is a larger region of RAM which is used for dynamic memory allocation. All Java objects are stored in the heap and
@@ -189,11 +192,7 @@ This is where native code for any shared libraries used are stored. This is load
 
 ---
 
-### Stack vs Heap
-
-![jvm_stack_non_heap_heap](res/images/jvm-stack-non-heap-heap.png)
-
-#### Table of Differences:
+### JVM Stack vs Heap
 
 ![jvm_stack_vs_heap](res/images/jvm-stack-vs-heap.png)
 
