@@ -8,7 +8,7 @@
     - Concurrency
     - [JVM](#jvm)
         - [JVM Architecture](#jvm-architecture)
-        - [JVM Memory](#jvm-memory)
+        - [JVM Memory Model](#jvm-memory-model)
         - [JVM Useful Links](#jvm-useful-links)
 
 # Git
@@ -30,7 +30,11 @@ $ git push -u origin main
 
 # Java
 
+***
+
 ## JVM
+
+---
 
 ### JVM Architecture
 
@@ -125,44 +129,83 @@ JVM is only a specification, and its implementation is different from vendor to 
 >
 > This is a collection of C/C++ Native Libraries which is required for the Execution Engine and can be accessed through the provided Native Interface.
 
-### JVM Memory
+***
 
-> **1) Stack**
->
-> Стек работает по схеме LIFO (последним вошел, первым вышел). Хранит примитивы и ссылки на объекты.
-> Память стека существует пока выполняется текущий метод.
-> Предел размера стека определен операционной системой.
-> Переменные в стеке существуют до тех пор, пока выполняется метод в котором они были созданы.
-> Если память стека будет заполнена, Java бросит исключение java.lang.StackOverFlowError.
-> Эта память автоматически выделяется и освобождается, когда метод вызывается и завершается соответственно.
-> Доступ к этой области памяти осуществляется быстрее, чем к куче.
-> Является потокобезопасным, поскольку для каждого потока создается свой отдельный стек.
+### JVM Memory Model
 
-> **2) Heap**
->
-> Эта область памяти используется для объектов и классов.
-> Новые объекты всегда создаются в куче, а ссылки на них хранятся в стеке.
-> Размер кучи не ограничен.
-> Эти объекты имеют глобальный доступ и могут быть получены из любого места программы.
-> Пространство кучи существует, пока работает приложение.
-> Когда эта область памяти полностью заполняется, Java бросает java.lang.OutOfMemoryError.
-> Доступ к ней медленнее, чем к стеку.
-> Память в куче выделяется, когда создается новый объект и освобождается сборщиком мусора, когда в приложении не
-> остается ни одной ссылки на его.
-> В отличие от стека, куча не является потокобезопасной и ее необходимо контролировать, правильно синхронизируя код.
->
-> * **Young Generation** — область, где размещаются недавно созданные объекты. Когда она заполняется, происходит
-    > быстрая сборка мусора.
-> * **Old (Tenured) Generation** — здесь хранятся долгоживущие объекты. Когда объекты из Young Generation достигают
-    > определенного порога «возраста», они перемещаются в Old Generation.
-> * **Metaspace** (начиная с Java 8 заменила область _Permanent Generation_) — эта область содержит метаинформацию о
-    > классах и методах приложения. По умолчанию увеличивается автоматически. Сборщик мусора автоматически удаляет
-    > из памяти ненужные классы, когда емкость, выделенная для хранения метаданных, достигает максимального значения.
+![jvm_native_memory](res/images/jvm-native-memory.png)
 
-> **3) Non-heap**
+#### 1) Heap Memory
+
+It is a larger region of RAM which is used for dynamic memory allocation. All Java objects are stored in the heap and
+the scope of the objects is the whole application. The memory management is managed by us in heap, but the unused
+objects are cleared by the Garbage collector automatically.
+
+![jvm_heap_memory](res/images/jvm-heap-memory.png)
+
+> **1.1) Young Generation**
+>
+> This is reserved for containing newly-allocated objects Young Gen includes three parts.
+>
+> > - **Eden Memory**
+> >
+> > Most of the newly-created objects goes Eden space. When Eden space is filled with objects, Minor GC (a.k.a. **Young Collection**) is performed and all the survivor objects are moved to one of the survivor spaces.
+>
+> > - **Survivor Spaces**
+> >
+> > Minor GC also checks the survivor objects and move them to the other survivor space. So at a time, one of the survivor space is always empty. Objects that are survived after many cycles of GC, are moved to the Old generation memory space. Usually it’s done by setting a threshold for the age of the young generation objects before they become eligible to promote to Old generation.
+> >
+> > > - **S0 Survivor Space**
+> >
+> > > - **S1 Survivor Space**
+
+> **1.2) Old Generation**
+>
+> This is reserved for containing long lived objects that could survive after many rounds of Minor GC. When Old Gen space
+> is full, Major GC (a.k.a. **Old Collection**) is performed (usually takes longer time).
+
+#### 2) Stack
+
+This store's local variables and the partial results. Each thread has its own runtime stack created when the thread is
+created. A new frame is created whenever a method is invoked and all the local variables of that method is stored in
+that corresponding frame. This is deleted when the method invocation is completed. This is not a shared resource.
+
+#### 3) Meta Space
+
+This is part of the native memory and doesn't have an upper limit by default. This is what used to be **Permanent
+Generation (PermGen) Space** in earlier versions of JVM. This space is used by the class loaders to store class
+definitions. If this space keeps growing, the OS might move data stored here from RAM to virtual memory which might slow
+down the application.
+
+#### 4) Code Cache
+
+This is where the Just In Time(JIT) compiler stores compiled code blocks that are often accessed. Generally, JVM has to
+interpret byte code to native machine code whereas JIT-compiled code need not be interpreted as it is already in native
+format and is cached here.
+
+#### 5) Shared Libraries
+
+This is where native code for any shared libraries used are stored. This is loaded only once per process by the OS.
+
+---
+
+### Stack vs Heap
+
+![jvm_stack_non_heap_heap](res/images/jvm-stack-non-heap-heap.png)
+
+#### Table of Differences:
+
+![jvm_stack_vs_heap](res/images/jvm-stack-vs-heap.png)
+
+***
 
 ### JVM useful links:
 
 * [The Structure of the Java Virtual Machine](https://docs.oracle.com/javase/specs/jvms/se10/html/jvms-2.html)
 * [Стек и куча в Java](https://topjava.ru/blog/stack-and-heap-in-java)
 * [Understanding JVM Architecture](https://medium.com/platform-engineer/understanding-jvm-architecture-22c0ddf09722)
+* [Understanding Java Memory Model](https://medium.com/platform-engineer/understanding-java-memory-model-1d0863f6d973)
+* [Understanding Java Garbage Collection](https://medium.com/platform-engineer/understanding-java-garbage-collection-54fc9230659a)
+* [JVM Memory Model](https://amanagrawal9999.medium.com/jvm-memory-model-70821e84af4b)
+* [Java Memory Explained](https://medium.com/nerd-for-tech/java-memory-explained-43de6de157be)
+* [Visualizing memory management in JVM](https://medium.com/@deepu105/visualizing-memory-management-in-jvm-java-kotlin-scala-groovy-clojure-4fbcc0929482)
