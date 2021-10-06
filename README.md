@@ -1,4 +1,4 @@
-# KnowledgeNotes
+# Knowledge Notes
 
 - [Git](#git)
     - [Git Initial](#git-initial)
@@ -11,6 +11,8 @@
         - [JVM Memory Model](#jvm-memory-model)
             - [JVM Stack vs Heap](#jvm-stack-vs-heap)
         - [JVM Useful Links](#jvm-useful-links)
+
+***
 
 # Git
 
@@ -28,6 +30,10 @@ $ git remote add origin git@github.com:username/projectname.git
   (or git remote add origin https://github.com/username/projectname.git)
 $ git push -u origin main
 ```
+
+[up](#knowledge-notes)
+
+***
 
 # Java
 
@@ -130,6 +136,8 @@ JVM is only a specification, and its implementation is different from vendor to 
 >
 > This is a collection of C/C++ Native Libraries which is required for the Execution Engine and can be accessed through the provided Native Interface.
 
+[up](#knowledge-notes)
+
 ***
 
 ### JVM Memory Model
@@ -196,6 +204,8 @@ This is where native code for any shared libraries used are stored. This is load
 
 ![jvm_stack_vs_heap](res/images/jvm-stack-vs-heap.png)
 
+[up](#knowledge-notes)
+
 ***
 
 ### JVM useful links:
@@ -208,3 +218,7 @@ This is where native code for any shared libraries used are stored. This is load
 * [JVM Memory Model](https://amanagrawal9999.medium.com/jvm-memory-model-70821e84af4b)
 * [Java Memory Explained](https://medium.com/nerd-for-tech/java-memory-explained-43de6de157be)
 * [Visualizing memory management in JVM](https://medium.com/@deepu105/visualizing-memory-management-in-jvm-java-kotlin-scala-groovy-clojure-4fbcc0929482)
+
+[up](#knowledge-notes)
+
+***
