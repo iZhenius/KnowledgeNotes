@@ -174,11 +174,11 @@ objects are cleared by the Garbage collector automatically.
 - #### Young Generation
   This is reserved for containing newly-allocated objects Young Gen includes three parts.
 
-    - **Eden Memory** - Most of the newly-created objects goes Eden space. When Eden space is filled with objects, Minor
+    - **Eden Memory** — Most of the newly-created objects goes Eden space. When Eden space is filled with objects, Minor
       Garbage Collection (a.k.a. **Young Collection**) is performed and all the survivor objects are moved to one of the
       survivor spaces.
 
-    - **Survivor Spaces** - Minor Garbage Collection also checks the survivor objects and move them to the other
+    - **Survivor Spaces** — Minor Garbage Collection also checks the survivor objects and move them to the other
       survivor space. So at a time, one of the survivor space is always empty. Objects that are survived after many
       cycles of Garbage Collection, are moved to the Old generation memory space. Usually it’s done by setting a
       threshold for the age of the young generation objects before they become eligible to promote to Old generation.
@@ -187,7 +187,7 @@ objects are cleared by the Garbage collector automatically.
 
 
 - #### Old Generation
-  This is reserved for containing long lived objects that could survive after many rounds of Minor Garbage Collection.
+  This is reserved for containing long-lived objects that could survive after many rounds of Minor Garbage Collection.
   When Old Gen space is full, Major Garbage Collection (a.k.a. **Old Collection**) is performed (usually takes longer
   time).
 
@@ -246,18 +246,12 @@ a low priority thread that runs in the background to provide services to user th
 
 ### GC process includes:
 
-* **Mark**
+* **Mark** — Identifying objects that are currently in use and not in use
 
-  Identifying objects that are currently in use and not in use
+* **Normal Deletion** — Removing the unused objects and reclaim the free space
 
-* **Normal Deletion**
-
-  Removing the unused objects and reclaim the free space
-
-* **Deletion with Compacting**
-
-  Moving all the survived objects to one survivor space (to increase the performance of allocation of memory to newer
-  objects)
+* **Deletion with Compacting** — Moving all the survived objects to one survivor space (to increase the performance of
+  allocation of memory to newer objects)
 
 ### GC roots:
 
@@ -268,23 +262,18 @@ a low priority thread that runs in the background to provide services to user th
 
 ### Eligibility cases for GC:
 
-* **Nullifying the reference variable**
+* **Nullifying the reference variable** — When a reference variable of an object are changed to NULL, the object becomes
+  unreachable and eligible for GC.
 
-  When a reference variable of an object are changed to NULL, the object becomes unreachable and eligible for GC.
+* **Re-assigning the reference variable** — When a reference id of one object is referenced to a reference id of some
+  other object, then the previous object will have no reference to it any longer. The object becomes unreachable and
+  eligible for GC.
 
-* **Re-assigning the reference variable**
+* **Object created inside the method** — When such a method is popped out from the Stack, all its members die and if
+  some objects were created inside it, then these objects also become unreachable, thus eligible for GC.
 
-  When a reference id of one object is referenced to a reference id of some other object, then the previous object will
-  have no reference to it any longer. The object becomes unreachable and eligible for GC.
-
-* **Object created inside the method**
-
-  When such a method is popped out from the Stack, all its members die and if some objects were created inside it, then
-  these objects also become unreachable, thus eligible for GC.
-
-* **Anonymous object**
-
-  An object becomes unreachable and eligible for GC when its reference id is not assigned to a variable.
+* **Anonymous object** — An object becomes unreachable and eligible for GC when its reference id is not assigned to a
+  variable.
 
 * **Objects with only internal references (Island of Isolation)**
 
