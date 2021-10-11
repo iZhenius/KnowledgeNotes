@@ -10,7 +10,7 @@
         - [JVM Architecture](#jvm-architecture)
         - [JVM Memory Model](#jvm-memory-model)
             - [JVM Stack vs Heap](#jvm-stack-vs-heap)
-        - [JVM Useful Links](#jvm-useful-links)
+        - [JVM Garbage Collector](#jvm-garbage-collector)
 
 ***
 
@@ -31,7 +31,7 @@ $ git remote add origin git@github.com:username/projectname.git
 $ git push -u origin main
 ```
 
-[up](#knowledge-notes)
+[^ up](#knowledge-notes)
 
 ***
 
@@ -90,7 +90,8 @@ information (class name, parent name, methods, variable information, static vari
 - #### Heap area
 
   This is a shared resource (only 1 heap area per JVM). Is not thread safe. Information of all objects and their
-  corresponding instance variables and arrays are stored in the Heap area. Heap area is a great target for GC.
+  corresponding instance variables and arrays are stored in the Heap area. Heap area is a great target for Garbage
+  Collection.
 
 - #### Stack Area
 
@@ -147,7 +148,12 @@ called by C/C++ libraries which may be specific to hardware.
 This is a collection of C/C++ Native Libraries which is required for the Execution Engine and can be accessed through
 the provided Native Interface.
 
-[up](#knowledge-notes)
+### Useful links:
+
+* [The Structure of the Java Virtual Machine](https://docs.oracle.com/javase/specs/jvms/se10/html/jvms-2.html)
+* [Understanding JVM Architecture](https://medium.com/platform-engineer/understanding-jvm-architecture-22c0ddf09722)
+
+[^ up](#knowledge-notes)
 
 ***
 
@@ -169,20 +175,21 @@ objects are cleared by the Garbage collector automatically.
   This is reserved for containing newly-allocated objects Young Gen includes three parts.
 
     - **Eden Memory** - Most of the newly-created objects goes Eden space. When Eden space is filled with objects, Minor
-      GC (a.k.a. **Young Collection**) is performed and all the survivor objects are moved to one of the survivor
-      spaces.
+      Garbage Collection (a.k.a. **Young Collection**) is performed and all the survivor objects are moved to one of the
+      survivor spaces.
 
-    - **Survivor Spaces** - Minor GC also checks the survivor objects and move them to the other survivor space. So at a
-      time, one of the survivor space is always empty. Objects that are survived after many cycles of GC, are moved to
-      the Old generation memory space. Usually it’s done by setting a threshold for the age of the young generation
-      objects before they become eligible to promote to Old generation.
+    - **Survivor Spaces** - Minor Garbage Collection also checks the survivor objects and move them to the other
+      survivor space. So at a time, one of the survivor space is always empty. Objects that are survived after many
+      cycles of Garbage Collection, are moved to the Old generation memory space. Usually it’s done by setting a
+      threshold for the age of the young generation objects before they become eligible to promote to Old generation.
         - **S0 Survivor Space**
         - **S1 Survivor Space**
 
 
 - #### Old Generation
-  This is reserved for containing long lived objects that could survive after many rounds of Minor GC. When Old Gen
-  space is full, Major GC (a.k.a. **Old Collection**) is performed (usually takes longer time).
+  This is reserved for containing long lived objects that could survive after many rounds of Minor Garbage Collection.
+  When Old Gen space is full, Major Garbage Collection (a.k.a. **Old Collection**) is performed (usually takes longer
+  time).
 
 ### 2. Stack
 
@@ -207,7 +214,14 @@ format and is cached here.
 
 This is where native code for any shared libraries used are stored. This is loaded only once per process by the OS.
 
-[up](#knowledge-notes)
+### Useful links:
+
+* [Understanding Java Memory Model](https://medium.com/platform-engineer/understanding-java-memory-model-1d0863f6d973)
+* [JVM Memory Model](https://amanagrawal9999.medium.com/jvm-memory-model-70821e84af4b)
+* [Java Memory Explained](https://medium.com/nerd-for-tech/java-memory-explained-43de6de157be)
+* [Visualizing memory management in JVM](https://medium.com/@deepu105/visualizing-memory-management-in-jvm-java-kotlin-scala-groovy-clojure-4fbcc0929482)
+
+[^ up](#knowledge-notes)
 
 ***
 
@@ -215,21 +229,117 @@ This is where native code for any shared libraries used are stored. This is load
 
 ![jvm_stack_vs_heap](res/images/jvm-stack-vs-heap.png)
 
-[up](#knowledge-notes)
+### Useful links:
 
-***
-
-### JVM useful links:
-
-* [The Structure of the Java Virtual Machine](https://docs.oracle.com/javase/specs/jvms/se10/html/jvms-2.html)
-* [Стек и куча в Java](https://topjava.ru/blog/stack-and-heap-in-java)
-* [Understanding JVM Architecture](https://medium.com/platform-engineer/understanding-jvm-architecture-22c0ddf09722)
 * [Understanding Java Memory Model](https://medium.com/platform-engineer/understanding-java-memory-model-1d0863f6d973)
-* [Understanding Java Garbage Collection](https://medium.com/platform-engineer/understanding-java-garbage-collection-54fc9230659a)
-* [JVM Memory Model](https://amanagrawal9999.medium.com/jvm-memory-model-70821e84af4b)
-* [Java Memory Explained](https://medium.com/nerd-for-tech/java-memory-explained-43de6de157be)
-* [Visualizing memory management in JVM](https://medium.com/@deepu105/visualizing-memory-management-in-jvm-java-kotlin-scala-groovy-clojure-4fbcc0929482)
+* [Стек и куча в Java](https://topjava.ru/blog/stack-and-heap-in-java)
 
-[up](#knowledge-notes)
+[^ up](#knowledge-notes)
+
+---
+
+### JVM Garbage Collector
+
+Java Garbage Collection (GC) is the process of tracking the live objects while destroying unreferenced objects in the
+Heap memory in order to reclaim space for future object allocation. Java Garbage Collector runs as a Daemon Thread (i.e.
+a low priority thread that runs in the background to provide services to user threads or perform JVM tasks).
+
+### GC process includes:
+
+* **Mark**
+
+  Identifying objects that are currently in use and not in use
+
+* **Normal Deletion**
+
+  Removing the unused objects and reclaim the free space
+
+* **Deletion with Compacting**
+
+  Moving all the survived objects to one survivor space (to increase the performance of allocation of memory to newer
+  objects)
+
+### GC roots:
+
+* Local variables and input parameters of the currently executing methods
+* Active Java threads
+* Static fields of the loaded classes
+* JNI references
+
+### Eligibility cases for GC:
+
+* **Nullifying the reference variable**
+
+  When a reference variable of an object are changed to NULL, the object becomes unreachable and eligible for GC.
+
+* **Re-assigning the reference variable**
+
+  When a reference id of one object is referenced to a reference id of some other object, then the previous object will
+  have no reference to it any longer. The object becomes unreachable and eligible for GC.
+
+* **Object created inside the method**
+
+  When such a method is popped out from the Stack, all its members die and if some objects were created inside it, then
+  these objects also become unreachable, thus eligible for GC.
+
+* **Anonymous object**
+
+  An object becomes unreachable and eligible for GC when its reference id is not assigned to a variable.
+
+* **Objects with only internal references (Island of Isolation)**
+
+### Programmatically Calling GC (no guarantee to run)
+
+* Using **System.gc()** method
+* Using **Runtime.getRuntime().gc()** method
+
+### GC Execution Strategies
+
+### 1. Serial GC
+
+Simple mark-sweep-compact approach with young and old gen garbage collections (a.k.a. Minor GC and Major GC). Suitable
+for simple stand-alone client-machine applications running with low memory footprint and less CPU power.
+
+![jvm_gc_serial](res/images/jvm-gc-serial.png)
+
+### 2. Parallel GC
+
+Parallel version of mark-sweep-compact approach for Minor GC with multiple threads (Major GC still happens with a single
+thread in a serial manner).
+
+![jvm_gc_parallel](res/images/jvm-gc-parallel.png)
+
+### 3. Concurrent Mark Sweep (CMS) GC
+
+Garbage collection normally happens with pauses (Major GC takes a long time), which makes it problematic for highly
+responsive applications where we can’t afford long pause times. CMS Collector minimizes the impact of these pauses by
+doing most of the garbage collection work (i.e. Major GC) concurrently within the application threads (Minor GC still
+follows the usual parallel algorithm without any concurrent progress with application threads).
+
+### 4. G1 GC
+
+Garbage First (G1) Collector divides the Heap into multiple equal-sized regions and when GC is invoked, first collects
+the region with lesser live data (young gen and old gen implementations don’t apply here). This collector is a parallel,
+concurrent and incrementally compact low-pause garbage collector which intends to replace the CMS Collector.
+
+![jvm_gc_g1](res/images/jvm-gc-g1.png)
+
+### 5. Shenandoah GC
+
+Compacting work concurrently within the application threads. Huge CPU usage. Experimental until JDK 15.
+
+### 6. ZGC GC
+
+All GC processes concurrently within the application threads. Experimental until JDK 15.
+
+### Useful links:
+
+* [Understanding Java Garbage Collection](https://medium.com/platform-engineer/understanding-java-garbage-collection-54fc9230659a)
+* [Сборка мусора в Java: что это такое и как работает в JVM](https://medium.com/nuances-of-programming/%D1%81%D0%B1%D0%BE%D1%80%D0%BA%D0%B0-%D0%BC%D1%83%D1%81%D0%BE%D1%80%D0%B0-%D0%B2-java-%D1%87%D1%82%D0%BE-%D1%8D%D1%82%D0%BE-%D1%82%D0%B0%D0%BA%D0%BE%D0%B5-%D0%B8-%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%B0%D0%B5%D1%82-%D0%B2-jvm-25bb2570b44c)
+* [Дюк, вынеси мусор! — Часть 1](https://habr.com/ru/post/269621/)
+* [Дюк, вынеси мусор! — Часть 2](https://habr.com/ru/post/269707/)
+* [Дюк, вынеси мусор! — Часть 3](https://habr.com/ru/post/269863/)
+
+[^ up](#knowledge-notes)
 
 ***
