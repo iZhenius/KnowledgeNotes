@@ -11,6 +11,7 @@
         - [JVM Memory Model](#jvm-memory-model)
             - [JVM Stack vs Heap](#jvm-stack-vs-heap)
         - [JVM Garbage Collector](#jvm-garbage-collector)
+        - [JVM Java Reference Types](#jvm-java-reference-types)
 
 ***
 
@@ -315,9 +316,9 @@ concurrent and incrementally compact low-pause garbage collector which intends t
 
 ### 5. Shenandoah GC
 
-Compacting work concurrently within the application threads. Huge CPU usage. Experimental until JDK 15.
+Compacting work concurrently within the application threads. Experimental until JDK 15.
 
-### 6. ZGC GC
+### 6. Z GC
 
 All GC processes concurrently within the application threads. Experimental until JDK 15.
 
@@ -328,6 +329,52 @@ All GC processes concurrently within the application threads. Experimental until
 * [Дюк, вынеси мусор! — Часть 1](https://habr.com/ru/post/269621/)
 * [Дюк, вынеси мусор! — Часть 2](https://habr.com/ru/post/269707/)
 * [Дюк, вынеси мусор! — Часть 3](https://habr.com/ru/post/269863/)
+
+[^ up](#knowledge-notes)
+
+---
+
+### JVM Java Reference Types
+
+* ### Strong reference
+
+  Strong references are the ordinary references in Java. Anytime we create a new object, a strong reference is by
+  default created.
+
+* ### Soft Reference
+
+  Soft reference objects, which are cleared at the discretion of the garbage collector in response to memory demand.
+  Soft references are most often used to implement memory-sensitive caches. A **softly reachable object** has no strong
+  references pointing to it. All soft references to softly-reachable objects **are guaranteed to have been cleared
+  before a JVM throws an _OutOfMemoryError_**. Softly reachable objects will remain alive for some time after the last
+  time they are referenced. The default value is a one second of lifetime per free megabyte in the heap. This value can
+  be adjusted.
+
+* ### Weak Reference
+
+  A weakly referenced object is cleared by the Garbage Collector when it's weakly reachable. Weak reachability means
+  that an object has neither strong nor soft references pointing to it. One of the best implementations of weak
+  references is the **WeakHashMap**. Reference queue is optional.
+
+* ### Phantom Reference
+
+  These references are only garbage collected when none of the references namely strong references, soft references or
+  weak references is being pointed to the object belonging to phantom references. They are always used **along with
+  reference queue** and to keep a track of objects which have been finalized. **We can't get a referent of a phantom
+  reference: `phantomReference.get()` returns `null`**. One of the use cases is **to determine when an object was
+  removed from the memory** which helps to schedule memory-sensitive tasks. For example, we can wait for a large object
+  to be removed before loading another one.
+
+### Useful links:
+
+* [Soft References in Java](https://www.baeldung.com/java-soft-references)
+* [Weak References in Java](https://www.baeldung.com/java-weak-reference)
+* [Phantom References in Java](https://www.baeldung.com/java-phantom-reference)
+* [Weak Soft and Phantom references in Java and why they matter](https://medium.com/@ramtop/weak-soft-and-phantom-references-in-java-and-why-they-matter-c04bfc9dc792)
+* [Finally understanding how references work in Android and Java](https://medium.com/google-developer-experts/finally-understanding-how-references-work-in-android-and-java-26a0d9c92f83)
+* [An overview of Strong, Weak, Soft and Phantom references in Java](https://prateeknima.medium.com/strong-weak-soft-and-phantom-references-in-java-b4f9068e883e)
+* [Особенности PhantomReference](https://javarush.ru/groups/posts/2291-osobennosti-phantomreference)
+* [Мягкие ссылки на страже доступной памяти или как экономить память правильно](https://habr.com/ru/post/169883/)
 
 [^ up](#knowledge-notes)
 
