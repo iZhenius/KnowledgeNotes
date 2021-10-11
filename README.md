@@ -285,42 +285,42 @@ a low priority thread that runs in the background to provide services to user th
 
 ### GC Execution Strategies
 
-### 1. Serial GC
+* ### Serial GC
 
-Simple mark-sweep-compact approach with young and old gen garbage collections (a.k.a. Minor GC and Major GC). Suitable
-for simple stand-alone client-machine applications running with low memory footprint and less CPU power.
+  Simple mark-sweep-compact approach with young and old gen garbage collections (a.k.a. Minor GC and Major GC). Suitable
+  for simple stand-alone client-machine applications running with low memory footprint and less CPU power.
 
-![jvm_gc_serial](res/images/jvm-gc-serial.png)
+  ![jvm_gc_serial](res/images/jvm-gc-serial.png)
 
-### 2. Parallel GC
+* ### Parallel GC
 
-Parallel version of mark-sweep-compact approach for Minor GC with multiple threads (Major GC still happens with a single
-thread in a serial manner).
+  Parallel version of mark-sweep-compact approach for Minor GC with multiple threads (Major GC still happens with a
+  single thread in a serial manner).
 
-![jvm_gc_parallel](res/images/jvm-gc-parallel.png)
+  ![jvm_gc_parallel](res/images/jvm-gc-parallel.png)
 
-### 3. Concurrent Mark Sweep (CMS) GC
+* ### Concurrent Mark Sweep (CMS) GC
 
-Garbage collection normally happens with pauses (Major GC takes a long time), which makes it problematic for highly
-responsive applications where we can’t afford long pause times. CMS Collector minimizes the impact of these pauses by
-doing most of the garbage collection work (i.e. Major GC) concurrently within the application threads (Minor GC still
-follows the usual parallel algorithm without any concurrent progress with application threads).
+  Garbage collection normally happens with pauses (Major GC takes a long time), which makes it problematic for highly
+  responsive applications where we can’t afford long pause times. CMS Collector minimizes the impact of these pauses by
+  doing most of the garbage collection work (i.e. Major GC) concurrently within the application threads (Minor GC still
+  follows the usual parallel algorithm without any concurrent progress with application threads).
 
-### 4. G1 GC
+* ### G1 GC
 
-Garbage First (G1) Collector divides the Heap into multiple equal-sized regions and when GC is invoked, first collects
-the region with lesser live data (young gen and old gen implementations don’t apply here). This collector is a parallel,
-concurrent and incrementally compact low-pause garbage collector which intends to replace the CMS Collector.
+  Garbage First (G1) Collector divides the Heap into multiple equal-sized regions and when GC is invoked, first collects
+  the region with lesser live data (young gen and old gen implementations don’t apply here). This collector is a
+  parallel, concurrent and incrementally compact low-pause garbage collector which intends to replace the CMS Collector.
 
-![jvm_gc_g1](res/images/jvm-gc-g1.png)
+  ![jvm_gc_g1](res/images/jvm-gc-g1.png)
 
-### 5. Shenandoah GC
+* ### Shenandoah GC
 
-Compacting work concurrently within the application threads. Experimental until JDK 15.
+  Compacting work concurrently within the application threads. Experimental until JDK 15.
 
-### 6. Z GC
+* ### Z GC
 
-All GC processes concurrently within the application threads. Experimental until JDK 15.
+  All GC processes concurrently within the application threads. Experimental until JDK 15.
 
 ### Useful links:
 
