@@ -3,13 +3,14 @@
 - [Git](#git)
     - [Git Initial](#git-initial)
 - [Java](#java)
-    - Basics
+    - [Basics](#java-basics)
+        - [Java String pool](#java-string-pool)
     - Collections
     - Concurrency
     - [JVM](#jvm)
         - [JVM Architecture](#jvm-architecture)
         - [JVM Memory Model](#jvm-memory-model)
-            - [JVM Stack vs Heap](#jvm-stack-vs-heap)
+            - [Stack vs Heap](#jvm-stack-vs-heap)
         - [JVM Garbage Collector](#jvm-garbage-collector)
         - [JVM Java Reference Types](#jvm-java-reference-types)
 
@@ -44,6 +45,14 @@ $ git push -u origin main
 
 String Pool is a place in the Heap memory of Java to store string literal. To decrease the number of String objects
 created in the JVM, the String class keeps a pool of strings.
+
+Why strings are immutable:
+
+* Use of String Constant Pool (caching the String literals)
+* Security
+* Thread-Safety
+* Cacheable HashCode
+* Improved Performance
 
 String objects are created in two ways:
 
