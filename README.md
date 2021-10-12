@@ -3,16 +3,32 @@
 - [Git](#git)
     - [Git Initial](#git-initial)
 - [Java](#java)
-    - [Basics](#java-basics)
-        - [Java String pool](#java-string-pool)
+    - [Basics](#basics)
+        - [String pool](#string-pool)
     - Collections
-    - Concurrency
+    - [Concurrency](#concurrency)
+        - Thread
+        - Object Monitor
+        - Runnable
+        - Callable
+        - Synchronized vs Lock
+        - Atomic vs Volatile
+        - Executors
+        - Deadlock
+        - Race condition
+        - Synchronizers
+            - Semaphore
+            - Countdownlatch
+            - CyclicBarrier
+            - Exchanger
+            - Phaser
+        - Concurrent Collections
     - [JVM](#jvm)
         - [JVM Architecture](#jvm-architecture)
         - [JVM Memory Model](#jvm-memory-model)
-            - [Stack vs Heap](#jvm-stack-vs-heap)
-        - [JVM Garbage Collector](#jvm-garbage-collector)
-        - [JVM Java Reference Types](#jvm-java-reference-types)
+            - [Stack vs Heap](#stack-vs-heap)
+        - [Garbage Collector](#garbage-collector)
+        - [Java Reference Types](#java-reference-types)
 
 ***
 
@@ -39,9 +55,9 @@ $ git push -u origin main
 
 # Java
 
-## Java Basics
+## Basics
 
-### Java String Pool
+### String Pool
 
 String Pool is a place in the Heap memory of Java to store string literal. To decrease the number of String objects
 created in the JVM, the String class keeps a pool of strings.
@@ -93,6 +109,8 @@ from `string pool`.
 [^ up](#knowledge-notes)
 
 ***
+
+## Concurrency
 
 ## JVM
 
@@ -282,7 +300,7 @@ This is where native code for any shared libraries used are stored. This is load
 
 ***
 
-### JVM Stack vs Heap
+### Stack vs Heap
 
 ![jvm_stack_vs_heap](res/images/jvm-stack-vs-heap.png)
 
@@ -295,7 +313,7 @@ This is where native code for any shared libraries used are stored. This is load
 
 ---
 
-### JVM Garbage Collector
+### Garbage Collector
 
 Java Garbage Collection (GC) is the process of tracking the live objects while destroying unreferenced objects in the
 Heap memory in order to reclaim space for future object allocation. Java Garbage Collector runs as a Daemon Thread (i.e.
@@ -390,7 +408,7 @@ a low priority thread that runs in the background to provide services to user th
 
 ---
 
-### JVM Java Reference Types
+### Java Reference Types
 
 * ### Strong reference
 
