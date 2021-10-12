@@ -38,6 +38,53 @@ $ git push -u origin main
 
 # Java
 
+## Java Basics
+
+### Java String Pool
+
+String Pool is a place in the Heap memory of Java to store string literal. To decrease the number of String objects
+created in the JVM, the String class keeps a pool of strings.
+
+String objects are created in two ways:
+
+1. #### Using double quotes(“ ”):
+
+   `String stringLiteral = “String literal”;`
+
+   The above statement first searches for the string `“String literal”` in the string pool, if found it just gives it a
+   reference `stringLiteral` from string pool. If not found it creates a string object and places it in the string pool
+   and then gives it a reference `stringLiteral`.
+
+   > In this case, **only one object is created**: in the `string pool`.
+
+2. #### Using the ‘new’ keyword:
+
+   `String newString = new String("New string”);`
+
+   The above statement creates a string object in heap memory, returns a reference from heap memory and checks whether
+   it is present in the string pool or not. If the string “New string” is not present in the string pool then it will
+   place this string in the string pool (JVM will point to that string object) else it will skip it.
+
+   > _Case 1:_ **Two objects are created**: one in the `heap memory` and the other in the `string pool`.
+   >
+   > _Case 2:_ **Only one object is created**: in the `heap memory`.
+
+#### String.intern()
+
+When the `String.intern()` method is invoked, if the `string pool` already contains a string equal to this String
+object (the object with which intern method is being called) , then the string from the `string pool` is returned.
+Otherwise, this String object is added to the `string pool`, and a reference to this String object is returned
+from `string pool`.
+
+### Useful links:
+
+* [Concept of String Pool And String Object Creation In Java](https://medium.com/nerd-for-tech/concept-of-string-pool-and-string-object-creation-in-java-27ed2b3089f5)
+* [String Pool in Java? Number of Objects Created When ‘Literals’ or ‘New’ Used?](https://medium.com/javarevisited/what-does-string-pool-mean-in-java-414c725fbd59)
+
+[^ up](#knowledge-notes)
+
+***
+
 ## JVM
 
 ### JVM Architecture
