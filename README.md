@@ -7,21 +7,11 @@
         - [String pool](#string-pool)
     - Collections
     - [Concurrency](#concurrency)
-        - Thread
-        - Object Monitor
-        - Runnable
-        - Callable
-        - Synchronized vs Lock
-        - Atomic vs Volatile
+        - [Thread](#thread)
+        - [Lock vs Monitor](#lock-vs-monitor)
+        - [Synchronized vs Volatile vs Atomic](#synchronized-vs-volatile-vs-atomic)
         - Executors
-        - Deadlock
-        - Race condition
         - Synchronizers
-            - Semaphore
-            - Countdownlatch
-            - CyclicBarrier
-            - Exchanger
-            - Phaser
         - Concurrent Collections
     - [JVM](#jvm)
         - [JVM Architecture](#jvm-architecture)
@@ -34,7 +24,7 @@
 
 # Git
 
-## Git Initial
+# Git Initial
 
 ```
 $ git config --global user.email "user@mail.com"
@@ -55,9 +45,9 @@ $ git push -u origin main
 
 # Java
 
-## Basics
+# Basics
 
-### String Pool
+## String Pool
 
 String Pool is a place in the Heap memory of Java to store string literal. To decrease the number of String objects
 created in the JVM, the String class keeps a pool of strings.
@@ -72,7 +62,7 @@ Why strings are immutable:
 
 String objects are created in two ways:
 
-1. #### Using double quotes(“ ”):
+1. ### Using double quotes(" "):
 
    `String stringLiteral = “String literal”;`
 
@@ -82,9 +72,9 @@ String objects are created in two ways:
 
    > In this case, **only one object is created**: in the `string pool`.
 
-2. #### Using the ‘new’ keyword:
+2. ### Using the 'new' keyword:
 
-   `String newString = new String("New string”);`
+   `String newString = new String("New string");`
 
    The above statement creates a string object in heap memory, returns a reference from heap memory and checks whether
    it is present in the string pool or not. If the string “New string” is not present in the string pool then it will
@@ -94,14 +84,16 @@ String objects are created in two ways:
    >
    > _Case 2:_ **Only one object is created**: in the `heap memory`.
 
-#### String.intern()
+### String.intern()
 
 When the `String.intern()` method is invoked, if the `string pool` already contains a string equal to this String
 object (the object with which intern method is being called) , then the string from the `string pool` is returned.
-Otherwise, this String object is added to the `string pool`, and a reference to this String object is returned
-from `string pool`.
+Otherwise, this String object is added to the `string pool`, and a reference to this String object in `string pool` is
+returned.
 
-### Useful links:
+### ///
+
+### References (online):
 
 * [Concept of String Pool And String Object Creation In Java](https://medium.com/nerd-for-tech/concept-of-string-pool-and-string-object-creation-in-java-27ed2b3089f5)
 * [String Pool in Java? Number of Objects Created When ‘Literals’ or ‘New’ Used?](https://medium.com/javarevisited/what-does-string-pool-mean-in-java-414c725fbd59)
@@ -110,11 +102,259 @@ from `string pool`.
 
 ***
 
-## Concurrency
+# Concurrency
 
-## JVM
+## Thread
 
-### JVM Architecture
+In concurrent programming, there are two basic units of execution: processes and threads. A process has a self-contained
+execution environment. A process generally has a complete, private set of basic run-time resources; in particular, each
+process has its own memory space.
+
+A Thread is a lightweight Process. Both processes and threads provide an execution environment, but creating a new
+thread requires fewer resources than creating a new process.
+
+Threads exist within a process — every process has at least one.
+
+### Create new Thread:
+
+1. #### Provide a Runnable object
+
+    ```java
+    public class HelloRunnable implements Runnable {
+    
+        public void run() {
+            System.out.println("Hello from a thread!");
+        }
+    
+        public static void main(String[] args) {
+            (new Thread(new HelloRunnable())).start();
+        }
+    
+    }
+    ```
+
+2. #### Extending the Thread Class.
+
+   The Thread class itself implements Runnable, though its run method does nothing.
+
+    ```java
+    public class HelloThread extends Thread {
+    
+        public void run() {
+            System.out.println("Hello from a thread!");
+        }
+    
+        public static void main(String[] args) {
+            (new HelloThread()).start();
+        }
+    
+    }
+    ```
+
+- #### Implementing the Callable Interface
+
+  To create the thread, a Runnable is required. To obtain the result, a Future is required.
+
+  The Java library has the concrete type FutureTask, which implements Runnable and Future, combining both functionality
+  conveniently. A FutureTask can be created by providing its constructor with a Callable. Then the FutureTask object is
+  provided to the constructor of Thread to create the Thread object. Thus, **indirectly**, the thread is created with a
+  Callable. For further emphasis, note that **there is no way to create the thread directly with a Callable**.
+
+    ```java
+    public class CallableExample implements Callable {
+    
+        public Object call() throws Exception {
+
+            Random generator = new Random();
+            Integer randomNumber = generator.nextInt(5);
+            Thread.sleep(randomNumber * 1000);
+    
+            return randomNumber;
+        }
+    }
+  
+    public class CallableFutureTest {
+  
+        public static void main(String[] args) throws Exception {
+            
+            FutureTask[] randomNumberTasks = new FutureTask[5];
+            
+            for (int i = 0; i < 5; i++) {
+                Callable callable = new CallableExample();
+                randomNumberTasks[i] = new FutureTask(callable);
+                Thread t = new Thread(randomNumberTasks[i]);
+                t.start();
+            }
+    
+            for (int i = 0; i < 5; i++) {
+                System.out.println(randomNumberTasks[i].get());
+                // As it implements Future, we can call get()
+                // This method blocks till the result is obtained
+                // The get method can throw checked exceptions
+                // like when it is interrupted. This is the reason
+                // for adding the throws clause to main
+            }
+        }
+    }
+    ```
+
+- #### By using the Executor Framework along with Runnable and Callable Tasks
+  Executor provides a way of decoupling task submission from the mechanics of how each task will be run, including
+  details of thread use, scheduling, etc. An Executor is normally used instead of explicitly creating threads. The
+  command may execute in a new thread, in a pooled thread, or in the calling thread, at the discretion of the Executor
+  implementation.
+
+    ```java
+    public class HelloExecutor {
+    
+        public static Executor executor;
+    
+        public static void main(String[] args) {
+            executor.execute(new RunnableTask1());
+            executor.execute(new RunnableTask2());
+        }
+    }  
+    ```
+
+### Thread states:
+
+![concurrency_thread_lifecycle](res/images/concurrency-thread-lifecycle.png)
+
+- **New** — When we create an instance of Thread class, a thread is in a new state.
+- **Runnable** — The Java thread is in running state.
+- **Suspended** — A running thread can be suspended, which temporarily suspends its activity. A suspended thread can
+  then be resumed, allowing it to pick up where it left off.
+- **Blocked** — A java thread can be blocked when waiting for a resource.
+- **Terminated** — A thread can be terminated, which halts its execution immediately at any given time. Once a thread is
+  terminated, it cannot be resumed.
+
+### Liveness
+
+A concurrent application's ability to execute in a timely manner is known as its liveness.
+
+- **Deadlock** — describes a situation where two or more threads are blocked forever, waiting for each other.
+- **Starvation** — describes a situation where a thread is unable to gain regular access to shared resources and is
+  unable to make progress.
+- **Livelock** — A thread often acts in response to the action of another thread. If the other thread's action is also a
+  response to the action of another thread, then livelock may result. As with deadlock, livelocked threads are unable to
+  make further progress. However, the threads are not blocked — they are simply too busy responding to each other to
+  resume work.
+
+### Thread Class vs Runnable Interface
+
+* If we extend the Thread class, our class cannot extend any other class because Java doesn't support multiple
+  inheritance. But, if we implement the Runnable interface, our class can still extend other base classes.
+* We can achieve basic functionality of a thread by extending Thread class because it provides some inbuilt methods like
+  `yield()`, `interrupt()` etc. that are not available in Runnable interface.
+* Using runnable will give you an object that can be shared amongst multiple threads.
+
+### Callable vs Runnable
+
+* For implementing Runnable, the `run()` method needs to be implemented which does not return anything, while for a
+  Callable, the `call()` method needs to be implemented which returns a result on completion. Note that a thread can’t
+  be created with a Callable, it can only be created with a Runnable.
+* Another difference is that the `call()` method can throw an exception whereas `run()` cannot.
+
+### ///
+
+### References (online):
+
+* [Java Threads - Creating Threads and Multithreading in Java](https://medium.com/edureka/java-thread-bfb08e4eb691)
+* [Callable and Future in Java](https://www.geeksforgeeks.org/callable-future-java/)
+* [How to Implement Callable Interface in Java](https://www.edureka.co/blog/callable-interface-in-java/)
+
+[^ up](#knowledge-notes)
+
+---
+
+## Lock vs Monitor
+
+### Locks
+
+**A lock is kind of data which is logically part of an object’s header on the heap memory.** Each object in a JVM has
+this lock (or mutex) that any program can use to coordinate multi-threaded access to the object. If any thread want to
+access instance variables of that object; then thread must “own” the object’s lock (set some flag in lock memory area).
+All other threads that attempt to access the object’s variables have to wait until the owning thread releases the
+object’s lock (unset the flag).
+
+### Monitors
+
+**Monitor is a synchronization construct that allows threads to have both mutual exclusion (using locks) and
+cooperation** i.e. the ability to make threads wait for certain condition to be true (using **wait-set**). In other
+words, along with data that implements a lock, every Java object is logically associated with data that implements a
+wait-set.
+
+### ///
+
+### References (online):
+
+* [What is a Monitor in Computer Science?](https://www.baeldung.com/cs/monitor)
+* [Difference between lock and monitor – Java Concurrency](https://howtodoinjava.com/java/multi-threading/multithreading-difference-between-lock-and-monitor/)
+* [Object level lock vs Class level lock in Java](https://howtodoinjava.com/java/multi-threading/object-vs-class-level-locking/)
+* [Difference: this vs Myclass.class vs MyClass.getClass() in synchronisation](https://stackoverflow.com/questions/51839363/difference-this-vs-myclass-class-vs-myclass-getclass-in-synchronisation)
+* [IllegalMonitorStateException in Java](https://www.baeldung.com/java-illegalmonitorstateexception)
+
+[^ up](#knowledge-notes)
+
+---
+
+![java_concurrency_monitor](res/images/java-concurrency-monitor.png)
+
+## Synchronized vs Volatile vs Atomic
+
+### Synchronized
+
+- Provides **mutual exclusion** - two threads can not run a synchronized method or block at the same time. Though beware
+  of using static and non-static synchronized methods together.
+- Provides **visibility guaranteed** - updated values of variables modified inside synchronized context will be visible
+  to all threads.
+- A synchronized keyword also provides **blocking**. A thread will block until the lock is available, before entering to
+  code protected by a synchronized keyword. See how synchronization works in Java to know all about synchronized
+  keyword.
+- As per the **happens-before rule**, an unlock on a monitor happens-before every subsequent lock on the same monitor.
+
+### Volatile
+
+- It provides a **visibility guarantee**. As per the happens-before rule, write to volatile variable happens before
+  every subsequent read of the same variable.
+- It also prevents Compiler from doing smart things, which can create problems in a multi-threading environment, like
+  caching variables, re-ordering of code, etc.
+
+### Atomic classes like AtomicInteger, AtomicLong, and AtomicReference
+
+- Atomic variables also provides the same memory semantics as a volatile variable, but with an added feature of
+  making **compound action** atomic.
+- It provides a convenient method to perform atomic increment, decrement, **CAS (compare-and-swap) operations**. Useful
+  methods are `addAndGet(int delta)`, `compareAndSet(int expect, int update)`, `incrementAndGet()` and
+  `decrementAndGet()`
+
+### ///
+
+### References (online):
+
+* [Difference between atomic, volatile and synchronized in Java](https://javarevisited.blogspot.com/2020/04/difference-between-atomic-volatile-and-synchronized-in-java-multi-threading.html#axzz79ky1D7bi)
+* [What is the difference between atomic / volatile / synchronized?](https://stackoverflow.com/questions/9749746/what-is-the-difference-between-atomic-volatile-synchronized)
+
+[^ up](#knowledge-notes)
+
+---
+
+## ///
+
+## References (online):
+
+* [Java Tutorial Lesson: Concurrency](https://docs.oracle.com/javase/tutorial/essential/concurrency/)
+* [Многопоточность в Java](https://habr.com/ru/post/164487/)
+* [Обзор java.util.concurrent.*](https://habr.com/ru/company/luxoft/blog/157273/)
+* [Справочник по синхронизаторам java.util.concurrent.*](https://habr.com/ru/post/277669/)
+
+[^ up](#knowledge-notes)
+
+***
+
+# JVM
+
+## JVM Architecture
 
 JVM is only a specification, and its implementation is different from vendor to vendor.
 
@@ -150,7 +390,7 @@ Method area for each class separately. Then, for every loaded .class file, it cr
 represent the file in the Heap memory as defined in java.lang package. This Class object can be used to read class level
 information (class name, parent name, methods, variable information, static variables etc.) later in our code.
 
-- #### Method Area
+- ### Method Area
 
   This is a shared resource (only 1 method area per JVM). Is not thread safe. Method area stores class level data (
   including static variables) such as:
@@ -162,13 +402,13 @@ information (class name, parent name, methods, variable information, static vari
     - **Method code** — Per method: bytecodes, operand stack size, local variable size, local variable table, exception
       table.
 
-- #### Heap area
+- ### Heap area
 
   This is a shared resource (only 1 heap area per JVM). Is not thread safe. Information of all objects and their
   corresponding instance variables and arrays are stored in the Heap area. Heap area is a great target for Garbage
   Collection.
 
-- #### Stack Area
+- ### Stack Area
 
   This is not a shared resource and is thread safe. For every JVM thread, when the thread starts, a separate runtime
   stack gets created in order to store method calls. For every such method call, one entry will be created and added (
@@ -184,12 +424,12 @@ information (class name, parent name, methods, variable information, static vari
     - **Frame Data** — All symbols related to the method are stored here.
 
 
-- **Program Counter Registers**  
+- ### Program Counter Registers
   For each JVM thread, when the thread starts, a separate PC Register gets created in order to hold the address of
   currently-executing instruction (memory address in the Method area).
 
 
-- **Native Method Stack**  
+- ### Native Method Stack
   There is a direct mapping between a Java thread and a native operating system thread. A separate native stack also
   gets created in order to store native method information (often written in C/C++) invoked through JNI (Java Native
   Interface).
@@ -199,16 +439,16 @@ information (class name, parent name, methods, variable information, static vari
 The actual execution of the bytecode occurs here. Execution Engine executes the instructions in the bytecode
 line-by-line by reading the data assigned to above runtime data areas.
 
-- **Interpreter**  
+- ### Interpreter
   It interprets the bytecode and executes the instructions one-by-one.
 
 
-- **Just-In-Time (JIT) Compiler**  
+- ### Just-In-Time (JIT) Compiler
   First, it compiles the entire bytecode to native code (machine code). Then for repeated method calls, it directly
   provides the native code. The native code is stored in the cache, thus the compiled code can be executed quicker.
 
 
-- **Garbage Collector (GC)**  
+- ### Garbage Collector (GC)
   As long as an object is being referenced, the JVM considers it alive. Once an object is no longer referenced and
   therefore is not reachable by the application code, the garbage collector removes it and reclaims the unused memory.
   We can trigger it by calling System.gc() method (But the execution is not guaranteed.).
@@ -223,7 +463,9 @@ called by C/C++ libraries which may be specific to hardware.
 This is a collection of C/C++ Native Libraries which is required for the Execution Engine and can be accessed through
 the provided Native Interface.
 
-### Useful links:
+### ///
+
+### References (online):
 
 * [The Structure of the Java Virtual Machine](https://docs.oracle.com/javase/specs/jvms/se10/html/jvms-2.html)
 * [Understanding JVM Architecture](https://medium.com/platform-engineer/understanding-jvm-architecture-22c0ddf09722)
@@ -232,7 +474,7 @@ the provided Native Interface.
 
 ***
 
-### JVM Memory Model
+## JVM Memory Model
 
 ![jvm_native_memory](res/images/jvm-native-memory.png)
 
@@ -246,7 +488,7 @@ objects are cleared by the Garbage collector automatically.
 
 ![jvm_heap_memory](res/images/jvm-heap-memory.png)
 
-- #### Young Generation
+- ### Young Generation
   This is reserved for containing newly-allocated objects Young Gen includes three parts.
 
     - **Eden Memory** — Most of the newly-created objects goes Eden space. When Eden space is filled with objects, Minor
@@ -261,7 +503,7 @@ objects are cleared by the Garbage collector automatically.
         - **S1 Survivor Space**
 
 
-- #### Old Generation
+- ### Old Generation
   This is reserved for containing long-lived objects that could survive after many rounds of Minor Garbage Collection.
   When Old Gen space is full, Major Garbage Collection (a.k.a. **Old Collection**) is performed (usually takes longer
   time).
@@ -289,7 +531,9 @@ format and is cached here.
 
 This is where native code for any shared libraries used are stored. This is loaded only once per process by the OS.
 
-### Useful links:
+### ///
+
+### References (online):
 
 * [Understanding Java Memory Model](https://medium.com/platform-engineer/understanding-java-memory-model-1d0863f6d973)
 * [JVM Memory Model](https://amanagrawal9999.medium.com/jvm-memory-model-70821e84af4b)
@@ -300,11 +544,13 @@ This is where native code for any shared libraries used are stored. This is load
 
 ***
 
-### Stack vs Heap
+## Stack vs Heap
 
 ![jvm_stack_vs_heap](res/images/jvm-stack-vs-heap.png)
 
-### Useful links:
+### ///
+
+### References (online):
 
 * [Understanding Java Memory Model](https://medium.com/platform-engineer/understanding-java-memory-model-1d0863f6d973)
 * [Стек и куча в Java](https://topjava.ru/blog/stack-and-heap-in-java)
@@ -313,7 +559,7 @@ This is where native code for any shared libraries used are stored. This is load
 
 ---
 
-### Garbage Collector
+## Garbage Collector
 
 Java Garbage Collection (GC) is the process of tracking the live objects while destroying unreferenced objects in the
 Heap memory in order to reclaim space for future object allocation. Java Garbage Collector runs as a Daemon Thread (i.e.
@@ -396,7 +642,9 @@ a low priority thread that runs in the background to provide services to user th
 
   All GC processes concurrently within the application threads. Experimental until JDK 15.
 
-### Useful links:
+### ///
+
+### References (online):
 
 * [Understanding Java Garbage Collection](https://medium.com/platform-engineer/understanding-java-garbage-collection-54fc9230659a)
 * [Сборка мусора в Java: что это такое и как работает в JVM](https://medium.com/nuances-of-programming/%D1%81%D0%B1%D0%BE%D1%80%D0%BA%D0%B0-%D0%BC%D1%83%D1%81%D0%BE%D1%80%D0%B0-%D0%B2-java-%D1%87%D1%82%D0%BE-%D1%8D%D1%82%D0%BE-%D1%82%D0%B0%D0%BA%D0%BE%D0%B5-%D0%B8-%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%B0%D0%B5%D1%82-%D0%B2-jvm-25bb2570b44c)
@@ -408,7 +656,7 @@ a low priority thread that runs in the background to provide services to user th
 
 ---
 
-### Java Reference Types
+## Java Reference Types
 
 * ### Strong reference
 
@@ -427,8 +675,10 @@ a low priority thread that runs in the background to provide services to user th
 * ### Weak Reference
 
   A weakly referenced object is cleared by the Garbage Collector when it's weakly reachable. Weak reachability means
-  that an object has neither strong nor soft references pointing to it. One of the best implementations of weak
-  references is the **WeakHashMap**. Reference queue is optional.
+  that an object has neither strong nor soft references pointing to it. First off, the Garbage Collector clears a weak
+  reference, so the referent is no longer accessible. Then the reference is placed in a reference queue (if any
+  associated exists) where we can obtain it from. At the same time, formerly weakly-reachable objects are going to be
+  finalized. One of the best implementations of weak references is the **WeakHashMap**. Reference queue is optional.
 
 * ### Phantom Reference
 
@@ -439,7 +689,9 @@ a low priority thread that runs in the background to provide services to user th
   removed from the memory** which helps to schedule memory-sensitive tasks. For example, we can wait for a large object
   to be removed before loading another one.
 
-### Useful links:
+### ///
+
+### References (online):
 
 * [Soft References in Java](https://www.baeldung.com/java-soft-references)
 * [Weak References in Java](https://www.baeldung.com/java-weak-reference)
