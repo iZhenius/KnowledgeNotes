@@ -21,11 +21,6 @@
         - [Java Reference Types](#java-reference-types)
 - [Android](#android)
     - [Multithreading](#multithreading)
-        - Thread
-        - Looper
-        - Handler
-        - Message Queue
-        -
 
 ***
 
