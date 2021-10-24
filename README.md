@@ -782,7 +782,8 @@ main thread by calling **Looper.getMainLooper()**.
 
 ### HandlerThread
 
-HandlerThread has their own `Looper` and `MessageQueue` or simply queue, other than the `Thread`.
+HandlerThread has their own `Looper` and `MessageQueue` or simply queue, other than the `Thread`. The looper can then be
+used to create handler classes. Note that `start()` must still be called.
 
 ```java
 public class HandlerThreadExample {
@@ -843,6 +844,10 @@ For other data transfers, use `Message.setData(Bundle data)`.
 
 * [Multi-Threaded Android: Handler, Thread, Looper, and Message Queue](https://betterprogramming.pub/a-detailed-story-about-handler-thread-looper-message-queue-ac2cd9be0d78)
 * [How Looper, MessageQueue, Handler work in Android](https://pivinci.medium.com/how-looper-messagequeue-handler-runnable-work-in-android-dbbe9db62094)
+* [Looper, Handler, Thread & HandlerThread](https://medium.com/@kushaalsingla/looper-handler-thread-handlerthread-6dcbd999d192)
+* [MessageQueue and Looper in Android](https://medium.com/@ankit.sinhal/messagequeue-and-looper-in-android-3a18c7fc9181)
+* [Handler in Android](https://medium.com/@ankit.sinhal/handler-in-android-d138c1f4980e)
+* [Understanding of AsyncTask in Android](https://medium.com/@ankit.sinhal/understanding-of-asynctask-in-android-8fe61a96a238)
 
 [^ up](#knowledge-notes)
 
