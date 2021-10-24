@@ -10,7 +10,7 @@
         - [Thread](#java-thread)
         - [Lock vs Monitor](#lock-vs-monitor)
         - [Synchronized vs Volatile vs Atomic](#synchronized-vs-volatile-vs-atomic)
-        - Executors
+        - [Executors](#executors)
         - Synchronizers
         - Concurrent Collections
     - [JVM](#jvm)
@@ -155,12 +155,13 @@ Threads exist within a process — every process has at least one.
 
 - #### Implementing the Callable Interface
 
-  To create the thread, a Runnable is required. To obtain the result, a Future is required.
+  To create the thread, a `Runnable` is required. To obtain the result, a `Future` is required.
 
-  The Java library has the concrete type FutureTask, which implements Runnable and Future, combining both functionality
-  conveniently. A FutureTask can be created by providing its constructor with a Callable. Then the FutureTask object is
-  provided to the constructor of Thread to create the Thread object. Thus, **indirectly**, the thread is created with a
-  Callable. For further emphasis, note that **there is no way to create the thread directly with a Callable**.
+  The Java library has the concrete type `FutureTask`, which implements `Runnable` and `Future`, combining both
+  functionality conveniently. A `FutureTask` can be created by providing its constructor with a `Callable`. Then
+  the `FutureTask` object is provided to the constructor of `Thread` to create the `Thread` object. Thus, **indirectly**
+  , the thread is created with a
+  `Callable`. For further emphasis, note that **there is no way to create the thread directly with a Callable**.
 
     ```java
     public class CallableExample implements Callable {
@@ -336,6 +337,103 @@ wait-set.
 
 * [Difference between atomic, volatile and synchronized in Java](https://javarevisited.blogspot.com/2020/04/difference-between-atomic-volatile-and-synchronized-in-java-multi-threading.html#axzz79ky1D7bi)
 * [What is the difference between atomic / volatile / synchronized?](https://stackoverflow.com/questions/9749746/what-is-the-difference-between-atomic-volatile-synchronized)
+* [Java Concurrency: Volatile](https://medium.com/javarevisited/java-concurrency-volatile-d0e585852d6b)
+* [Java Concurrency: Synchronized](https://medium.com/javarevisited/java-concurrency-synchronized-7828bf5f06cb)
+
+[^ up](#knowledge-notes)
+
+---
+
+## Executors
+
+In large-scale applications, it makes sense to separate thread management and creation from the rest of the application.
+Objects that encapsulate these functions are known as **executors**.
+
+### UML Diagram of Executor framework:
+
+![java-executor-framework-uml-diagram.png](res/images/java-executor-framework-uml-diagram.png)
+
+### Executor Interfaces:
+
+- ### The Executor Interface
+
+  The `Executor` interface supports launching new tasks. It provides a single method `execute()`. The definition
+  of `execute()` is less specific. The low-level idiom creates a new thread and launches it immediately. Depending on
+  the `Executor` implementation, `execute()` may do the same thing, but is more likely to use an existing worker thread
+  to run `Runnable` object, or to place `Runnable` object in a queue to wait for a worker thread to become available.
+
+- ### The ExecutorService Interface
+
+  The `ExecutorService` interface supplements `execute()` with a similar, but a more versatile `submit()` method.
+  Like `execute()`, `submit()` accepts `Runnable` objects, but also accepts `Callable` objects, which allow the task to
+  return a value. The `submit()` method returns a `Future` object, which is used to retrieve the `Callable` return value
+  and to manage the status of both `Callable` and `Runnable` tasks.
+
+  `ExecutorService` also provides methods for submitting large collections of `Callable` objects.
+  Finally, `ExecutorService` provides a number of methods for managing the shutdown of the executor. To support the
+  immediate shutdown, tasks should handle interrupts correctly.
+
+    ```java
+    class ExecutorServiceExample {
+    
+        public static void main(String[] args) {
+            // The easiest way to create ExecutorService is to use
+            // one of the factory methods of the Executors class.
+            // Create a thread-pool with 10 threads.
+            ExecutorService executorService = Executors.newFixedThreadPool(10);
+    
+            // The execute() method is void, and it doesn't give any possibility
+            // to get the result of task’s execution or to check
+            // the task’s status (is it running or executed).
+            executorService.execute(runnableTask);
+    
+            // submit() submits a Callable or a Runnable task to an ExecutorService
+            // and returns a result of type Future.
+            Future<String> future = executorService.submit(callableTask);
+    
+            // invokeAny() assigns a collection of tasks to an ExecutorService,
+            // causing each to be executed, and returns the result of a successful
+            // execution of one task (if there was a successful execution).
+            String result = executorService.invokeAny(callableTasks);
+    
+            // invokeAll() assigns a collection of tasks to an ExecutorService,
+            // causing each to be executed, and returns the result of all
+            // task executions in the form of a list of objects of type Future.
+            List<Future<String>> futures = executorService.invokeAll(callableTasks);
+    
+            // The ExecutorService will not be automatically destroyed
+            // when there is no task to process. It will stay alive
+            // and wait for new work to do.
+    
+            // The shutdown() method doesn't cause immediate destruction of
+            // the ExecutorService. It will make the ExecutorService stop
+            // accepting new tasks and shut down after all running threads
+            // finish their current work.
+            executorService.shutdown();
+    
+            // The shutdownNow() method tries to destroy the ExecutorService
+            // immediately, but it doesn't guarantee that all the running threads
+            // will be stopped at the same time. This method returns a list
+            // of tasks that are waiting to be processed.
+            List<Runnable> notExecutedTasks = executorService.shutDownNow();
+        }
+    }
+    ```
+
+- ### The ScheduledExecutorService Interface
+
+  The `ScheduledExecutorService` interface supplements the methods of its parent `ExecutorService` with schedule, which
+  executes a `Runnable` or `Callable` task after a specified delay. In addition, the interface
+  defines `scheduleAtFixedRate` and `scheduleWithFixedDelay`, which executes specified tasks repeatedly, at defined
+  intervals.
+
+### ///
+
+### References (online):
+
+* [Java Concurrency: Executors](https://medium.com/javarevisited/java-concurrency-executors-fa2307ed7f80)
+* [Java Multithread Executor Framework <Callable, Future, Executor and Executor Service>](https://programmer.help/blogs/5d312fd63b7b0.html)
+* [Java Concurrency: Thread Pools](https://medium.com/javarevisited/java-concurrency-thread-pools-3f1902b7beee)
 
 [^ up](#knowledge-notes)
 
@@ -541,6 +639,7 @@ This is where native code for any shared libraries used are stored. This is load
 * [JVM Memory Model](https://amanagrawal9999.medium.com/jvm-memory-model-70821e84af4b)
 * [Java Memory Explained](https://medium.com/nerd-for-tech/java-memory-explained-43de6de157be)
 * [Visualizing memory management in JVM](https://medium.com/@deepu105/visualizing-memory-management-in-jvm-java-kotlin-scala-groovy-clojure-4fbcc0929482)
+* [Java Concurrency: Java Memory Model](https://medium.com/javarevisited/java-concurrency-java-memory-model-96e3ac36ec6b)
 
 [^ up](#knowledge-notes)
 
@@ -729,18 +828,21 @@ Concurrency means running multiple tasks in parallel, it is one of the main reas
 single-threaded model, we need to create different threads to perform our task.
 
 ```java
-class LooperThread extends Thread {
+  class LooperThread extends Thread {
     public Handler mHandler;
 
     public void run() {
+        // Initialize the current thread as a looper. 
         Looper.prepare();
 
-        mHandler = new Handler() {
+        // Looper.myLooper(() － Return the Looper object associated with the current thread
+        mHandler = new Handler(Looper.myLooper()) {
             public void handleMessage(Message msg) {
                 // process incoming messages here
             }
         };
-
+        // Run the message queue in this thread.
+        // Be sure to call quit() or quitSafely() to end the loop.
         Looper.loop();
     }
 }
