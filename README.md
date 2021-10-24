@@ -7,7 +7,7 @@
         - [String pool](#string-pool)
     - Collections
     - [Concurrency](#concurrency)
-        - [Thread](#thread)
+        - [Thread](#java-thread)
         - [Lock vs Monitor](#lock-vs-monitor)
         - [Synchronized vs Volatile vs Atomic](#synchronized-vs-volatile-vs-atomic)
         - Executors
@@ -19,6 +19,13 @@
             - [Stack vs Heap](#stack-vs-heap)
         - [Garbage Collector](#garbage-collector)
         - [Java Reference Types](#java-reference-types)
+- [Android](#android)
+    - [Multithreading](#multithreading)
+        - Thread
+        - Looper
+        - Handler
+        - Message Queue
+        -
 
 ***
 
@@ -26,14 +33,14 @@
 
 # Git Initial
 
-```
+```shell
 $ git config --global user.email "user@mail.com"
 $ git config --global user.name "User Name"
 $ git config --global init.defaultBranch main
 $ git init
 $ git add .
-$ add .gitignore
-$ git commit -m “Initial commit”
+$ git add .gitignore
+$ git commit -m "Initial commit"
 $ git remote add origin git@github.com:username/projectname.git
   (or git remote add origin https://github.com/username/projectname.git)
 $ git push -u origin main
@@ -104,7 +111,7 @@ returned.
 
 # Concurrency
 
-## Thread
+## Java Thread
 
 In concurrent programming, there are two basic units of execution: processes and threads. A process has a self-contained
 execution environment. A process generally has a complete, private set of basic run-time resources; in particular, each
@@ -218,7 +225,7 @@ Threads exist within a process — every process has at least one.
 
 ### Thread states:
 
-![concurrency_thread_lifecycle](res/images/concurrency-thread-lifecycle.png)
+![concurrency_thread_lifecycle](res/images/java-concurrency-thread-lifecycle.png)
 
 - **New** — When we create an instance of Thread class, a thread is in a new state.
 - **Runnable** — The Java thread is in running state.
@@ -269,7 +276,7 @@ A concurrent application's ability to execute in a timely manner is known as its
 
 ## Lock vs Monitor
 
-### Locks
+### Lock
 
 **A lock is kind of data which is logically part of an object’s header on the heap memory.** Each object in a JVM has
 this lock (or mutex) that any program can use to coordinate multi-threaded access to the object. If any thread want to
@@ -277,7 +284,7 @@ access instance variables of that object; then thread must “own” the object�
 All other threads that attempt to access the object’s variables have to wait until the owning thread releases the
 object’s lock (unset the flag).
 
-### Monitors
+### Monitor
 
 **Monitor is a synchronization construct that allows threads to have both mutual exclusion (using locks) and
 cooperation** i.e. the ability to make threads wait for certain condition to be true (using **wait-set**). In other
@@ -411,8 +418,8 @@ information (class name, parent name, methods, variable information, static vari
 - ### Stack Area
 
   This is not a shared resource and is thread safe. For every JVM thread, when the thread starts, a separate runtime
-  stack gets created in order to store method calls. For every such method call, one entry will be created and added (
-  pushed) into the top of runtime stack and such entry is called a _Stack Frame_. The size of stack frame is fixed
+  stack gets created in order to store method calls. For every such method call, one entry will be created and added
+  (pushed) into the top of runtime stack and such entry is called a _Stack Frame_. The size of stack frame is fixed
   according to the method. The frame is removed (popped) when the method returns normally or if an uncaught exception is
   thrown during the method invocation. After a thread terminates, its stack frame will also be destroyed by JVM.  
   A Stack Frame is divided into three sub-entities:
@@ -701,6 +708,146 @@ a low priority thread that runs in the background to provide services to user th
 * [An overview of Strong, Weak, Soft and Phantom references in Java](https://prateeknima.medium.com/strong-weak-soft-and-phantom-references-in-java-b4f9068e883e)
 * [Особенности PhantomReference](https://javarush.ru/groups/posts/2291-osobennosti-phantomreference)
 * [Мягкие ссылки на страже доступной памяти или как экономить память правильно](https://habr.com/ru/post/169883/)
+
+[^ up](#knowledge-notes)
+
+***
+
+# Android
+
+## Multithreading
+
+When a user opens an application, Android creates its own Linux process. Besides this, the system creates a thread of
+execution for that application called the **main thread** or **UI thread**.
+
+**The main thread** is nothing but a handler thread. The main thread is responsible for handling events from all over
+the app like callbacks associated with the lifecycle information or callbacks from input events or handling events from
+other apps, etc
+
+![android_multithreading](res/images/android-multithreading.png)
+
+### Thread
+
+The Java virtual machine allows an application to have multiple threads of execution running concurrently.
+
+Concurrency means running multiple tasks in parallel, it is one of the main reasons that we use threads. As Android is a
+single-threaded model, we need to create different threads to perform our task.
+
+```java
+class LooperThread extends Thread {
+    public Handler mHandler;
+
+    public void run() {
+        Looper.prepare();
+
+        mHandler = new Handler() {
+            public void handleMessage(Message msg) {
+                // process incoming messages here
+            }
+        };
+
+        Looper.loop();
+    }
+}
+```
+
+We can perform any kind of operation inside threads except updating the UI elements. To update a UI element from a
+thread, we need to use either the `Handler` or the `runOnUIThread()` method.
+
+### Looper
+
+The looper is responsible for keeping the thread alive. It is a kind of worker that serves a `MessageQueue` for the
+current thread. Looper loops through a message queue and sends messages to corresponding threads to process. **There
+will be only one unique looper per thread**. So, the looper is providing the thread with the facility to run in a loop
+with its own `MessageQueue`.
+
+`Looper.quit()` will immediately terminate the Looper and discard all the messages inside the `MessageQueue`. To make
+sure that all message in the `MessageQueue` will be dispatched before quitting, we can use `Looper.quiteSafely()`.
+
+### Handler
+
+As there is only one thread that updates the UI, which is main thread, we use different other threads to do multiple
+tasks in the background but finally, to update the UI, we need to post the result to the main or UI thread. So, Android
+has provided handlers to make the inter-process communication easier. A handler allows you to send and process `Message`
+and `Runnable` objects associated with a thread's `MessageQueue`. Each handler instance i**s associated with a single
+thread and that thread’s message queue**.
+
+When a handler is created, it can get a **Looper** object in the constructor, which indicates which thread the handler
+is attached to. If you want to use a handler attached to the main thread, you need to use the looper associated with the
+main thread by calling **Looper.getMainLooper()**.
+
+#### How to schedule:
+
+- `post(Runnable)`, `postAtTime(Runnable, long)`, `postDelayed(Runnable, long)` — The post versions allow you to enqueue
+  Runnable objects to be called by the message queue when they are received.
+
+- `sendEmptyMessage(int)`, `sendMessage(Message)`, `sendMessageAtTime(Message, long)`
+  , `sendMessageDelayed(Message, long)` — The sendMessage versions allow you to enqueue a Message object containing a
+  bundle of data that will be processed by the handler’s handleMessage(Message)
+
+### HandlerThread
+
+HandlerThread has their own `Looper` and `MessageQueue` or simply queue, other than the `Thread`.
+
+```java
+public class HandlerThreadExample {
+
+    public void doWork() {
+        //create the HandlerThread
+        HandlerThread handlerThread = new HandlerThread("HandlerThreadName");
+        handlerThread.start();
+
+        //create the Handler
+        Handler handler = new Handler(handlerThread.getLooper());
+
+        //Use the Handler to send message or post runnables as you deem fit and 
+        //all these works will be done in the background.
+        handler.post(new Runnable() {
+                         // do background work
+                     }
+        );
+
+        //close the handler thread when done. 
+        //I mostly close it in the onDestroy method in activity or fragment
+        handlerThread.quit();
+    }
+}
+```
+
+### MessageQueue
+
+The MessageQueue is a queue that has a list of tasks (messages, runnables) that will be executed in a certain thread.
+Android maintains a MessageQueue on the main thread. It is a low-level class holding the list of messages to be
+dispatched by a looper. Messages are not added directly to a MessageQueue, but rather through handler objects associated
+with the looper. **There will be only one MessageQueue per thread**. The order in the Message list is base on the
+timestamp. The message which has the lowest timestamp will be dispatched first.
+
+### Message
+
+The message defines a message containing a description and arbitrary data object that can be sent to a handler. We can
+simply say that message is something like a bundle that is used for the transfer of data. While the constructor of
+message is public, the best way to get one of these is to call `Message.obtain()` or one of
+the `Handler.obtainMessage()`
+methods, which will pull them from a pool of recycled objects.
+
+There are different arguments that can be useful:
+
+- `public int what` — User-defined message code so that the recipient can identify what this message is about. **Each
+  handler has its own name-space for message codes**, so you do not need to worry about yours conflicting with other
+  handlers.
+- `public int arg1`, `public int arg2` — `arg1` and `arg2` are lower-cost alternatives to using `setData()` if you only
+  need to store a few integer values.
+- `public Object obj` — An arbitrary object to send to the recipient. When using Messenger to send the message across
+  processes.
+
+For other data transfers, use `Message.setData(Bundle data)`.
+
+### ///
+
+### References (online):
+
+* [Multi-Threaded Android: Handler, Thread, Looper, and Message Queue](https://betterprogramming.pub/a-detailed-story-about-handler-thread-looper-message-queue-ac2cd9be0d78)
+* [How Looper, MessageQueue, Handler work in Android](https://pivinci.medium.com/how-looper-messagequeue-handler-runnable-work-in-android-dbbe9db62094)
 
 [^ up](#knowledge-notes)
 
