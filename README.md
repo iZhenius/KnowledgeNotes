@@ -93,9 +93,7 @@ object (the object with which intern method is being called) , then the string f
 Otherwise, this String object is added to the `string pool`, and a reference to this String object in `string pool` is
 returned.
 
-### ///
-
-### References (online):
+### ///// References (online):
 
 * [Concept of String Pool And String Object Creation In Java](https://medium.com/nerd-for-tech/concept-of-string-pool-and-string-object-creation-in-java-27ed2b3089f5)
 * [String Pool in Java? Number of Objects Created When ‘Literals’ or ‘New’ Used?](https://medium.com/javarevisited/what-does-string-pool-mean-in-java-414c725fbd59)
@@ -259,9 +257,7 @@ A concurrent application's ability to execute in a timely manner is known as its
   be created with a Callable, it can only be created with a Runnable.
 * Another difference is that the `call()` method can throw an exception whereas `run()` cannot.
 
-### ///
-
-### References (online):
+### ///// References (online):
 
 * [Java Threads - Creating Threads and Multithreading in Java](https://medium.com/edureka/java-thread-bfb08e4eb691)
 * [Callable and Future in Java](https://www.geeksforgeeks.org/callable-future-java/)
@@ -291,14 +287,12 @@ cooperation** i.e. the ability to make threads wait for certain condition to be 
 words, along with data that implements a lock, every Java object is logically associated with data that implements a
 wait-set.
 
-### ///
-
-### References (online):
+### ///// References (online):
 
 * [What is a Monitor in Computer Science?](https://www.baeldung.com/cs/monitor)
 * [Difference between lock and monitor – Java Concurrency](https://howtodoinjava.com/java/multi-threading/multithreading-difference-between-lock-and-monitor/)
 * [Object level lock vs Class level lock in Java](https://howtodoinjava.com/java/multi-threading/object-vs-class-level-locking/)
-* [Difference: this vs Myclass.class vs MyClass.getClass() in synchronisation](https://stackoverflow.com/questions/51839363/difference-this-vs-myclass-class-vs-myclass-getclass-in-synchronisation)
+* [Difference: this vs MyClass.class vs MyClass.getClass() in synchronisation](https://stackoverflow.com/questions/51839363/difference-this-vs-myclass-class-vs-myclass-getclass-in-synchronisation)
 * [IllegalMonitorStateException in Java](https://www.baeldung.com/java-illegalmonitorstateexception)
 
 [^ up](#knowledge-notes)
@@ -335,9 +329,7 @@ wait-set.
   methods are `addAndGet(int delta)`, `compareAndSet(int expect, int update)`, `incrementAndGet()` and
   `decrementAndGet()`
 
-### ///
-
-### References (online):
+### ///// References (online):
 
 * [Difference between atomic, volatile and synchronized in Java](https://javarevisited.blogspot.com/2020/04/difference-between-atomic-volatile-and-synchronized-in-java-multi-threading.html#axzz79ky1D7bi)
 * [What is the difference between atomic / volatile / synchronized?](https://stackoverflow.com/questions/9749746/what-is-the-difference-between-atomic-volatile-synchronized)
@@ -431,9 +423,7 @@ Objects that encapsulate these functions are known as **executors**.
   defines `scheduleAtFixedRate` and `scheduleWithFixedDelay`, which executes specified tasks repeatedly, at defined
   intervals.
 
-### ///
-
-### References (online):
+### ///// References (online):
 
 * [Java Concurrency: Executors](https://medium.com/javarevisited/java-concurrency-executors-fa2307ed7f80)
 * [Java Multithread Executor Framework <Callable, Future, Executor and Executor Service>](https://programmer.help/blogs/5d312fd63b7b0.html)
@@ -567,9 +557,7 @@ called by C/C++ libraries which may be specific to hardware.
 This is a collection of C/C++ Native Libraries which is required for the Execution Engine and can be accessed through
 the provided Native Interface.
 
-### ///
-
-### References (online):
+### //// References (online):
 
 * [The Structure of the Java Virtual Machine](https://docs.oracle.com/javase/specs/jvms/se10/html/jvms-2.html)
 * [Understanding JVM Architecture](https://medium.com/platform-engineer/understanding-jvm-architecture-22c0ddf09722)
@@ -635,9 +623,7 @@ format and is cached here.
 
 This is where native code for any shared libraries used are stored. This is loaded only once per process by the OS.
 
-### ///
-
-### References (online):
+### ///// References (online):
 
 * [Understanding Java Memory Model](https://medium.com/platform-engineer/understanding-java-memory-model-1d0863f6d973)
 * [JVM Memory Model](https://amanagrawal9999.medium.com/jvm-memory-model-70821e84af4b)
@@ -653,9 +639,7 @@ This is where native code for any shared libraries used are stored. This is load
 
 ![jvm_stack_vs_heap](res/images/jvm-stack-vs-heap.png)
 
-### ///
-
-### References (online):
+### ///// References (online):
 
 * [Understanding Java Memory Model](https://medium.com/platform-engineer/understanding-java-memory-model-1d0863f6d973)
 * [Стек и куча в Java](https://topjava.ru/blog/stack-and-heap-in-java)
@@ -747,9 +731,7 @@ a low priority thread that runs in the background to provide services to user th
 
   All GC processes concurrently within the application threads. Experimental until JDK 15.
 
-### ///
-
-### References (online):
+### ///// References (online):
 
 * [Understanding Java Garbage Collection](https://medium.com/platform-engineer/understanding-java-garbage-collection-54fc9230659a)
 * [Сборка мусора в Java: что это такое и как работает в JVM](https://medium.com/nuances-of-programming/%D1%81%D0%B1%D0%BE%D1%80%D0%BA%D0%B0-%D0%BC%D1%83%D1%81%D0%BE%D1%80%D0%B0-%D0%B2-java-%D1%87%D1%82%D0%BE-%D1%8D%D1%82%D0%BE-%D1%82%D0%B0%D0%BA%D0%BE%D0%B5-%D0%B8-%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%B0%D0%B5%D1%82-%D0%B2-jvm-25bb2570b44c)
@@ -794,9 +776,7 @@ a low priority thread that runs in the background to provide services to user th
   removed from the memory** which helps to schedule memory-sensitive tasks. For example, we can wait for a large object
   to be removed before loading another one.
 
-### ///
-
-### References (online):
+### ///// References (online):
 
 * [Soft References in Java](https://www.baeldung.com/java-soft-references)
 * [Weak References in Java](https://www.baeldung.com/java-weak-reference)
@@ -839,7 +819,7 @@ single-threaded model, we need to create different threads to perform our task.
         // Initialize the current thread as a looper. 
         Looper.prepare();
 
-        // Looper.myLooper(() － Return the Looper object associated with the current thread
+        // Looper.myLooper(() － Return the Looper object associated with the current thread.
         mHandler = new Handler(Looper.myLooper()) {
             public void handleMessage(Message msg) {
                 // process incoming messages here
@@ -910,7 +890,7 @@ public class HandlerThreadExample {
         );
 
         //close the handler thread when done. 
-        //I mostly close it in the onDestroy method in activity or fragment
+        //I mostly close it in the onDestroy method in activity or fragment.
         handlerThread.quit();
     }
 }
@@ -944,9 +924,7 @@ There are different arguments that can be useful:
 
 For other data transfers, use `Message.setData(Bundle data)`.
 
-### ///
-
-### References (online):
+### ///// References (online):
 
 * [Multi-Threaded Android: Handler, Thread, Looper, and Message Queue](https://betterprogramming.pub/a-detailed-story-about-handler-thread-looper-message-queue-ac2cd9be0d78)
 * [How Looper, MessageQueue, Handler work in Android](https://pivinci.medium.com/how-looper-messagequeue-handler-runnable-work-in-android-dbbe9db62094)
