@@ -423,19 +423,62 @@ Objects that encapsulate these functions are known as **executors**.
   defines `scheduleAtFixedRate` and `scheduleWithFixedDelay`, which executes specified tasks repeatedly, at defined
   intervals.
 
+### Thread Pools
+
+Since active threads consume system resources, a JVM creating too many threads at the same time can cause the system to
+run out of memory. This necessitates the need to limit the number of threads being created.
+
+Most of the executor implementations in `java.util.concurrent` use **thread pools**, which consist of _worker threads_.
+This kind of thread exists separately from the `Runnable` and `Callable` tasks it executes and is often used to execute
+multiple tasks.
+
+Using worker threads minimizes the overhead due to thread creation. Thread objects use a significant amount of memory,
+and in a large-scale application, allocating and deallocating many thread objects creates a significant memory
+management overhead.
+
+- ### Fixed Thread Pool
+
+  One common type of thread pool is the fixed thread pool. This type of pool always has a specified number of threads
+  running. Instead of starting a new thread for every task to execute concurrently, the task can be passed to a thread
+  pool. As soon as the pool has any idle threads the task is assigned to one of them and executed. Internally the tasks
+  are inserted into a `BlockingQueue` which the threads in the pool are dequeuing from. When a new task is inserted into
+  the queue one of the idle threads will dequeue it successfully and execute it. The rest of the idle threads in the
+  pool will be blocked waiting to dequeue tasks. Invoke `newFixedThreadPool(int numberOfThreads)` method to create it.
+
+- ### Cached Thread Pool
+
+  This is an expandable thread pool. This does not have fixed size of threads. This is suitable for application which
+  have a lot of short live tasks. According to the below diagram,when coming new task to the cached thread pool, if all
+  the threads are busy, cached thread pool is created new thread for that new task. If thread is idle for 1 minute, it
+  will tear down those threads. Invoke `newCachedThreadPool()` method to create it.
+
+- ### Scheduled Thread Pool
+
+  If you need to schedule the task after certain delay, this is the thread pool for it. If you need a check security
+  check, login check within every 10 seconds, we can use scheduled thread pool.
+  Invoke `newScheduledThreadPool(int corePoolSize)` method to create it.
+
+- ### Single Thread Executor
+
+  Here, only one thread is using in the thread pool. All the tasks are keeping in blocking queue. After finishing task,
+  it fetches new task from the queue and execute it. Invoke `newSingleThreadExecutor()`method to create it.
+
 ### ///// References (online):
 
 * [Java Concurrency: Executors](https://medium.com/javarevisited/java-concurrency-executors-fa2307ed7f80)
 * [Java Multithread Executor Framework <Callable, Future, Executor and Executor Service>](https://programmer.help/blogs/5d312fd63b7b0.html)
 * [Java Concurrency: Thread Pools](https://medium.com/javarevisited/java-concurrency-thread-pools-3f1902b7beee)
+* [Executor Service(Java Thread Pool Framework)](https://pramodshehan.medium.com/executor-service-java-thread-pool-framework-d314b12ca043)
+* [Executor Framework- Understanding the basics (Part 1)](https://medium.com/android-news/executor-framework-understanding-the-basics-43d575e72310)
+* [Executor Framework- Understanding the basics (Part 2)](https://medium.com/android-news/executor-framework-understanding-the-basics-part-2-bc3427fa8e2f)
+* [How to use the Executor Framework in Java](https://levelup.gitconnected.com/how-to-use-the-executor-framework-in-java-58a610d20b87)
+* [How to use Java Callable and Future](https://levelup.gitconnected.com/how-to-use-java-callable-and-future-5d79ecb47c8b)
 
 [^ up](#knowledge-notes)
 
 ---
 
-## ///
-
-## References (online):
+## ///// References (online):
 
 * [Java Tutorial Lesson: Concurrency](https://docs.oracle.com/javase/tutorial/essential/concurrency/)
 * [Многопоточность в Java](https://habr.com/ru/post/164487/)
