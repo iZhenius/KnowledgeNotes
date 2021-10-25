@@ -223,13 +223,14 @@ Threads exist within a process — every process has at least one.
 
 ![concurrency_thread_lifecycle](res/images/java-concurrency-thread-lifecycle.png)
 
-- **New** — When we create an instance of Thread class, a thread is in a new state.
-- **Runnable** — The Java thread is in running state.
-- **Suspended** — A running thread can be suspended, which temporarily suspends its activity. A suspended thread can
-  then be resumed, allowing it to pick up where it left off.
-- **Blocked** — A java thread can be blocked when waiting for a resource.
-- **Terminated** — A thread can be terminated, which halts its execution immediately at any given time. Once a thread is
-  terminated, it cannot be resumed.
+- **NEW** — A NEW Thread is a thread that’s been created but not yet started.
+- **RUNNABLE** — Threads in this state are either running or ready to run, but they’re waiting for resource allocation
+  from the system.
+- **WAITING** — Waiting for some other thread to perform a particular action without any time limit.
+- **TIMED_WAITING** — Waiting for some other thread to perform a specific action for a specified amount of time.
+- **BLOCKED** — Waiting to acquire a lock to enter or re-enter a synchronized block/method.
+- **TERMINATED** — When thread has either finished execution or was terminated abnormally. Once a thread is terminated,
+  it cannot be resumed.
 
 ### Liveness
 
@@ -265,6 +266,9 @@ A concurrent application's ability to execute in a timely manner is known as its
 * [Java Threads - Creating Threads and Multithreading in Java](https://medium.com/edureka/java-thread-bfb08e4eb691)
 * [Callable and Future in Java](https://www.geeksforgeeks.org/callable-future-java/)
 * [How to Implement Callable Interface in Java](https://www.edureka.co/blog/callable-interface-in-java/)
+* [Java Concurrency: How To Create A Thread](https://medium.com/javarevisited/java-concurrency-how-to-create-a-thread-a760bac60d27)
+* [Java Concurrency: Thread Life Cycle](https://medium.com/javarevisited/java-concurrency-thread-life-cycle-4869432474b)
+* [Java Concurrency: Thread Methods](https://medium.com/javarevisited/java-concurrency-thread-methods-54d12545c825)
 
 [^ up](#knowledge-notes)
 
