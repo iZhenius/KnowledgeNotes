@@ -5,6 +5,7 @@
 - [Java](#java)
     - [Basics](#basics)
         - [String pool](#string-pool)
+        - [Generics](#java-generics)
     - Collections
     - [Concurrency](#concurrency)
         - [Thread](#java-thread)
@@ -100,6 +101,221 @@ returned.
 
 [^ up](#knowledge-notes)
 
+---
+
+## Java Generics
+
+Generics were introduced in JDK 5.0 to provide **compile-time type checking** and to eliminate the risk of
+`ClassCastException` that was common when working with collection classes earlier.
+
+A programmer can restrict a collection class to contain only one type of object using **Generics**.
+
+Generic code ensures **type safety**. The compiler uses **type-erasure** to remove all type parameters at the compile
+time to reduce the overload at runtime.
+
+```java
+public interface List<E> {
+    void add(E x);
+
+    Iterator<E> iterator();
+}
+
+public interface Iterator<E> {
+    E next();
+
+    boolean hasNext();
+}
+
+public interface IntegerList {
+    void add(Integer x);
+
+    Iterator<Integer> iterator();
+}
+```
+
+The parameters in the angle brackets in the front of `List` and `Iterator` interfaces are the declarations of the **
+formal type parameters** of the interfaces `List` and `Iterator`.
+
+When a generic declaration is invoked, the **Actual Type Arguments** are substituted for the **Formal Type Parameters**.
+
+The **Formal Type Parameter** (**E**) in this case is an **unbounded type parameter** and can take any values
+like `Integer`, `Long`, `Double`, `String` or **any custom class name**.
+
+### Type Safety
+
+It’s just a guarantee by compiler that if correct Types are used in correct places then there should not be any
+`ClassCastException` in runtime.
+
+### Type Erasure
+
+It essentially means that all the extra information added using generics into source code will be removed from bytecode
+generated from it. Inside bytecode, it will be old java syntax which you will get if you don’t use generics at all. This
+necessarily helps in generating and executing code written prior to Java 5.0 when generics were not added in language.
+
+### Java Generic Type naming conventions:
+
+- **E** — Element (used extensively by the Java Collections Framework, for example, `ArrayList`, `Set`, etc.)
+- **K** — Key (Used in `Map`)
+- **N** — Number
+- **T** — Type
+- **V** — Value (Used in `Map`)
+
+### Invariant
+
+First, generic types in Java are invariant, meaning that `List<String>` is **not a subtype of** `List<Object>`.
+If `List` were not invariant, it would have been no better than `Array`, as the following code would have compiled but
+caused an exception at runtime:
+
+```java
+class GenericsExample {
+
+    public static void main(String[] args) {
+        List<String> strs = new ArrayList<String>();
+        List<Object> objs = strs; // !!! A compile-time error here saves us from a runtime exception later.
+        objs.add(1); // Put an Integer into a list of Strings
+        String s = strs.get(0); // !!! ClassCastException: Cannot cast Integer to String
+    }
+}
+```
+
+
+
+### Bounded Type Parameters in Generics
+
+When we restrict generic type declaration (**<** **E** **>**) to have certain classes that are called **Bounded Type
+Parameters**.
+
+```java
+public class Hardware<T extends Machine> {
+}
+
+class Machine {
+}
+
+class Laptop extends Machine {
+}
+
+class Mobile extends Machine {
+}
+```
+
+In the above example, the **generic type of Hardware class** can be a **Machine class** or **subclasses of a Machine**.
+
+Hence, **T** can have only one out of three values: `Machine`, `Laptop`, or `Mobile`).
+
+### Generics with Wildcards (**?**)
+
+In generic code, the question mark (?), called the wildcard, represents an unknown type. A wildcard parameterized type
+is an instantiation of a generic type where at least one type argument is a wildcard.
+
+Examples of wildcard parameterized types:
+
+- `Collection<?>` — **Unbounded wildcard parameterized type**. Denotes all instantiations of the `Collection` interface
+  without any restriction on the type argument.
+- `List<? extends Number>` — **Upper bounded wildcard parameterized type**. Denotes all list types where the element
+  type is a subtype of `Number` or type `Number`.
+- `Comparator<? super String>`— **Lower bounded wildcard parameterized type**. Denotes all instantiations of
+  the `Comparator` interface for type argument types that are supertypes of `String` or the type `String`.
+
+```java
+class GenericsExamples {
+
+    public static void main(String[] args) {
+        List<Number> listNumber_ListNumber = new ArrayList<Number>();
+        //List<Number> listNumber_ListInteger = new ArrayList<Integer>(); // error - can assign only exactly <Number>
+        //List<Number> listNumber_ListDouble  = new ArrayList<Double>(); // error - can assign only exactly <Number>
+
+        //List<? extends Number> listExtendsNumber_ListObject = new ArrayList<Object>(); // error - Object is not a subclass of Number
+        List<? extends Number> listExtendsNumber_ListNumber = new ArrayList<Number>();
+        List<? extends Number> listExtendsNumber_ListInteger = new ArrayList<Integer>();
+        List<? extends Number> listExtendsNumber_ListDouble = new ArrayList<Double>();
+
+        List<? super Number> listSuperNumber_ListNumber = new ArrayList<Number>();
+        //List<? super Number> listSuperNumber_ListInteger = new ArrayList<Integer>(); // error - Integer is not superclass of Number
+        //List<? super Number> listSuperNumber_ListDouble  = new ArrayList<Double>(); // error - Double is not superclass of Number
+
+
+        //List<Integer> listInteger_ListNumber  = new ArrayList<Number>(); // error - can assign only exactly <Integer>
+        List<Integer> listInteger_ListInteger = new ArrayList<Integer>();
+        //List<Integer> listInteger_ListDouble  = new ArrayList<Double>(); // error - can assign only exactly <Integer>
+
+        //List<? extends Integer> listExtendsInteger_ListNumber  = new ArrayList<Number>(); // error - Number is not a subclass of Integer
+        List<? extends Integer> listExtendsInteger_ListInteger = new ArrayList<Integer>();
+        //List<? extends Integer> listExtendsInteger_ListDouble  = new ArrayList<Double>(); // error - Double is not a subclass of Integer
+
+        List<? super Integer> listSuperInteger_ListNumber = new ArrayList<Number>();
+        List<? super Integer> listSuperInteger_ListInteger = new ArrayList<Integer>();
+        //List<? super Integer> listSuperInteger_ListDouble  = new ArrayList<Double>(); // error - Double is not a superclass of Integer
+
+
+        listNumber_ListNumber.add(3); // ok - allowed to add Integer to exactly List<Number>
+
+        // These next 3 are compile errors for the same reason:
+        // You don't know what kind of List<T> is really being referenced - it may not be able to hold an Integer.
+        // You can't add anything (not Object, Number, Integer, nor Double) to List<? extends Number>
+        //listExtendsNumber_ListNumber.add(3); // error - can't add Integer to *possible* List<Double>, even though it is really List<Number>
+        //listExtendsNumber_ListInteger.add(3); // error - can't add Integer to *possible* List<Double>, even though it is really List<Integer>
+        //listExtendsNumber_ListDouble.add(3); // error - can't add Integer to *possible* List<Double>, especially since it is really List<Double>
+
+        listSuperNumber_ListNumber.add(3); // ok - allowed to add Integer to List<Number> or List<Object>
+
+        listInteger_ListInteger.add(3); // ok - allowed to add Integer to exactly List<Integer> (duh)
+
+        // This fails for same reason above - you can't guarantee what kind of List the var is really pointing to
+        //listExtendsInteger_ListInteger.add(3); // error - can't add Integer to *possible* List<X> that is only allowed to hold X's
+
+        listSuperInteger_ListNumber.add(3); // ok - allowed to add Integer to List<Integer>, List<Number>, or List<Object>
+        listSuperInteger_ListInteger.add(3); // ok - allowed to add Integer to List<Integer>, List<Number>, or List<Object>
+    }
+}
+```
+
+### Not allowed to do with Generics:
+
+1. #### You can’t have static field of type
+
+    ```java
+    class GenericsExample<T> {
+        private static T member; //Not allowed
+    }
+    ```
+
+2. #### You can not create an instance of T
+
+    ```java
+    class GenericsExample<T> {
+        public GenericsExample(){
+            new T(); //Not allowed
+        }
+    }
+    ```
+
+3. #### Generics are not compatible with primitives in declarations
+
+    ```java
+    class GenericsExample<T> {
+        List<int> ids = new ArrayList<>(); //Not allowed
+    }
+    ```
+
+4. #### You can’t create Generic exception class
+
+    ```java
+    // causes compiler error
+    public class GenericException<T> extends Exception {
+    }
+    ```
+
+### ///// References (online):
+
+* [Java Generics Tutorial](https://howtodoinjava.com/java/generics/complete-java-generics-tutorial/)
+* [Java Generics: Why Are They Used?](https://medium.com/javarevisited/java-generics-why-are-they-used-4157734de4fd)
+* [How can I add to List<? extends Number> data structures?](https://stackoverflow.com/questions/2776975/how-can-i-add-to-list-extends-number-data-structures)
+* [An introduction to generic types in Java: covariance and contravariance](https://medium.com/free-code-camp/understanding-java-generic-types-covariance-and-contravariance-88f4c19763d2)
+* [Java Generics FAQs](http://www.angelikalanger.com/GenericsFAQ/JavaGenericsFAQ.html)
+
+[^ up](#knowledge-notes)
+
 ***
 
 # Concurrency
@@ -110,7 +326,7 @@ In concurrent programming, there are two basic units of execution: processes and
 execution environment. A process generally has a complete, private set of basic run-time resources; in particular, each
 process has its own memory space.
 
-A Thread is a lightweight Process. Both processes and threads provide an execution environment, but creating a new
+A `Thread` is a lightweight Process. Both processes and threads provide an execution environment, but creating a new
 thread requires fewer resources than creating a new process.
 
 Threads exist within a process — every process has at least one.
@@ -151,20 +367,20 @@ Threads exist within a process — every process has at least one.
     }
     ```
 
-- #### Implementing the Callable Interface
+3. #### Implementing the Callable Interface
 
-  To create the thread, a `Runnable` is required. To obtain the result, a `Future` is required.
+   To create the thread, a `Runnable` is required. To obtain the result, a `Future` is required.
 
-  The Java library has the concrete type `FutureTask`, which implements `Runnable` and `Future`, combining both
-  functionality conveniently. A `FutureTask` can be created by providing its constructor with a `Callable`. Then
-  the `FutureTask` object is provided to the constructor of `Thread` to create the `Thread` object. Thus, **indirectly**
-  , the thread is created with a
-  `Callable`. For further emphasis, note that **there is no way to create the thread directly with a Callable**.
+   The Java library has the concrete type `FutureTask`, which implements `Runnable` and `Future`, combining both
+   functionality conveniently. A `FutureTask` can be created by providing its constructor with a `Callable`. Then
+   the `FutureTask` object is provided to the constructor of `Thread` to create the `Thread` object. Thus, indirectly,
+   the thread is created with a `Callable`. For further emphasis, note that **there is no way to create the thread
+   directly with a Callable**.
 
     ```java
     public class CallableExample implements Callable {
     
-        public Object call() throws Exception {
+        public Object call() {
 
             Random generator = new Random();
             Integer randomNumber = generator.nextInt(5);
@@ -176,7 +392,7 @@ Threads exist within a process — every process has at least one.
   
     public class CallableFutureTest {
   
-        public static void main(String[] args) throws Exception {
+        public static void main(String[] args) {
             
             FutureTask[] randomNumberTasks = new FutureTask[5];
             
@@ -199,11 +415,13 @@ Threads exist within a process — every process has at least one.
     }
     ```
 
-- #### By using the Executor Framework along with Runnable and Callable Tasks
-  Executor provides a way of decoupling task submission from the mechanics of how each task will be run, including
-  details of thread use, scheduling, etc. An Executor is normally used instead of explicitly creating threads. The
-  command may execute in a new thread, in a pooled thread, or in the calling thread, at the discretion of the Executor
-  implementation.
+4. #### By using the Executor Framework along with Runnable and Callable Tasks
+
+   Executor provides a way of decoupling task submission from the mechanics of how each task will be run, including
+   details of thread use, scheduling, etc. An `Executor` is normally used instead of explicitly creating threads. The
+   command may execute in a new thread, in a pooled thread, or in the calling thread, at the discretion of
+   the `Executor`
+   implementation.
 
     ```java
     public class HelloExecutor {
@@ -244,17 +462,18 @@ A concurrent application's ability to execute in a timely manner is known as its
 
 ### Thread Class vs Runnable Interface
 
-* If we extend the Thread class, our class cannot extend any other class because Java doesn't support multiple
+* If we extend the `Thread` class, our class cannot extend any other class because Java doesn't support multiple
   inheritance. But, if we implement the Runnable interface, our class can still extend other base classes.
-* We can achieve basic functionality of a thread by extending Thread class because it provides some inbuilt methods like
-  `yield()`, `interrupt()` etc. that are not available in Runnable interface.
-* Using runnable will give you an object that can be shared amongst multiple threads.
+* We can achieve basic functionality of a thread by extending `Thread` class because it provides some inbuilt methods
+  like
+  `yield()`, `interrupt()` etc. that are not available in `Runnable` interface.
+* Using `Runnable` will give you an object that can be shared amongst multiple threads.
 
 ### Callable vs Runnable
 
-* For implementing Runnable, the `run()` method needs to be implemented which does not return anything, while for a
-  Callable, the `call()` method needs to be implemented which returns a result on completion. Note that a thread can’t
-  be created with a Callable, it can only be created with a Runnable.
+* For implementing `Runnable`, the `run()` method needs to be implemented which does not return anything, while for a
+  `Callable`, the `call()` method needs to be implemented which returns a result on completion. Note that a thread can’t
+  be created with a Callable, it can only be created with a `Runnable`.
 * Another difference is that the `call()` method can throw an exception whereas `run()` cannot.
 
 ### ///// References (online):
@@ -287,6 +506,8 @@ cooperation** i.e. the ability to make threads wait for certain condition to be 
 words, along with data that implements a lock, every Java object is logically associated with data that implements a
 wait-set.
 
+![java_concurrency_monitor](res/images/java-concurrency-monitor.png)
+
 ### ///// References (online):
 
 * [What is a Monitor in Computer Science?](https://www.baeldung.com/cs/monitor)
@@ -298,8 +519,6 @@ wait-set.
 [^ up](#knowledge-notes)
 
 ---
-
-![java_concurrency_monitor](res/images/java-concurrency-monitor.png)
 
 ## Synchronized vs Volatile vs Atomic
 
@@ -383,16 +602,16 @@ Objects that encapsulate these functions are known as **executors**.
             // the task’s status (is it running or executed).
             executorService.execute(runnableTask);
     
-            // submit() submits a Callable or a Runnable task to an ExecutorService
+            // The submit() submits a Callable or a Runnable task to an ExecutorService
             // and returns a result of type Future.
             Future<String> future = executorService.submit(callableTask);
     
-            // invokeAny() assigns a collection of tasks to an ExecutorService,
+            // The invokeAny() assigns a collection of tasks to an ExecutorService,
             // causing each to be executed, and returns the result of a successful
             // execution of one task (if there was a successful execution).
             String result = executorService.invokeAny(callableTasks);
     
-            // invokeAll() assigns a collection of tasks to an ExecutorService,
+            // The invokeAll() assigns a collection of tasks to an ExecutorService,
             // causing each to be executed, and returns the result of all
             // task executions in the form of a list of objects of type Future.
             List<Future<String>> futures = executorService.invokeAll(callableTasks);
@@ -411,7 +630,7 @@ Objects that encapsulate these functions are known as **executors**.
             // immediately, but it doesn't guarantee that all the running threads
             // will be stopped at the same time. This method returns a list
             // of tasks that are waiting to be processed.
-            List<Runnable> notExecutedTasks = executorService.shutDownNow();
+            List<Runnable> notExecutedTasks = executorService.shutdownNow();
         }
     }
     ```
@@ -881,7 +1100,7 @@ thread, we need to use either the `Handler` or the `runOnUIThread()` method.
 ### Looper
 
 The looper is responsible for keeping the thread alive. It is a kind of worker that serves a `MessageQueue` for the
-current thread. Looper loops through a message queue and sends messages to corresponding threads to process. **There
+current thread. `Looper` loops through a message queue and sends messages to corresponding threads to process. **There
 will be only one unique looper per thread**. So, the looper is providing the thread with the facility to run in a loop
 with its own `MessageQueue`.
 
@@ -896,14 +1115,14 @@ has provided handlers to make the inter-process communication easier. A handler 
 and `Runnable` objects associated with a thread's `MessageQueue`. Each handler instance i**s associated with a single
 thread and that thread’s message queue**.
 
-When a handler is created, it can get a **Looper** object in the constructor, which indicates which thread the handler
-is attached to. If you want to use a handler attached to the main thread, you need to use the looper associated with the
-main thread by calling **Looper.getMainLooper()**.
+When a handler is created, it can get a `Looper` object in the constructor, which indicates which thread the handler is
+attached to. If you want to use a handler attached to the main thread, you need to use the looper associated with the
+main thread by calling `Looper.getMainLooper()`.
 
 #### How to schedule:
 
 - `post(Runnable)`, `postAtTime(Runnable, long)`, `postDelayed(Runnable, long)` — The post versions allow you to enqueue
-  Runnable objects to be called by the message queue when they are received.
+  `Runnable` objects to be called by the message queue when they are received.
 
 - `sendEmptyMessage(int)`, `sendMessage(Message)`, `sendMessageAtTime(Message, long)`
   , `sendMessageDelayed(Message, long)` — The sendMessage versions allow you to enqueue a Message object containing a
@@ -941,15 +1160,15 @@ public class HandlerThreadExample {
 
 ### MessageQueue
 
-The MessageQueue is a queue that has a list of tasks (messages, runnables) that will be executed in a certain thread.
-Android maintains a MessageQueue on the main thread. It is a low-level class holding the list of messages to be
-dispatched by a looper. Messages are not added directly to a MessageQueue, but rather through handler objects associated
-with the looper. **There will be only one MessageQueue per thread**. The order in the Message list is base on the
-timestamp. The message which has the lowest timestamp will be dispatched first.
+The `MessageQueue` is a queue that has a list of tasks (messages, runnables) that will be executed in a certain thread.
+Android maintains a `MessageQueue` on the main thread. It is a low-level class holding the list of messages to be
+dispatched by a `Looper`. Messages are not added directly to a `MessageQueue`, but rather through handler objects
+associated with the `Looper`. **There will be only one MessageQueue per thread**. The order in the Message list is base
+on the timestamp. The message which has the lowest timestamp will be dispatched first.
 
 ### Message
 
-The message defines a message containing a description and arbitrary data object that can be sent to a handler. We can
+The message defines a message containing a description and arbitrary data object that can be sent to a `Handler`. We can
 simply say that message is something like a bundle that is used for the transfer of data. While the constructor of
 message is public, the best way to get one of these is to call `Message.obtain()` or one of
 the `Handler.obtainMessage()`
@@ -972,6 +1191,7 @@ For other data transfers, use `Message.setData(Bundle data)`.
 * [Multi-Threaded Android: Handler, Thread, Looper, and Message Queue](https://betterprogramming.pub/a-detailed-story-about-handler-thread-looper-message-queue-ac2cd9be0d78)
 * [How Looper, MessageQueue, Handler work in Android](https://pivinci.medium.com/how-looper-messagequeue-handler-runnable-work-in-android-dbbe9db62094)
 * [Looper, Handler, Thread & HandlerThread](https://medium.com/@kushaalsingla/looper-handler-thread-handlerthread-6dcbd999d192)
+* [Android Handler Internals](https://medium.com/@jagsaund/android-handler-internals-b5d49eba6977)
 * [MessageQueue and Looper in Android](https://medium.com/@ankit.sinhal/messagequeue-and-looper-in-android-3a18c7fc9181)
 * [Handler in Android](https://medium.com/@ankit.sinhal/handler-in-android-d138c1f4980e)
 * [Understanding of AsyncTask in Android](https://medium.com/@ankit.sinhal/understanding-of-asynctask-in-android-8fe61a96a238)
