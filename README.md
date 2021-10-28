@@ -20,6 +20,9 @@
             - [Stack vs Heap](#stack-vs-heap)
         - [Garbage Collector](#garbage-collector)
         - [Java Reference Types](#java-reference-types)
+- [Kotlin](#kotlin)
+    - [Kotlin Syntax Features](#kotlin-syntax-features)
+        - [Scope functions](#kotlin-scope-functions)
 - [Android](#android)
     - [Multithreading](#multithreading)
 
@@ -177,8 +180,6 @@ class GenericsExample {
     }
 }
 ```
-
-
 
 ### Bounded Type Parameters in Generics
 
@@ -1048,6 +1049,127 @@ a low priority thread that runs in the background to provide services to user th
 * [An overview of Strong, Weak, Soft and Phantom references in Java](https://prateeknima.medium.com/strong-weak-soft-and-phantom-references-in-java-b4f9068e883e)
 * [Особенности PhantomReference](https://javarush.ru/groups/posts/2291-osobennosti-phantomreference)
 * [Мягкие ссылки на страже доступной памяти или как экономить память правильно](https://habr.com/ru/post/169883/)
+
+[^ up](#knowledge-notes)
+
+***
+
+# Kotlin
+
+# Kotlin Syntax Features
+
+## Kotlin Scope Functions
+
+| Function | Object reference | Return value | Is extension function | Usage |
+| --- | --- | --- | --- | --- |
+| `.let{it} ` | `it` | Lambda result | Yes | 1) to invoke one or more functions on results of call chains; 2)  to execute a code block only with non-null values; 3) to introduce local variables with a limited scope for improving code readability. |
+
+```kotlin
+val str: String? = "Hello"
+val length: Int? = str?.let { nonNullStr -> // it - nonNullStr is `String` && nonNullStr === str
+    println("let() called on $nonNullStr")
+    nonNullStr.length
+    // lambda returns `Int`
+}
+println(length) // 5 or `null` if str == `null`
+```
+
+| Function | Object reference | Return value | Is extension function | Usage |
+| --- | --- | --- | --- | --- |
+| `.run{this}` | `this` | Lambda result | Yes | 1) useful when your lambda contains both the object initialization and the computation of the return value. |
+
+```kotlin
+val service = MultiportService("https://example.kotlinlang.org", 80)
+val result: QueryResult = service.run { // this: MultiportService
+    port = 8080
+    query(prepareRequest() + " to port $port")
+    // lambda returns `QueryResult` instance
+}
+```
+
+| Function | Object reference | Return value | Is extension function | Usage |
+| --- | --- | --- | --- | --- |
+| `run{}` | － | Lambda result | No | 1) useful for executing a block of several statements where an expression is required. |
+
+```kotlin
+val hexNumberRegex: Regex = run { // no reference to context object
+    val digits = "0-9"
+    val hexDigits = "A-Fa-f"
+    val sign = "+-"
+    Regex("[$sign]?[$digits$hexDigits]+")
+    // lambda returns `Regex` instance
+}
+```
+
+| Function | Object reference | Return value | Is extension function | Usage |
+| --- | --- | --- | --- | --- |
+| `with{this}` | `this` | Lambda result | No | 1) for calling functions on the context object without providing the lambda result; 2) introducing a helper object whose properties or functions will be used for calculating a return value. |
+
+```kotlin
+val numbers = mutableListOf("one", "two", "three")
+// without providing the lambda result
+with(numbers) { // this: MutableList<String>
+    println("'with' is called with argument $this")
+    println("It contains $size elements")
+    // lambda returns the `Unit` kotlin type
+}
+// with using the context object for lambda result
+val firstAndLast: String = with(numbers) { // this: MutableList<String>
+    "The first element is ${first()}," +
+            " the last element is ${last()}"
+    // lambda returns the new `String`
+}
+```
+
+| Function | Object reference | Return value | Is extension function | Usage |
+| --- | --- | --- | --- | --- |
+| `.apply{this}` | `this` | Context object | Yes | 1)  for code blocks that don't return a value and mainly operate on the members of the receiver object. |
+
+```kotlin
+val adam = Person("Adam").apply { // this: Person
+    age = 32
+    city = "London"
+    // the same `Person` will be returned
+}
+```
+
+| Function | Object reference | Return value | Is extension function | Usage |
+| --- | --- | --- | --- | --- |
+| `.also{it}` | `it` | Context object | Yes | 1) use for actions that need a reference rather to the object than to its properties and functions; 2) use when you don't want to shadow `this` reference from an outer scope. |
+
+```kotlin
+val numbers = mutableListOf("one", "two", "three")
+numbers
+    .also { // it: MutableList<String>
+        println("The list elements before adding new one: $it")
+        // the same `MutableList` will be returned
+    }
+    .add("four")
+```
+
+| Function | Object reference | Return value | Is extension function | Usage |
+| --- | --- | --- | --- | --- |
+| `.takeIf{it}?` | `it` | Context object, `null` | Yes | 1) use as a filtering function for a single object. |
+
+```kotlin
+val str = "Hello"
+val caps = str.takeIf { it.isNotEmpty() }?.uppercase() ?: "null"
+println(caps) // "HELLO"
+```
+
+| Function | Object reference | Return value | Is extension function | Usage |
+| --- | --- | --- | --- | --- |
+| `.takeUnless{it}?` | `it` | Context object, `null` | Yes | 1) use as a filtering function for a single object. |
+
+```kotlin
+val str = "Hello"
+val caps = str.takeUnless { it.isNotEmpty() }?.uppercase() ?: "null"
+println(caps) // "null"
+```
+
+### ///// References (online):
+
+- [Scope functions](https://kotlinlang.org/docs/scope-functions.html#function-selection)
 
 [^ up](#knowledge-notes)
 
