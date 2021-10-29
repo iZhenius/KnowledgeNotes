@@ -178,7 +178,7 @@ If `List` were not invariant, it would have been no better than `Array`, as the 
 caused an exception at runtime:
 
 ```java
-class GenericsExample {
+public class GenericsExample {
 
     public static void main(String[] args) {
         List<String> strs = new ArrayList<String>();
@@ -191,8 +191,7 @@ class GenericsExample {
 
 ### Bounded Type Parameters in Generics
 
-When we restrict generic type declaration (`<E>`) to have certain classes that are called **Bounded Type
-Parameters**.
+When we restrict generic type declaration (`<E>`) to have certain classes that are called **Bounded Type Parameters**.
 
 ```java
 public class Hardware<T extends Machine> {
@@ -212,7 +211,7 @@ In the above example, the **generic type of Hardware class** can be a **Machine 
 
 Hence,`T` can have only one out of three values: `Machine`, `Laptop`, or `Mobile`.
 
-### Generics with Wildcards (**?**)
+### Generics with Wildcards (?)
 
 In generic code, the question mark (`?`), called the wildcard, represents an unknown type. A wildcard parameterized type
 is an instantiation of a generic type where at least one type argument is a wildcard.
@@ -227,54 +226,141 @@ Examples of wildcard parameterized types:
   the `Comparator` interface for type argument types that are supertypes of `String` or the type `String` itself.
 
 ```java
-class GenericsExamples {
+public class GenericsExamples {
 
     public static void main(String[] args) {
+
+        Object anyObject = new Object();
+        Number anyNumber = 1;
+        int anyInt = 2;
+        byte anyByte = Byte.parseByte("3");
+
+        //region Invariance
+        List<Object> listObject_ListObject = new ArrayList<Object>();
+        //List<Object> listObject_ListNumber = new ArrayList<Number>();   // error - can assign only exactly <Object>
+        //List<Object> listObject_ListInteger = new ArrayList<Integer>();   // error - can assign only exactly <Object>
+        //List<Object> listObject_ListByte = new ArrayList<Byte>();   // error - can assign only exactly <Object>
+
+        //List<Number> listNumber_ListObject = new ArrayList<Object>();  // error - can assign only exactly <Number>
         List<Number> listNumber_ListNumber = new ArrayList<Number>();
         //List<Number> listNumber_ListInteger = new ArrayList<Integer>(); // error - can assign only exactly <Number>
-        //List<Number> listNumber_ListDouble  = new ArrayList<Double>(); // error - can assign only exactly <Number>
+        //List<Number> listNumber_ListByte  = new ArrayList<Byte>(); // error - can assign only exactly <Number>
+
+        //List<Integer> listInteger_ListObject  = new ArrayList<Object>(); // error - can assign only exactly <Integer>
+        //List<Integer> listInteger_ListNumber  = new ArrayList<Number>(); // error - can assign only exactly <Integer>
+        List<Integer> listInteger_ListInteger = new ArrayList<Integer>();
+        //List<Integer> listInteger_ListByte  = new ArrayList<Byte>(); // error - can assign only exactly <Integer>
+
+        // operations of reading (producing)
+        anyObject = listObject_ListObject.get(0);
+        //anyNumber = listObject_ListObject.get(0); // error - not safe to get Number
+        //anyInt = listObject_ListObject.get(0); // error - not safe to get Integer
+        //anyByte = listObject_ListObject.get(0); // error - not safe to get Byte
+
+        anyObject = listNumber_ListNumber.get(0);
+        anyNumber = listNumber_ListNumber.get(0);
+        //anyInt = listNumber_ListNumber.get(0); // error - not safe to get Integer
+        //anyByte = listNumber_ListNumber.get(0); // error - not safe to get Byte
+
+        anyObject = listInteger_ListInteger.get(0);
+        anyNumber = listInteger_ListInteger.get(0);
+        anyInt = listInteger_ListInteger.get(0);
+        //anyByte = listInteger_ListInteger.get(0); // error - not safe to get Byte
+
+        // operations of setting (consuming)
+        listObject_ListObject.add(anyObject); // ok - allowed to add Object to exactly List<Object>
+        listObject_ListObject.add(anyInt); // ok - allowed to add Object, Number, Integer, Byte to exactly List<Object>
+
+        //listNumber_ListNumber.add(anyObject); // error - not allowed to add Object to exactly List<Number>
+        listNumber_ListNumber.add(anyNumber); // ok - allowed to add Number to exactly List<Number>
+        listNumber_ListNumber.add(anyInt); // ok - allowed to add Integer to exactly List<Number>
+        listNumber_ListNumber.add(anyByte); // ok - allowed to add Byte to exactly List<Number>
+
+        //listInteger_ListInteger.add(anyObject); // error - not allowed to add Object to exactly List<Integer>
+        //listInteger_ListInteger.add(anyNumber); // error - not allowed to add Number to exactly List<Integer>
+        listInteger_ListInteger.add(anyInt); // ok - allowed to add Integer to exactly List<Integer>
+        //listInteger_ListInteger.add(anyByte); // error - not allowed to add Byte to exactly List<Integer>
+        //endregion
+
+        //region Covariance
+        List<? extends Object> listExtendsObject_ListObject = new ArrayList<Object>();
+        List<? extends Object> listExtendsObject_ListNumber = new ArrayList<Number>();
+        List<? extends Object> listExtendsObject_ListInteger = new ArrayList<Integer>();
+        List<? extends Object> listExtendsObject_ListByte = new ArrayList<Byte>();
 
         //List<? extends Number> listExtendsNumber_ListObject = new ArrayList<Object>(); // error - Object is not a subclass of Number
         List<? extends Number> listExtendsNumber_ListNumber = new ArrayList<Number>();
         List<? extends Number> listExtendsNumber_ListInteger = new ArrayList<Integer>();
-        List<? extends Number> listExtendsNumber_ListDouble = new ArrayList<Double>();
+        List<? extends Number> listExtendsNumber_ListByte = new ArrayList<Byte>();
 
-        List<? super Number> listSuperNumber_ListNumber = new ArrayList<Number>();
-        //List<? super Number> listSuperNumber_ListInteger = new ArrayList<Integer>(); // error - Integer is not superclass of Number
-        //List<? super Number> listSuperNumber_ListDouble  = new ArrayList<Double>(); // error - Double is not superclass of Number
-
-
-        //List<Integer> listInteger_ListNumber  = new ArrayList<Number>(); // error - can assign only exactly <Integer>
-        List<Integer> listInteger_ListInteger = new ArrayList<Integer>();
-        //List<Integer> listInteger_ListDouble  = new ArrayList<Double>(); // error - can assign only exactly <Integer>
-
+        //List<? extends Integer> listExtendsInteger_ListObject  = new ArrayList<Object>(); // error - Object is not a subclass of Integer
         //List<? extends Integer> listExtendsInteger_ListNumber  = new ArrayList<Number>(); // error - Number is not a subclass of Integer
         List<? extends Integer> listExtendsInteger_ListInteger = new ArrayList<Integer>();
-        //List<? extends Integer> listExtendsInteger_ListDouble  = new ArrayList<Double>(); // error - Double is not a subclass of Integer
+        //List<? extends Integer> listExtendsInteger_ListByte  = new ArrayList<Byte>(); // error - Byte is not a subclass of Integer
 
-        List<? super Integer> listSuperInteger_ListNumber = new ArrayList<Number>();
-        List<? super Integer> listSuperInteger_ListInteger = new ArrayList<Integer>();
-        //List<? super Integer> listSuperInteger_ListDouble  = new ArrayList<Double>(); // error - Double is not a superclass of Integer
+        // operations of reading (producing)
+        anyObject = listExtendsNumber_ListNumber.get(0);
+        anyNumber = listExtendsNumber_ListNumber.get(0);
+        //anyInt = listExtendsNumber_ListNumber.get(0); // error - not safe to get Integer
+        //anyByte = listExtendsNumber_ListNumber.get(0); // error - not safe to get Byte
 
+        anyObject = listExtendsInteger_ListInteger.get(0);
+        anyNumber = listExtendsInteger_ListInteger.get(0);
+        anyInt = listExtendsInteger_ListInteger.get(0);
+        //anyByte = listExtendsInteger_ListInteger.get(0); // error - not safe to get Byte
 
-        listNumber_ListNumber.add(3); // ok - allowed to add Integer to exactly List<Number>
+        // operations of setting (consuming)
+        //listExtendsObject_ListObject.add(anyObject);  // error - can't add Object to *possible* List<Byte>, even though it is really List<Object>
 
         // These next 3 are compile errors for the same reason:
         // You don't know what kind of List<T> is really being referenced - it may not be able to hold an Integer.
-        // You can't add anything (not Object, Number, Integer, nor Double) to List<? extends Number>
-        //listExtendsNumber_ListNumber.add(3); // error - can't add Integer to *possible* List<Double>, even though it is really List<Number>
-        //listExtendsNumber_ListInteger.add(3); // error - can't add Integer to *possible* List<Double>, even though it is really List<Integer>
-        //listExtendsNumber_ListDouble.add(3); // error - can't add Integer to *possible* List<Double>, especially since it is really List<Double>
+        // You can't add anything (not Object, Number, Integer, nor Byte) to List<? extends Number>
+        //listExtendsNumber_ListNumber.add(anyInt); // error - can't add Integer to *possible* List<Byte>, even though it is really List<Number>
+        //listExtendsNumber_ListInteger.add(anyInt); // error - can't add Integer to *possible* List<Byte>, even though it is really List<Integer>
+        //listExtendsNumber_ListByte.add(anyInt); // error - can't add Integer to *possible* List<Byte>, especially since it is really List<Byte>
 
-        listSuperNumber_ListNumber.add(3); // ok - allowed to add Integer to List<Number> or List<Object>
+        // This fails for same reason above - you can't guarantee what kind of List the variable is really pointing to
+        //listExtendsInteger_ListInteger.add(anyInt); // error - can't add Integer to *possible* List<X> that is only allowed to hold X's
+        //endregion
 
-        listInteger_ListInteger.add(3); // ok - allowed to add Integer to exactly List<Integer> (duh)
+        //region Contravariance
+        List<? super Object> listSuperObject_ListObject = new ArrayList<Object>();
+        //List<? super Object> listSuperObject_ListNumber = new ArrayList<Number>(); // error - Integer is not superclass of Object
+        //List<? super Object> listSuperObject_ListInteger = new ArrayList<Integer>(); // error - Integer is not superclass of Object
+        //List<? super Object> listSuperObject_ListByte  = new ArrayList<Byte>(); // error - Byte is not superclass of Object
 
-        // This fails for same reason above - you can't guarantee what kind of List the var is really pointing to
-        //listExtendsInteger_ListInteger.add(3); // error - can't add Integer to *possible* List<X> that is only allowed to hold X's
+        List<? super Number> listSuperNumber_ListObject = new ArrayList<Object>();
+        List<? super Number> listSuperNumber_ListNumber = new ArrayList<Number>();
+        //List<? super Number> listSuperNumber_ListInteger = new ArrayList<Integer>(); // error - Integer is not superclass of Number
+        //List<? super Number> listSuperNumber_ListByte  = new ArrayList<Byte>(); // error - Byte is not superclass of Number
 
-        listSuperInteger_ListNumber.add(3); // ok - allowed to add Integer to List<Integer>, List<Number>, or List<Object>
-        listSuperInteger_ListInteger.add(3); // ok - allowed to add Integer to List<Integer>, List<Number>, or List<Object>
+        List<? super Integer> listSuperInteger_ListObject = new ArrayList<Object>();
+        List<? super Integer> listSuperInteger_ListNumber = new ArrayList<Number>();
+        List<? super Integer> listSuperInteger_ListInteger = new ArrayList<Integer>();
+        //List<? super Integer> listSuperInteger_ListByte  = new ArrayList<Byte>(); // error - Byte is not a superclass of Integer
+
+        // operations of reading (producing)
+        anyObject = listSuperNumber_ListNumber.get(0);
+        //anyNumber = listSuperNumber_ListNumber.get(0); // error - not allowed to get Number to List<Number> or List<Object>
+        //anyInt = listSuperNumber_ListNumber.get(0); // error - not allowed to get Integer to List<Number> or List<Object>
+        //anyByte = listSuperNumber_ListNumber.get(0); // error - not allowed to get Byte to List<Number> or List<Object>
+
+        anyObject = listSuperInteger_ListInteger.get(0);
+        //anyNumber = listSuperInteger_ListInteger.get(0); // error - not allowed to get Number to List<Integer>, List<Number>, or List<Object>
+        //anyInt = listSuperInteger_ListInteger.get(0); // error - not allowed to get Integer to List<Integer>, List<Number>, or List<Object>
+        //anyByte = listSuperInteger_ListInteger.get(0); // error - not allowed to get Byte to List<Integer>, List<Number>, or List<Object>
+
+        // operations of setting (consuming)
+        //listSuperNumber_ListNumber.add(anyObject); // error - not allowed to add Object to List<Number> or List<Object>
+        listSuperNumber_ListNumber.add(anyNumber); // ok - allowed to add Number to List<Number> or List<Object>
+        listSuperNumber_ListNumber.add(anyInt); // ok - allowed to add Integer to List<Number> or List<Object>
+        listSuperNumber_ListNumber.add(anyByte); // ok - allowed to add Byte to List<Number> or List<Object>
+
+        //listSuperInteger_ListInteger.add(anyObject); // error - not allowed to add Object to List<Integer>, List<Number>, or List<Object>
+        //listSuperInteger_ListInteger.add(anyNumber); // error - not allowed to add Number to List<Integer>, List<Number>, or List<Object>
+        listSuperInteger_ListInteger.add(anyInt); // ok - allowed to add Integer to List<Integer>, List<Number>, or List<Object>
+        //listSuperInteger_ListInteger.add(anyByte); // error - not allowed to add Byte to List<Integer>, List<Number>, or List<Object>
+        //endregion
     }
 }
 ```
@@ -315,6 +401,16 @@ class GenericsExamples {
     }
     ```
 
+5. #### The `super` bound is not allowed in class, interface or method definition
+
+    ```java
+    //this code does not compile !
+    class Forbidden<X super Vehicle> {
+        <X super Vehicle> void foo() {
+        }
+    }
+    ```
+
 ### ///// References (online):
 
 * [Java Generics Tutorial](https://howtodoinjava.com/java/generics/complete-java-generics-tutorial/)
@@ -322,6 +418,8 @@ class GenericsExamples {
 * [How can I add to List<? extends Number> data structures?](https://stackoverflow.com/questions/2776975/how-can-i-add-to-list-extends-number-data-structures)
 * [An introduction to generic types in Java: covariance and contravariance](https://medium.com/free-code-camp/understanding-java-generic-types-covariance-and-contravariance-88f4c19763d2)
 * [Java Generics FAQs](http://www.angelikalanger.com/GenericsFAQ/JavaGenericsFAQ.html)
+* [Why super keyword in generics is not allowed at class level](https://stackoverflow.com/questions/37411256/why-super-keyword-in-generics-is-not-allowed-at-class-level/37411519#37411519)
+* [Пришел, увидел, обобщил: погружаемся в Java Generics](https://habr.com/en/company/sberbank/blog/416413/)
 
 [^ up](#knowledge-notes)
 
