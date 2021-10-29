@@ -70,7 +70,11 @@ String objects are created in two ways:
 
 1. ### Using double quotes(" "):
 
-   `String stringLiteral = “String literal”;`
+   ```java
+   class StringPoolExample {
+    String stringLiteral = "String literal";
+   }
+   ```
 
    The above statement first searches for the string `“String literal”` in the string pool, if found it just gives it a
    reference `stringLiteral` from string pool. If not found it creates a string object and places it in the string pool
@@ -80,7 +84,11 @@ String objects are created in two ways:
 
 2. ### Using the 'new' keyword:
 
-   `String newString = new String("New string");`
+   ```java
+   class StringPoolExample {
+    String newString = new String("New string");
+   }
+   ```
 
    The above statement creates a string object in heap memory, returns a reference from heap memory and checks whether
    it is present in the string pool or not. If the string “New string” is not present in the string pool then it will
