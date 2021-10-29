@@ -121,8 +121,8 @@ Generics were introduced in JDK 5.0 to provide **compile-time type checking** an
 
 A programmer can restrict a collection class to contain only one type of object using **Generics**.
 
-Generic code ensures **type safety**. The compiler uses **type-erasure** to remove all type parameters at the compile
-time to reduce the overload at runtime.
+Generic code ensures **type safety**. The compiler uses **type-erasure** to remove all type parameters at the
+compile-time to reduce the overload at runtime.
 
 ```java
 public interface List<E> {
@@ -144,12 +144,12 @@ public interface IntegerList {
 }
 ```
 
-The parameters in the angle brackets in the front of `List` and `Iterator` interfaces are the declarations of the **
-formal type parameters** of the interfaces `List` and `Iterator`.
+The parameters in the angle brackets in the front of `List` and `Iterator` interfaces (`<E>`) are the declarations of
+the **Formal Type Parameters** of the interfaces `List` and `Iterator`.
 
 When a generic declaration is invoked, the **Actual Type Arguments** are substituted for the **Formal Type Parameters**.
 
-The **Formal Type Parameter** (**E**) in this case is an **unbounded type parameter** and can take any values
+The **Formal Type Parameter** (`E`) in this case is an **Unbounded Type Parameter** and can take any values
 like `Integer`, `Long`, `Double`, `String` or **any custom class name**.
 
 ### Type Safety
@@ -191,7 +191,7 @@ class GenericsExample {
 
 ### Bounded Type Parameters in Generics
 
-When we restrict generic type declaration (**<** **E** **>**) to have certain classes that are called **Bounded Type
+When we restrict generic type declaration (`<E>`) to have certain classes that are called **Bounded Type
 Parameters**.
 
 ```java
@@ -210,11 +210,11 @@ class Mobile extends Machine {
 
 In the above example, the **generic type of Hardware class** can be a **Machine class** or **subclasses of a Machine**.
 
-Hence, **T** can have only one out of three values: `Machine`, `Laptop`, or `Mobile`).
+Hence,`T` can have only one out of three values: `Machine`, `Laptop`, or `Mobile`.
 
 ### Generics with Wildcards (**?**)
 
-In generic code, the question mark (?), called the wildcard, represents an unknown type. A wildcard parameterized type
+In generic code, the question mark (`?`), called the wildcard, represents an unknown type. A wildcard parameterized type
 is an instantiation of a generic type where at least one type argument is a wildcard.
 
 Examples of wildcard parameterized types:
@@ -222,9 +222,9 @@ Examples of wildcard parameterized types:
 - `Collection<?>` — **Unbounded wildcard parameterized type**. Denotes all instantiations of the `Collection` interface
   without any restriction on the type argument.
 - `List<? extends Number>` — **Upper bounded wildcard parameterized type**. Denotes all list types where the element
-  type is a subtype of `Number` or type `Number`.
+  type is a subtype of `Number` or a type `Number` itself.
 - `Comparator<? super String>`— **Lower bounded wildcard parameterized type**. Denotes all instantiations of
-  the `Comparator` interface for type argument types that are supertypes of `String` or the type `String`.
+  the `Comparator` interface for type argument types that are supertypes of `String` or the type `String` itself.
 
 ```java
 class GenericsExamples {
