@@ -5,6 +5,7 @@
 - [Java](#java)
     - [Basics](#basics)
         - [Class Object](#class-object)
+        - [Data Types](#data-types)
         - [String pool](#string-pool)
         - [Generics](#java-generics)
     - Collections
@@ -236,7 +237,25 @@ public class Object {
 
 ## ///// References (online):
 
-* []()
+* [Class Object](https://docs.oracle.com/javase/7/docs/api/java/lang/Object.html)
+
+[^ up](#knowledge-notes)
+
+---
+
+## Data Types
+
+![](res/images/java-data-types.png)
+
+### Primitive Data Types
+
+![](res/images/java-primitive-data-types.png)
+
+## ///// References (online):
+
+* [Data types in Java](https://www.geeksforgeeks.org/data-types-in-java/)
+* [Primitive Data Types and What Default Values Are Assigned to Them in Java?](https://medium.com/javarevisited/primitive-data-types-in-java-and-what-default-values-are-assigned-to-them-take-a-look-7d5f0e8083e4)
+* [Are wrappers of a primitive type primitives types too?](https://stackoverflow.com/questions/48304498/are-wrappers-of-a-primitive-type-primitives-types-too)
 
 [^ up](#knowledge-notes)
 
