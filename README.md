@@ -4,6 +4,7 @@
     - [Git Initial](#git-initial)
 - [Java](#java)
     - [Basics](#basics)
+        - [Class Object](#class-object)
         - [String pool](#string-pool)
         - [Generics](#java-generics)
     - Collections
@@ -53,6 +54,193 @@ $ git push -u origin main
 # Java
 
 # Basics
+
+## Class Object
+
+```java
+public class Object {
+
+    /**
+     * Returns the runtime class of this Object.
+     * The returned Class object is the object that is locked
+     * by static synchronized methods of the represented class.
+     * The actual result type is Class<? extends |X|> where |X|
+     * is the erasure of the static type of the expression on which getClass is called.
+     */
+    public final native Class<?> getClass();
+
+    /**
+     * Returns a hash code value for the object.
+     * The general contract of hashCode() is:
+     * - Whenever it is invoked on the same object more than once,
+     *   the hashCode method must return the same integer, provided
+     *   no information is modified.
+     * - If two objects are equal according to the equals(Object) method,
+     *   then calling the hashCode method must produce the same integer result.
+     * - It is not required that if two objects are unequal according to
+     *   the equals(Object) method, then calling the hashCode method must
+     *   produce distinct integer results.
+     * Returns: a hash code value for this object.
+     */
+    public native int hashCode();
+
+    /**
+     * Indicates whether some other object is "equal to" this one.
+     * The equals(Object) method implements an equivalence relation
+     * on NON-NULL object references:
+     * - x.equals(x) should return true.
+     * - x.equals(y) should return true if y.equals(x) returns true.
+     * - If x.equals(y) returns true and y.equals(z) returns true,
+     *   then x.equals(z) should return true.
+     * - Multiple invocations of x.equals(y) return true (or false),
+     *   provided no information is modified.
+     * - x.equals(null) should return false.
+     * Params: obj – the reference object with which to compare.
+     * Returns: true if this object is the same as the obj argument; false otherwise.
+     */
+    public boolean equals(Object obj) {
+        return (this == obj);
+    }
+
+    /**
+     * Creates and returns a copy of this object. The precise meaning
+     * of "copy" may depend on the class of the object.
+     * Returns: a clone of this instance.
+     * Throws:  CloneNotSupportedException – if the object's class
+     *          does not support the Cloneable interface.
+     */
+    protected native Object clone() throws CloneNotSupportedException;
+
+    /**
+     * Returns a string representation of the object. In general,
+     * the toString method returns a string that "textually represents" this object.
+     * It is recommended that all subclasses override this method.
+     * Returns: a string representation of the object.
+     */
+    public String toString() {
+        return getClass().getName() + "@" + Integer.toHexString(hashCode());
+    }
+
+    /**
+     * Wakes up a single thread that is waiting on this object's monitor.
+     * If any threads are waiting on this object, one of them is chosen
+     * to be awakened. The choice is arbitrary and occurs at the discretion
+     * of the implementation.
+     * This method should only be called by a thread that is the owner of
+     * this object's monitor.
+     * Only one thread at a time can own an object's monitor.
+     * Throws:  IllegalMonitorStateException – if the current thread
+     *          is not the owner of this object's monitor.
+     */
+    public final native void notify();
+
+    /**
+     * Wakes up all threads that are waiting on this object's monitor.
+     * A thread waits on an object's monitor by calling one of the wait methods.
+     * This method should only be called by a thread that is the owner of
+     * this object's monitor.
+     * Throws:  IllegalMonitorStateException – if the current thread
+     *          is not the owner of this object's monitor.
+     */
+    public final native void notifyAll();
+
+    /**
+     * Causes the current thread to wait until it is awakened,
+     * typically by being notified or interrupted.
+     * Throws:  IllegalMonitorStateException – if the current thread
+     *          is not the owner of the object's monitor
+     *          InterruptedException – if any thread interrupted the current thread
+     *          before or while the current thread was waiting.
+     *          The interrupted status of the current thread is cleared
+     *          when this exception is thrown.
+     */
+    public final void wait() throws InterruptedException {
+        wait(0L);
+    }
+
+    /**
+     * Causes the current thread to wait until it is awakened,
+     * typically by being notified or interrupted, or until
+     * a certain amount of real time has elapsed.
+     * Params:  timeoutMillis – the maximum time to wait, in milliseconds
+     * Throws:  IllegalArgumentException – if timeoutMillis is negative
+     *          IllegalMonitorStateException – if the current thread
+     *          is not the owner of the object's monitor
+     *          InterruptedException – if any thread interrupted the current thread
+     *          before or while the current thread was waiting.
+     *          The interrupted status of the current thread is cleared
+     *          when this exception is thrown.
+     */
+    public final native void wait(long timeoutMillis) throws InterruptedException;
+
+    /**
+     * Causes the current thread to wait until it is awakened,
+     * typically by being notified or interrupted, or until
+     * a certain amount of real time has elapsed.
+     * The current thread must own this object's monitor lock.
+     * Params:  timeoutMillis – the maximum time to wait, in milliseconds
+     *          nanos – additional time, in nanoseconds, in the range 0-999999 inclusive
+     * Throws:  IllegalArgumentException – if timeoutMillis is negative,
+     *          or if the value of nanos is out of range
+     *          IllegalMonitorStateException – if the current thread
+     *          is not the owner of the object's monitor
+     *          InterruptedException – if any thread interrupted
+     *          the current thread before or while the current thread was waiting.
+     *          The interrupted status of the current thread
+     *          is cleared when this exception is thrown.
+     * API Note:    The recommended approach to waiting is to check
+     *              the condition being awaited in a while loop around
+     *              the call to wait, as shown in the example below.
+     *              Among other things, this approach avoids problems
+     *             that can be caused by spurious wakeups.
+     */
+    public final void wait(long timeoutMillis, int nanos) throws InterruptedException {
+        if (timeoutMillis < 0) {
+            throw new IllegalArgumentException("timeoutMillis value is negative");
+        }
+
+        if (nanos < 0 || nanos > 999999) {
+            throw new IllegalArgumentException(
+                    "nanosecond timeout value out of range");
+        }
+
+        if (nanos > 0) {
+            timeoutMillis++;
+        }
+
+        wait(timeoutMillis);
+    }
+
+    /**
+     * Called by the garbage collector on an object when garbage collection
+     * determines that there are no more references to the object.
+     * A subclass overrides the finalize method to dispose of system
+     * resources or to perform other cleanup.
+     * The finalize method of class Object performs no special action;
+     * it simply returns normally. Subclasses of Object may override this definition.
+     * The finalize method is never invoked more than once by a Java
+     * virtual machine for any given object.
+     * Deprecated   The finalization mechanism is inherently problematic.
+     *              Finalization can lead to performance issues, deadlocks, and hangs.
+     *              Errors in finalizers can lead to resource leaks;
+     *              there is no way to cancel finalization if it is no longer necessary;
+     *              and no ordering is specified among calls to finalize
+     *              methods of different objects.
+     * Throws:      Throwable – the Exception raised by this method
+     */
+    @Deprecated(since = "9")
+    protected void finalize() throws Throwable {
+    }
+}
+```
+
+## ///// References (online):
+
+* []()
+
+[^ up](#knowledge-notes)
+
+---
 
 ## String Pool
 
