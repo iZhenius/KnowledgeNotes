@@ -23,6 +23,7 @@
 - [Kotlin](#kotlin)
     - [Kotlin Syntax Features](#kotlin-syntax-features)
         - [Scope functions](#kotlin-scope-functions)
+    - [Kotlin Generics](#kotlin-generics)
 - [Android](#android)
     - [Multithreading](#multithreading)
 
@@ -1276,6 +1277,61 @@ println(caps) // "null"
 ### ///// References (online):
 
 - [Scope functions](https://kotlinlang.org/docs/scope-functions.html#function-selection)
+
+[^ up](#knowledge-notes)
+
+---
+
+## Kotlin Generics
+
+```kotlin
+class KotlinGenericsExample {
+
+    open class Vehicle
+    class Bicycle : Vehicle()
+    class StoreProducer<out T> // Covariance
+    class StoreConsumer<in T> // Contravariance
+
+    fun main() {
+        //var storeProducer_BicycleVehicle: StoreProducer<Bicycle> = StoreProducer<Vehicle>() // Error: Type mismatch
+        var storeProducer_BicycleBicycle: StoreProducer<Bicycle> = StoreProducer<Bicycle>()
+        var storeProducer_VehicleVehicle: StoreProducer<Vehicle> = StoreProducer<Vehicle>()
+        var storeProducer_VehicleBicycle: StoreProducer<Vehicle> = StoreProducer<Bicycle>()
+
+        var storeConsumer_BicycleVehicle: StoreConsumer<Bicycle> = StoreConsumer<Vehicle>()
+        var storeConsumer_BicycleBicycle: StoreConsumer<Bicycle> = StoreConsumer<Bicycle>()
+        var storeConsumer_VehicleVehicle: StoreConsumer<Vehicle> = StoreConsumer<Vehicle>()
+        //var storeConsumer_VehicleBicycle: StoreConsumer<Vehicle> = StoreConsumer<Bicycle>() // Error: Type mismatch
+    }
+}
+```
+
+### Type projections
+
+- #### Use-site variance: type projections
+
+  > Kotlin's `Array<out Any>` corresponds to Java's `Array<? extends Object>`.
+  >
+  > Kotlin's `Array<in String>` corresponds to Java's `Array<? super String>`.
+
+### Generic constraints
+
+- #### Upper bounds
+
+  > Kotlin's `T : Comparable<T>` corresponds to Java's `extends` keyword.
+  >
+  >`fun <T : Comparable<T>> sort(list: List<T>) { ... }`
+  >
+  > The type specified after a colon is the **upper bound**, indicating that only a subtype of `Comparable<T>` can be substituted for `T`.
+  >
+  > The **default upper bound** (if there was none specified) is `Any?`.
+
+## ///// References (online):
+
+- [Generics: in, out, where](https://kotlinlang.org/docs/generics.html)
+- [Generics in Kotlin](https://medium.com/swlh/generics-in-kotlin-5152142e281c)
+- [Introduction to Kotlin Generics: Reified Generic Parameters](https://medium.com/kotlin-thursdays/introduction-to-kotlin-generics-reified-generic-parameters-7643f53ba513)
+- [Kotlin Covariance and Contravariance](https://medium.com/kotlin-thursdays/introduction-to-kotlin-generics-9d18d3719e1d)
 
 [^ up](#knowledge-notes)
 
