@@ -1520,6 +1520,9 @@ class KotlinGenericsExample {
 - [Generics in Kotlin](https://medium.com/swlh/generics-in-kotlin-5152142e281c)
 - [Introduction to Kotlin Generics: Reified Generic Parameters](https://medium.com/kotlin-thursdays/introduction-to-kotlin-generics-reified-generic-parameters-7643f53ba513)
 - [Kotlin Covariance and Contravariance](https://medium.com/kotlin-thursdays/introduction-to-kotlin-generics-9d18d3719e1d)
+- [Covariance, Contravariance, and Invariance — What do they mean? (Part 1)](https://medium.com/android-news/covariance-contravariance-and-invariance-what-do-they-mean-part-1-351f7865b506)
+- [Covariance, Contravariance, and Invariance — What do they mean? (Part 2)](https://medium.com/android-news/covariance-contravariance-and-invariance-what-do-they-mean-part-2-b2111a6e9bbf)
+- [Generics & Variance in Java vs Kotlin](https://medium.com/learn-kotlin/generics-variance-in-java-vs-kotlin-c964df6f649b)
 
 [^ up](#knowledge-notes)
 
