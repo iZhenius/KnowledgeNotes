@@ -4,6 +4,7 @@
     - [Git Initial](#git-initial)
 - [Java](#java)
     - [Basics](#basics)
+        - [AbstractClass vs Interface](#abstractclass-vs-interface)
         - [Class Object](#class-object)
         - [Data Types](#data-types)
         - [String pool](#string-pool)
@@ -55,6 +56,19 @@ $ git push -u origin main
 # Java
 
 # Basics
+
+## AbstractClass vs Interface
+
+## ///// References (online):
+
+* [Interface vs Abstract class vs Concrete class](https://medium.com/heuristics/interface-vs-abstract-class-vs-concrete-class-196f20c3af9a)
+* [Choosing Between an Interface and an Abstract Class](https://betterprogramming.pub/choosing-between-interface-and-abstract-class-7a078551b914)
+* [Easiest explanation of Abstract class and Interface](https://medium.com/@alifabdullah/easiest-explanation-of-abstract-class-and-interface-280741bc2daf)
+* [Abstract class vs interface in Kotlin](https://blog.kotlin-academy.com/abstract-class-vs-interface-in-kotlin-5ab8697c3a14)
+
+[^ up](#knowledge-notes)
+
+---
 
 ## Class Object
 
@@ -981,10 +995,10 @@ management overhead.
 
 - ### Cached Thread Pool
 
-  This is an expandable thread pool. This does not have fixed size of threads. This is suitable for application which
-  have a lot of short live tasks. According to the below diagram,when coming new task to the cached thread pool, if all
-  the threads are busy, cached thread pool is created new thread for that new task. If thread is idle for 1 minute, it
-  will tear down those threads. Invoke `newCachedThreadPool()` method to create it.
+  This is an expandable thread pool (0 worker threads at the beginning). This does not have fixed size of threads. This
+  is suitable for application which have a lot of short live tasks. When coming new task to the cached thread pool, if
+  all the threads are busy, cached thread pool is created new thread for that new task. If thread is idle for 1 minute,
+  it will terminate those threads. Invoke `newCachedThreadPool()` method to create it.
 
 - ### Scheduled Thread Pool
 
@@ -995,7 +1009,7 @@ management overhead.
 - ### Single Thread Executor
 
   Here, only one thread is using in the thread pool. All the tasks are keeping in blocking queue. After finishing task,
-  it fetches new task from the queue and execute it. Invoke `newSingleThreadExecutor()`method to create it.
+  it fetches new task from the queue and execute it. Invoke `newSingleThreadExecutor()` method to create it.
 
 ### ///// References (online):
 
