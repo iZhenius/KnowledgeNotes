@@ -3,7 +3,7 @@
 - [Git](#git)
     - [Git Initial](#git-initial)
 - [Java](#java)
-    - [Basics](#basics)
+    - [Basics](#java-basics)
         - [AbstractClass vs Interface](#abstractclass-vs-interface)
         - [Class Object](#class-object)
         - [Data Types](#data-types)
@@ -24,6 +24,8 @@
         - [Garbage Collector](#garbage-collector)
         - [Java Reference Types](#java-reference-types)
 - [Kotlin](#kotlin)
+    - [Kotlin Basics](#kotlin-basics)
+        - [Class Any](#class-any)
     - [Kotlin Syntax Features](#kotlin-syntax-features)
         - [Scope functions](#kotlin-scope-functions)
     - [Kotlin Generics](#kotlin-generics)
@@ -55,7 +57,7 @@ $ git push -u origin main
 
 # Java
 
-# Basics
+# Java Basics
 
 ## AbstractClass vs Interface
 
@@ -1383,6 +1385,72 @@ a low priority thread that runs in the background to provide services to user th
 ***
 
 # Kotlin
+
+# Kotlin Basics
+
+## Class Any
+
+In Kotlin theAny type represents the super type of all **non-nullable** types.
+
+```kotlin
+/**
+ * The root of the Kotlin class hierarchy. Every Kotlin class has `Any` as a superclass.
+ */
+public open class Any {
+    /**
+     * Indicates whether some other object is "equal to" this one. Implementations must fulfil the following
+     * requirements:
+     *
+     * - Reflexive: for any non-null value `x`, `x.equals(x)` should return true.
+     * - Symmetric: for any non-null values `x` and `y`, `x.equals(y)` should return true if
+     *              and only if `y.equals(x)` returns true.
+     * - Transitive:    for any non-null values `x`, `y`, and `z`, if `x.equals(y)` returns true
+     *                  and `y.equals(z)` returns true, then `x.equals(z)` should return true.
+     * - Consistent:    for any non-null values `x` and `y`, multiple invocations of
+     *                  `x.equals(y)` consistently return true or consistently return false,
+     *                  provided no information used in `equals` comparisons
+     *                  on the objects is modified.
+     * - Never equal to null:   for any non-null value `x`, `x.equals(null)` should return false.
+     *
+     * Read more about [equality](https://kotlinlang.org/docs/reference/equality.html) in Kotlin.
+     */
+    public open operator fun equals(other: Any?): Boolean
+
+    /**
+     * Returns a hash code value for the object.  The general contract of `hashCode` is:
+     *
+     * - Whenever it is invoked on the same object more than once, the `hashCode` method must
+     * consistently return the same integer, provided no information used in `equals`
+     * comparisons on the object is modified.
+     * - If two objects are equal according to the `equals()` method, then calling the
+     * `hashCode` method on each of the two objects must produce the same integer result.
+     */
+    public open fun hashCode(): Int
+
+    /**
+     * Returns a string representation of the object.
+     */
+    public open fun toString(): String
+}
+
+```
+
+It differs to Java’s Object in 2 main things:
+
+- In Java, primitives types aren't type of the hierarchy, so you need to box them implicitly, while in Kotlin
+  `Any` is a super type of all types.
+- `Any` can’t hold the `null` value, if you need `null` to be part of your variable you can use the type `Any?`
+- To use `wait(...)`, `notify()`, `notifyAll()` need to cast a variable to `Object`
+
+### ///// References (online):
+
+* [Kotlin Any](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/)
+* [Kotlin basics: types. Any, Unit and Nothing](https://itnext.io/kotlin-basics-types-any-unit-and-nothing-674cc858035)
+* [[Kotlin Pearls 7] Unit, Nothing, Any (and null)](https://proandroiddev.com/kotlin-pearls-7-unit-nothing-any-and-null-cbbbbca86c2d)
+
+[^ up](#knowledge-notes)
+
+---
 
 # Kotlin Syntax Features
 
