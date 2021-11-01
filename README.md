@@ -9,14 +9,19 @@
         - [Data Types](#data-types)
         - [String pool](#string-pool)
         - [Generics](#java-generics)
-    - Collections
+    - [Collections](#java-collections)
+        - [Interface Collection](#java-interface-collection)
+        - [Interface Map](#java-interface-map)
+            - [HashMap](#java-hashmap)
     - [Concurrency](#concurrency)
         - [Thread](#java-thread)
         - [Lock vs Monitor](#lock-vs-monitor)
         - [Synchronized vs Volatile vs Atomic](#synchronized-vs-volatile-vs-atomic)
         - [Executors](#executors)
         - Synchronizers
-        - Concurrent Collections
+        - [Concurrent Collections](#java-concurrent-collections)
+            - [ConcurrentHashMap](#java-concurrenthashmap)
+            - [SynchronizedHashMap](#java-synchronizedhashmap)
     - [JVM](#jvm)
         - [JVM Architecture](#jvm-architecture)
         - [JVM Memory Model](#jvm-memory-model)
@@ -649,6 +654,110 @@ public class GenericsExamples {
 
 ***
 
+# Java Collections
+
+![](res/images/java-collections-framework-hierarchy.png)
+
+![](res/images/java-collections-framework.png)
+
+![](res/images/java-collections-framework-hierarchy-2.png)
+
+# Java Interface Collection
+
+# Java Interface Map
+
+![](res/images/java-map.png)
+
+## Java HashMap
+
+### Important points:
+
+* `HashMap` uses its static inner class `Node<K,V>` for storing the entries into the map.
+* `HashMap` allows at most one `null` key and multiple `null` values.
+* The `HashMap` class does not preserve the order of insertion of entries into the map.
+* `HashMap` has multiple buckets or bins which contain a head reference to a singly linked list. That means there would
+  be as many linked lists as there are buckets. Initially, it has a bucket size of 16 which grows to 32 when the number
+  of entries in the map crosses the 75%. (That means after inserting in 12 buckets bucket size becomes 32)
+* `HashMap` is almost similar to `Hashtable` except that it’s unsynchronized and allows at max one `null` key and
+  multiple `null` values.
+* `HashMap` uses `hashCode()` and `equals()` methods on keys for the get and put operations. So `HashMap` key objects
+  should provide a good implementation of these methods.
+* That’s why the Wrapper classes like `Integer` and `String` classes are a good choice for keys for `HashMap` as they
+  are immutable and their object state won’t change over the course of the execution of the program.
+
+### Time Complexity:
+
+* **O(1)** － time for `search`, `insertion`, and `deletion` operations for good **in a fairly distributed** hashMap.
+* **O(n)** － time for `search`, `insertion`, and `deletion` operations in **the worst case**, where all the entries go
+  to the same bucket and the **singly linked list** stores these entries.
+* **O(log(n))** － time for `search`, `insertion`, and `deletion` operations In a case where the threshold for converting
+  this linked list to a **self-balancing binary search tree** (i.e. AVL/Red black) is used.
+
+### Internal Working:
+
+1. `HashMap` uses its **static inner class** `Node<K,V>` for storing map entries. That means each entry in hashMap is
+   a `Node`. Internally `HashMap` uses a hashCode of the key `Object` and this hashCode is further used by the hash
+   function to find the index of the bucket where the new entry can be added.
+2. `HashMap` uses multiple buckets and each bucket points to a **Singly Linked List** where the entries (nodes) are
+   stored.
+3. Once the bucket is identified by the hash function using hashcode, then hashCode is used to check if there is already
+   a key with the same hashCode or not in the bucket (**singly linked list**).
+4. If there already exists a key with the same hashCode, then the `equals()` method is used on the keys. If
+   the `equals()` method returns true, that means there is already a node with the same key and hence the value against
+   that key is overwritten in the entry(node), otherwise, a new node is created and added to this Singly Linked List of
+   that bucket.
+5. If there is no key with the same hashCode in the bucket found by the hash function then the new `Node` is added into
+   the bucket found.
+
+### HashMap Node Structure
+
+* ### Regular Node Structure:
+
+  ![](res/images/java-hashmap-node.png)
+
+* ### Since Java 8 it transforms into a self-balancing BST when the threshold is reached (default threshold = 8):
+
+  ![](res/images/java-hashmap-treenode.png)
+
+## ///// References (online):
+
+* [Class HashMap<K,V>](https://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html)
+* [How HashMap works in Java](https://howtodoinjava.com/java/collections/hashmap/how-hashmap-works-in-java/)
+* [Comparing HashMap and ConcurrentHashMap in Java](https://medium.com/javarevisited/comparing-hashmap-and-concurrenthashmap-in-java-e131769c2eec)
+* [HashMap and Hashtable](https://medium.com/@nhphung216/hashmap-and-hashtable-5e1ebbc88c29)
+* [Java Collection Framework Analysis 1](https://www.programmersought.com/article/41504190986/)
+
+[^ up](#knowledge-notes)
+
+---
+
+## Java HashTable
+
+It is similar to `HashMap`.
+
+### The differences between a `HashMap` and `Hashtable` in Java:
+
+- `HashMap` is non synchronized. `Hashtable` is synchronized.
+- `HashMap` allows one `null` key and multiple `null` values. `Hashtable` doesn't allow any `null` key or value.
+- `HashMap` is fast. `Hashtable` is slow due to added synchronization.
+- `HashMap` is traversed by `Iterator`. `Hashtable` is traversed by `Enumerator` and `Iterator`.
+- `Iterator` in `HashMap` is fail-fast. `Enumerator` in `Hashtable` is not fail-fast.
+- `HashMap` inherits `AbstractMap` class. `Hashtable` inherits `Dictionary` class.
+
+## ///// References (online):
+
+* [Java Hashtable class](https://howtodoinjava.com/java/collections/hashtable-class/)
+
+[^ up](#knowledge-notes)
+
+---
+
+# ///// References (online):
+
+* [Collections in Java](https://howtodoinjava.com/java-collections/)
+
+***
+
 # Concurrency
 
 ## Java Thread
@@ -1034,6 +1143,48 @@ management overhead.
 * [Многопоточность в Java](https://habr.com/ru/post/164487/)
 * [Обзор java.util.concurrent.*](https://habr.com/ru/company/luxoft/blog/157273/)
 * [Справочник по синхронизаторам java.util.concurrent.*](https://habr.com/ru/post/277669/)
+
+[^ up](#knowledge-notes)
+
+---
+
+## Java Concurrent Collections
+
+### Java ConcurrentHashMap
+
+Basically, it is a `HashTable` implementation, that supports concurrent retrieval and updates in the map.
+
+### Important points:
+
+* doesn't allow `null` for keys and values.
+* operations are **thread-safe**.
+* supports concurrent access to it’s key-value pairs by design.
+* allows multiple threads to work independently on different segments in the map.
+* allows modification while iterating over it.
+* no need to lock the map to read a value.
+
+### ///// References (online):
+
+* [Comparing HashMap and ConcurrentHashMap in Java](https://medium.com/javarevisited/comparing-hashmap-and-concurrenthashmap-in-java-e131769c2eec)
+
+[^ up](#knowledge-notes)
+
+---
+
+### Java SynchronizedHashMap
+
+`SynchronizedHashMap` works very similar to `ConcurrentHashMap`.
+
+### Important points:
+
+* allows only one thread to perform read/write operations at a time because all of its methods are declared
+  **synchronized**.
+* a lock is required for read operation.
+* returns `Iterator`, which fails-fast on concurrent modification.
+
+### ///// References (online):
+
+* [Synchronize HashMap – ConcurrentHashMap](https://howtodoinjava.com/java/collections/hashmap/synchronize-hashmap/)
 
 [^ up](#knowledge-notes)
 
