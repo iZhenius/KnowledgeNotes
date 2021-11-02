@@ -36,6 +36,7 @@
     - [Kotlin Generics](#kotlin-generics)
 - [Android](#android)
     - [Multithreading](#multithreading)
+    - [View](#view)
 
 ***
 
@@ -1978,6 +1979,154 @@ For other data transfers, use `Message.setData(Bundle data)`.
 * [MessageQueue and Looper in Android](https://medium.com/@ankit.sinhal/messagequeue-and-looper-in-android-3a18c7fc9181)
 * [Handler in Android](https://medium.com/@ankit.sinhal/handler-in-android-d138c1f4980e)
 * [Understanding of AsyncTask in Android](https://medium.com/@ankit.sinhal/understanding-of-asynctask-in-android-8fe61a96a238)
+
+[^ up](#knowledge-notes)
+
+---
+
+## View
+
+`View` class represents the basic building block for user interface components. A `View` occupies a rectangular area on
+the screen and is responsible for drawing and event handling. The view is the base class for `widgets`, which are used
+to create interactive UI components (buttons, text fields, etc.). The `ViewGroup` subclass is the base class for
+layouts, which are invisible containers that hold other `Views` (or other `ViewGroups`) and define their layout
+properties.
+
+```java
+public class View
+        extends Object implements Drawable.Callback, KeyEvent.Callback, AccessibilityEventSource {
+    // ...
+}
+```
+
+### View Hierarchy (not full)
+
+![](res/images/android-view-hierarchy.png)
+
+### Write the XML
+
+```html
+<?xml version="1.0" encoding="utf-8"?>
+<ViewGroup
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@[+][package:]id/resource_name"
+        android:layout_height='["dimension" | "match_parent" | "wrap_content"]'
+        android:layout_width='["dimension" | "match_parent" | "wrap_content"]'
+<!--    [ViewGroup-specific attributes] >-->
+<View
+        android:id="@[+][package:]id/resource_name"
+        android:layout_height='["dimension" | "match_parent" | "wrap_content"]'
+        android:layout_width='["dimension" | "match_parent" | "wrap_content"]'
+<!--    [View-specific attributes] >-->
+<requestFocus/>
+</View>
+<ViewGroup>
+    <View/>
+</ViewGroup>
+<include layout="@layout/layout_resource"/>
+</ViewGroup>
+```
+
+### View Life Cycle
+
+![](res/images/android-view-lifecycle.png)
+
+- ### `onMeasure()`
+
+  This is called to find out how big a view should be. In the case of ViewGroup, it will go ahead and call measure on
+  each of their child views and the results can help to decide its own size. `onMeasure()` doesn't return a value
+  instead we call `setMeasuredDimension()` to set width and height explicitly.
+
+    ```java
+    public class
+    View implements Drawable.Callback, KeyEvent.Callback, AccessibilityEventSource {
+        // ...
+        protected void
+        onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            setMeasuredDimension(
+                getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec),
+                getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec)
+            );
+        }
+        // ...
+    }
+    ```
+
+  ### `public static class MeasureSpec`
+
+  A `View.MeasureSpec` encapsulates the layout requirements passed from parent to child. Each `MeasureSpec` represents a
+  requirement for either the width or the height. A `View.MeasureSpec` is comprised of a size and a mode. There are
+  three possible modes:
+
+    - **MeasureSpec.EXACTLY** — This is used by the parent to impose an exact size on the child. The child must use this
+      size, and guarantee that all of its descendants will fit within this size.
+    - **MeasureSpec.AT_MOST** — This is used by the parent to impose a maximum size on the child. The child must
+      guarantee that it and all of its descendants will fit within this size.
+    - **MeasureSpec.UNSPECIFIED** — The parent has not imposed any constraint on the child. It can be whatever size it
+      wants. For example, a `LinearLayout` may call `measure()` on its child with the height set to UNSPECIFIED and a
+      width of EXACTLY 240 to find out how tall the child view wants to be given a width of 240 pixels.
+
+- ### `onLayout()`
+
+  This is called after measuring the views to position them on the screen.
+
+    ```java
+    public class
+    View implements Drawable.Callback, KeyEvent.Callback, AccessibilityEventSource {
+        // ...
+        protected void
+        onLayout(boolean changed, int left, int top, int right, int bottom) {
+        }
+        // ...
+    }
+    ```
+
+- ### `onDraw()`
+
+  Sizes and positions are calculated in previous steps, so the view can draw itself based on them.
+  In `onDraw(Canvas canvas)` `Canvas` object generated (or updates) has a list of OpenGL-ES commands (displayList) to
+  send to the GPU. **Never create objects** in `onDraw()` as it gets called a number of times.
+
+  This is called after measuring the views to position them on the screen.
+
+    ```java
+    public class
+    View implements Drawable.Callback, KeyEvent.Callback, AccessibilityEventSource {
+        // ...
+        protected void onDraw(Canvas canvas) {
+        }
+        // ...
+    }
+    ```
+- ### `View.Invalidate()`
+
+  The `invalidate()` is a method that insists on force reDrawing of a particular view that we wish to show changes.
+  Simply we can say `invalidate()` needs to be called when there was a change in view’s appearance. Then it
+  invokes `onDraw()`.
+
+- ### `View.requestLayout()`
+
+  At some point, there is a state change in the view. `requestLayout()` is the signal to the view system that it needs
+  to recalculate the `Measure` and `Layout` phase of the views (measure → layout → draw). Simply we can
+  say `requestLayout()` needs to be called when there was a change in view’s bounds. Then it invokes `onMeasure()`
+  , `onLayout()`, `onDraw()`.
+
+### Layout
+
+Layout is a two pass process: a **measure pass** and a **layout pass**. The measuring pass is implemented
+in `measure(int, int)` and is a top-down traversal of the view tree. Each view pushes dimension specifications down the
+tree during the recursion. At the end of the measure pass, every view has stored its measurements. The second pass
+happens in `layout(int, int, int, int)` and is also top-down. During this pass each parent is responsible for
+positioning all of its children using the sizes computed in the measure pass.
+
+A parent view may call `measure()` more than once on its children. For example, the parent may measure each child once
+with unspecified dimensions to find out how big they want to be, then call `measure()` on them again with actual numbers
+if the sum of all the children's unconstrained sizes is too big or too small.
+
+### ///// References (online):
+
+* [Android developers: View](https://developer.android.com/reference/android/view/View)
+* [The Life Cycle of a View in Android](https://proandroiddev.com/the-life-cycle-of-a-view-in-android-6a2c4665b95e)
 
 [^ up](#knowledge-notes)
 
