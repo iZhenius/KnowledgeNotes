@@ -4,7 +4,7 @@
     - [Git Initial](#git-initial)
 - [Java](#java)
     - [Basics](#java-basics)
-        - [AbstractClass vs Interface](#abstractclass-vs-interface)
+        - [AbstractClass vs Interface](#abstract-class-vs-interface)
         - [Class Object](#class-object)
         - [Data Types](#data-types)
         - [String pool](#string-pool)
@@ -64,7 +64,63 @@ $ git push -u origin main
 
 # Java Basics
 
-## AbstractClass vs Interface
+## Abstract Class vs Interface
+
+## Interface
+
+```java
+interface Brain extends Serializable, Cloneable {
+
+    public static final int number = 1;
+
+    void talk(String name); // public abstract by default
+
+    public abstract void doProgramming();
+
+    public default void doRoutine() {
+        // carry out normal day-to-day duties
+    }
+
+    ;
+}
+```
+
+- all methods can have `static`, `default` or `abstract` modifiers (since Java 8). Implicitly they are `public abstract`
+  .
+- methods can be implemented (can have a code body) if it is declared `static` or `default`. `Abstract` methods cannot
+  have a body only method signature  (since Java 8).
+- variables are not allowed. Any data declaration is `public static final` (constants).
+- can extend other interfaces (one or more) but not classes (abstract or not).
+- cannot be instantiated as they are not concrete classes.
+- methods and constants cannot be declared `private`, methods cannot be declared `final`.
+
+## Abstract class
+
+```java
+abstract class Car extends SecurityManager implements Serializable, Cloneable {
+
+    public static int wheels = 4;
+
+    private boolean isTankFull = false;
+
+    protected void turn(String direction) {
+        System.out.println("Turning" + direction);
+    }
+
+    public abstract void startWithSound(String sound);
+
+    public abstract void shutdown();
+}
+```
+
+- can be without having any methods inside it. But if it has any methods inside it, it must have at least one `abstract`
+  method. This rule does not apply to `static` methods.
+- can have both **abstract** and **non abstract** methods, hence the `abstract` modifier is necessary here (unlike
+  in `interface` where only `abstract` methods are allowed ).
+- `static` members are allowed.
+- can extend other at most one `abstract` or concrete `class` and implement several `interfaces`.
+- any class that does not implement all the `abstract` methods of it's `super` class has to be an `abstract` class
+  itself.
 
 ## ///// References (online):
 
