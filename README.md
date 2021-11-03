@@ -33,6 +33,7 @@
         - [Class Any](#class-any)
     - [Kotlin Syntax Features](#kotlin-syntax-features)
         - [Scope functions](#kotlin-scope-functions)
+        - [Properties](#kotlin-properties)
     - [Kotlin Generics](#kotlin-generics)
 - [Android](#android)
     - [Multithreading](#multithreading)
@@ -1773,7 +1774,77 @@ println(caps) // "null"
 
 ### ///// References (online):
 
-- [Scope functions](https://kotlinlang.org/docs/scope-functions.html#function-selection)
+- [Scope functions](https://kotlinlang.org/docs/scope-functions.html)
+
+[^ up](#knowledge-notes)
+
+---
+
+## Kotlin Properties
+
+```kotlin
+var <propertyName>[: <PropertyType>] [ = <property_initializer>]
+[<getter>]
+[<setter>]
+```
+
+```kotlin
+class KotlinPropertiesExample {
+
+    // Getters and setters
+    val square: Int
+        get() = this.width * this.height // custom getter will be called every time you access the property (implementation a computed property)
+    //set() - no setter cause `val`
+
+    var stringRepresentation: String // = "initialization" // Initializer is not allowed here because this property has no backing field
+        get() = this.toString()
+        set(value) { // is called when you assign a value to the property, except its initialization
+            setDataFromString(value) // parses the string and assigns values to other properties
+        }
+
+    var setterVisibility: String = "abc"
+        private set // the setter is private and has the default implementation
+
+    var setterWithAnnotation: Any? = null
+        @Inject set // annotate the setter with Inject
+
+    // Backing fields
+    var counter = 0 // the initializer assigns the backing field directly
+        get() = field // redundant getter
+        set(value) {
+            if (value >= 0)
+                field = value //The field identifier can only be used in the accessors of the property
+            // counter = value // ERROR StackOverflow: Using actual name 'counter' would make setter recursive
+        }
+
+    val isEmpty: Boolean //no backing field in this case
+        get() = this.size == 0
+
+    // Backing properties
+    private var _table: Map<String, Int>? = null // The private property
+    public val table: Map<String, Int> // The backing property
+        get() {
+            if (_table == null) {
+                _table = HashMap() // Type parameters are inferred
+            }
+            return _table ?: throw AssertionError("Set to null by another thread")
+        }
+
+    // Compile-time constants
+    companion object {
+        const val CONSTANT: String = "This is constant" // String or primitive type
+        //get() = field // Const 'val' should not have a getter
+    }
+
+    // Late-initialized properties and variables
+    lateinit var subject: TestSubject // non-null type property if you want to avoid null checks when referencing
+    val subjectIsInitialized = this::subject.isInitialized // or ::subject.isInitialized
+}
+```
+
+### ///// References (online):
+
+- [Properties](https://kotlinlang.org/docs/properties.html)
 
 [^ up](#knowledge-notes)
 
