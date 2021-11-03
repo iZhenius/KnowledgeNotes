@@ -34,6 +34,7 @@
     - [Kotlin Syntax Features](#kotlin-syntax-features)
         - [Scope functions](#kotlin-scope-functions)
         - [Properties](#kotlin-properties)
+        - [Delegated Properties](#kotlin-delegated-properties)
     - [Kotlin Generics](#kotlin-generics)
 - [Android](#android)
     - [Multithreading](#multithreading)
@@ -1844,7 +1845,149 @@ class KotlinPropertiesExample {
 
 ### ///// References (online):
 
-- [Properties](https://kotlinlang.org/docs/properties.html)
+- [Kotlin Properties](https://kotlinlang.org/docs/properties.html)
+
+[^ up](#knowledge-notes)
+
+---
+
+## Kotlin Delegated Properties
+
+### Delegation pattern
+
+```kotlin
+interface Base {
+    val message: String
+    fun print()
+}
+
+class BaseImpl(val x: Int) : Base {
+    override val message = "BaseImpl: x = $x"
+    override fun print() {
+        println(message)
+    }
+}
+
+class Derived(b: Base) : Base by b {
+    // This property is not accessed from b's implementation of `print`
+    override val message = "Message of Derived"
+}
+
+fun main() {
+    val b = BaseImpl(10)
+    val derived = Derived(b)
+    derived.print() // BaseImpl: x = 10
+    println(derived.message) // Message of Derived
+}
+```
+
+### Standard Delegates
+
+```kotlin
+class KotlinStandardDelegatesExamples {
+    // Lazy properties
+    val lazyValue: String by lazy(LazyThreadSafetyMode.NONE) {
+        println("computed!")
+        "Hello"
+    }
+
+    // Observable properties
+    var name: String by Delegates.observable("<no name>") { prop, old, new ->
+        // after the assignment has been performed
+        println("$old -> $new")
+    }
+
+    // Vetoable properties
+    var max: Int by Delegates.vetoable(0) { property, oldValue, newValue ->
+        // before the assignment has been performed
+        if (newValue > oldValue) true else throw IllegalArgumentException("New value must be larger than old value.")
+    }
+
+    // Storing properties in a Map
+    val map = mapOf("name" to "John", "age" to 25)
+    val name: String by map // can be `val` if map is MutableMap
+    val age: Int by map // can be `val` if map is MutableMap
+
+    // Local delegated properties
+    fun example(computeFoo: () -> Foo) {
+        val memoizedFoo by lazy(computeFoo)
+
+        if (someCondition && memoizedFoo.isValid()) {
+            // If `someCondition` fails, the `memoizedFoo` won't be computed at all
+            memoizedFoo.doSomething()
+        }
+    }
+}
+```
+
+### Custom Property Delegate
+
+```kotlin
+class Resource
+
+class Owner {
+    var varResource: Resource by ResourceDelegate()
+}
+
+class ResourceDelegate(private var resource: Resource = Resource()) {
+
+    operator fun getValue(thisRef: Owner, property: KProperty<*>): Resource {
+        return resource
+    }
+
+    operator fun setValue(thisRef: Owner, property: KProperty<*>, value: Any?) {
+        if (value is Resource) {
+            resource = value
+        }
+    }
+}
+
+/**
+ * Delegate as anonymous objects without creating new classes,
+ * by using the interfaces ReadOnlyProperty and ReadWriteProperty
+ * from the Kotlin standard library
+ */
+class OwnerWithAnonymousDelegate {
+
+    fun resourceDelegate(): ReadWriteProperty<Any?, Int> =
+        object : ReadWriteProperty<Any?, Int> {
+            var curValue = 0
+            override fun getValue(thisRef: Any?, property: KProperty<*>): Int = curValue
+            override fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) {
+                curValue = value
+            }
+        }
+
+    val readOnly: Int by resourceDelegate()  // ReadWriteProperty as val
+    var readWrite: Int by resourceDelegate()
+}
+```
+
+### Delegating to another property
+
+```kotlin
+var topLevelInt: Int = 0
+
+class ClassWithDelegate(val anotherClassInt: Int)
+
+class MyClass(var memberInt: Int, val anotherClassInstance: ClassWithDelegate) {
+
+    var delegatedToMember: Int by this::memberInt
+    var delegatedToTopLevel: Int by ::topLevelInt
+
+    val delegatedToAnotherClass: Int by anotherClassInstance::anotherClassInt
+}
+
+var MyClass.extDelegated: Int by ::topLevelInt
+```
+
+### ///// References (online):
+
+- [Kotlin Delegated Properties](https://kotlinlang.org/docs/delegated-properties.html)
+- [Kotlin Delegation](https://kotlinlang.org/docs/delegation.html)
+- [Kotlin lazy](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/lazy.html)
+- [Package kotlin.properties](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.properties/)
+- [Делегаты в Kotlin для Android](https://medium.com/nuances-of-programming/%D0%B4%D0%B5%D0%BB%D0%B5%D0%B3%D0%B0%D1%82%D1%8B-%D0%B2-kotlin-%D0%B4%D0%BB%D1%8Fandroid-%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D1%83%D0%B9%D1%82%D0%B5-%D1%81%D0%B8%D0%BB%D1%83-%D0%B4%D0%B5%D0%BB%D0%B5%D0%B3%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%BD%D1%8B%D1%85-%D1%81%D0%B2%D0%BE%D0%B9%D1%81%D1%82%D0%B2-%D0%B2-%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B5-%D0%BF%D0%BE%D0%B4-android-ca4d88d42800)
 
 [^ up](#knowledge-notes)
 
