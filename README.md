@@ -31,6 +31,7 @@
         - [Java Reference Types](#java-reference-types)
 - [Kotlin](#kotlin)
     - [Kotlin Basics](#kotlin-basics)
+        - [Nested Classes](#kotlin-nested-classes)
         - [Class Any](#class-any)
     - [Kotlin Syntax Features](#kotlin-syntax-features)
         - [Scope functions](#kotlin-scope-functions)
@@ -1761,6 +1762,72 @@ a low priority thread that runs in the background to provide services to user th
 # Kotlin
 
 # Kotlin Basics
+
+## Kotlin Nested Classes
+
+In Kotlin, an `OuterClass` does not see private members of its `InnerClass`. In Java see.
+
+```kotlin
+class OuterClass {
+    private val outerStr = "outerStr"
+    private fun outerFoo() {
+        val innerClass: InnerClass = InnerClass()
+        //val innerStr = innerClass.innerStr // Cannot access to private members
+        //innerClass.innerFoo() // Cannot access to private members
+        val staticInnerClass = StaticInnerClass()
+        //val innerStr2 = staticInnerClass.innerStr // Cannot access to private members
+        //val staticInnerStr = StaticInnerClass.staticInnerStr // Cannot access to private members
+    }
+
+    private inner class InnerClass {
+        //static val staticInnerStr = ""; // Cannot have static members
+        private val innerStr = outerStr
+
+        //static staticInnerFoo() {}  // Cannot have static members
+        private fun innerFoo() {
+            staticOuterFoo()
+            outerFoo()
+        }
+    }
+
+    class StaticInnerClass {
+        //val innerStr = outerStr; // Cannot make a static reference to the non-static
+        private val innerStr = OuterClass().outerStr // only from outer class instance
+
+        companion object {
+            private const val staticInnerStr = "staticInnerStr"
+
+            //static staticInnerFoo() {}  // Cannot have static members
+            private fun staticInnerFoo(outerClass: OuterClass) {
+                staticOuterFoo()
+                //outerFoo(); // Non-static method cannot be referenced from a static context
+                outerClass.outerFoo() // only from outer class instance
+            }
+        }
+    }
+
+    companion object {
+        private const val staticOuterStr = "staticOuterStr"
+        private fun staticOuterFoo() {}
+
+        @JvmStatic
+        fun main(args: Array<String>) {
+            val staticInnerObject = StaticInnerClass()
+            //val innerObject1 = InnerClass(); // Constructor of inner class can be called only with receiver of containing class
+            val innerObject = OuterClass().InnerClass()
+        }
+    }
+}
+```
+
+### ///// References (online):
+
+* [Nested and inner classes](https://kotlinlang.org/docs/nested-classes.html)
+* [Visibility modifiers](https://kotlinlang.org/docs/visibility-modifiers.html)
+
+[^ up](#knowledge-notes)
+
+---
 
 ## Class Any
 
