@@ -5,6 +5,7 @@
 - [Java](#java)
     - [Basics](#java-basics)
         - [AbstractClass vs Interface](#abstract-class-vs-interface)
+        - [Nested Classes](#java-nested-classes)
         - [Class Object](#class-object)
         - [Data Types](#data-types)
         - [String pool](#string-pool)
@@ -69,7 +70,7 @@ $ git push -u origin main
 
 ## Abstract Class vs Interface
 
-## Interface
+### Interface
 
 ```java
 interface Brain extends Serializable, Cloneable {
@@ -97,7 +98,7 @@ interface Brain extends Serializable, Cloneable {
 - cannot be instantiated as they are not concrete classes.
 - methods and constants cannot be declared `private`, methods cannot be declared `final`.
 
-## Abstract class
+### Abstract class
 
 ```java
 abstract class Car extends SecurityManager implements Serializable, Cloneable {
@@ -125,12 +126,163 @@ abstract class Car extends SecurityManager implements Serializable, Cloneable {
 - any class that does not implement all the `abstract` methods of it's `super` class has to be an `abstract` class
   itself.
 
-## ///// References (online):
+### ///// References (online):
 
 * [Interface vs Abstract class vs Concrete class](https://medium.com/heuristics/interface-vs-abstract-class-vs-concrete-class-196f20c3af9a)
 * [Choosing Between an Interface and an Abstract Class](https://betterprogramming.pub/choosing-between-interface-and-abstract-class-7a078551b914)
 * [Easiest explanation of Abstract class and Interface](https://medium.com/@alifabdullah/easiest-explanation-of-abstract-class-and-interface-280741bc2daf)
 * [Abstract class vs interface in Kotlin](https://blog.kotlin-academy.com/abstract-class-vs-interface-in-kotlin-5ab8697c3a14)
+
+[^ up](#knowledge-notes)
+
+---
+
+## Java Nested Classes
+
+![](res/images/java-nested-class.png)
+
+The Java programming language allows you to define a class within another class. Such a class is called a **nested
+class**. The nested class can be declared `private`, `public`, `protected`, or `package-private(default)`.
+
+```java
+class OuterClass { // The outer class can be only `public` or `package-private(default)`
+
+    //region Nested Classes
+    class InnerClass {
+        // ...
+    }
+
+    static class StaticNestedClass {
+        // ...
+    }
+    //endregion
+}
+```
+
+### Nested classes are divided into two categories:
+
+- ### Non-Static — _"Inner Classes"_
+
+  An **instance** of `InnerClass` can exist only within an **instance** of `OuterClass` and has direct access to the
+  methods and fields of its **enclosing instance**.
+
+  To instantiate an inner class, you must first instantiate the outer class. Then, create the inner object within the
+  outer object.
+
+    ```java
+    class NestedClassExample {
+    
+        public static void main(String[] args) {
+            OuterClass outerObject = new OuterClass();
+            OuterClass.InnerClass innerObject = outerObject.new InnerClass();
+        }
+    }
+    ```
+
+  ### There are two special kinds of inner classes:
+
+    - **Local Classes** — When the inner classes are declared within the body of a method. Local classes are similar to
+      inner classes.
+
+    - **Anonymous Classes** — When the inner classes are declared within the body of a method without naming the class.
+      An anonymous class is an expression. It must be part of a statement.
+
+- ### Static — _"Static Nested Classes"_
+
+  A `StaticInnerClass` cannot refer directly to instance variables or methods defined in `OuterClass`: it can use
+  them **only through an object reference**. A `StaticInnerClass` interacts with the instance members of
+  its `OuterClass` (and other classes) just like any other top-level class.
+
+    ```java
+    class NestedClassExample {
+      
+        public static void main(String[] args) {
+            StaticInnerClass staticInnerObject = new StaticInnerClass();
+        }
+    }
+    ```
+
+### Why Use Nested Classes?
+
+- **It is a way of logically grouping classes that are only used in one place:**
+  If a class is useful to only one other class, it is logical to embed it in that class and keep the two together.
+  Nesting such "helper classes" makes their package more streamlined.
+
+- **It increases encapsulation:** Consider two top-level classes, A and B, where B needs access to members of A that
+  would otherwise be declared private. By hiding class B within class A, A's members can be declared private and B can
+  access them. In addition, B itself can be hidden from the outside world.
+
+- **It can lead to more readable and maintainable code:** Nesting small classes within top-level classes places the code
+  closer to where it is used.
+
+### Inner Class and Nested Static Class Example
+
+```java
+class OuterClass {
+
+    private static String staticOuterStr = "staticOuterStr";
+    private String outerStr = "outerStr";
+
+    private static void staticOuterFoo() {
+    }
+
+    private void outerFoo() {
+
+        //innerFoo(); // Does not have access to the members of the nested class
+        //staticInnerFoo(this); // Does not have access to the static members of the nested class
+        
+        InnerClass innerClass = new InnerClass();
+        String innerStr = innerClass.innerStr;
+        innerClass.innerFoo();
+
+        StaticInnerClass staticInnerClass = new StaticInnerClass();
+        String innerStr2 = staticInnerClass.innerStr;
+        String staticInnerStr = StaticInnerClass.staticInnerStr;
+    }
+
+    private class InnerClass {
+
+        //static String staticInnerStr = ""; // Cannot have static members
+        private String innerStr = outerStr;
+
+        //static void staticInnerFoo() {}  // Cannot have static members
+
+        private void innerFoo() {
+            staticOuterFoo();
+            outerFoo();
+        }
+    }
+
+    static class StaticInnerClass {
+
+        private static String staticInnerStr = "staticInnerStr";
+        //String innerStr = outerStr; // Cannot make a static reference to the non-static
+        private String innerStr = new OuterClass().outerStr; // only from outer class instance
+
+        //static void staticInnerFoo() {}  // Cannot have static members
+
+        private static void staticInnerFoo(OuterClass outerClass) {
+            staticOuterFoo();
+            //outerFoo(); // Non-static method cannot be referenced from a static context
+            outerClass.outerFoo(); // only from outer class instance
+        }
+    }
+
+    public static void main(String[] args) {
+
+        StaticInnerClass staticInnerObject = new StaticInnerClass();
+        //InnerClass innerObject = new InnerClass();
+        InnerClass innerObject = new OuterClass().new InnerClass();
+    }
+}
+```
+
+### ///// References (online):
+
+* [The Java™ Tutorials: Nested Classes](https://docs.oracle.com/javase/tutorial/java/javaOO/nested.html)
+* [The Java™ Tutorials: Local Classes](https://docs.oracle.com/javase/tutorial/java/javaOO/localclasses.html)
+* [The Java™ Tutorials: Anonymous Classes](https://docs.oracle.com/javase/tutorial/java/javaOO/anonymousclasses.html)
+* [Do You Know Nested and Inner Classes in Java?](https://medium.com/javarevisited/do-you-know-nested-and-inner-classes-in-java-cc5647f46e07)
 
 [^ up](#knowledge-notes)
 
@@ -315,7 +467,7 @@ public class Object {
 }
 ```
 
-## ///// References (online):
+### ///// References (online):
 
 * [Class Object](https://docs.oracle.com/javase/7/docs/api/java/lang/Object.html)
 
@@ -331,7 +483,7 @@ public class Object {
 
 ![](res/images/java-primitive-data-types.png)
 
-## ///// References (online):
+### ///// References (online):
 
 * [Data types in Java](https://www.geeksforgeeks.org/data-types-in-java/)
 * [Primitive Data Types and What Default Values Are Assigned to Them in Java?](https://medium.com/javarevisited/primitive-data-types-in-java-and-what-default-values-are-assigned-to-them-take-a-look-7d5f0e8083e4)
@@ -811,7 +963,7 @@ It is similar to `HashMap`.
 
 ---
 
-# ///// References (online):
+## ///// References (online):
 
 * [Collections in Java](https://howtodoinjava.com/java-collections/)
 
@@ -2037,7 +2189,7 @@ class KotlinGenericsExample {
   >
   > The **default upper bound** (if there was none specified) is `Any?`.
 
-## ///// References (online):
+### ///// References (online):
 
 - [Generics: in, out, where](https://kotlinlang.org/docs/generics.html)
 - [Generics in Kotlin](https://medium.com/swlh/generics-in-kotlin-5152142e281c)
