@@ -230,7 +230,7 @@ class OuterClass {
 
         //innerFoo(); // Does not have access to the members of the nested class
         //staticInnerFoo(this); // Does not have access to the static members of the nested class
-        
+
         InnerClass innerClass = new InnerClass();
         String innerStr = innerClass.innerStr;
         innerClass.innerFoo();
@@ -1180,9 +1180,20 @@ wait-set.
 - Provides **visibility guaranteed** - updated values of variables modified inside synchronized context will be visible
   to all threads.
 - A synchronized keyword also provides **blocking**. A thread will block until the lock is available, before entering to
-  code protected by a synchronized keyword. See how synchronization works in Java to know all about synchronized
-  keyword.
+  code protected by a synchronized keyword.
 - As per the **happens-before rule**, an unlock on a monitor happens-before every subsequent lock on the same monitor.
+
+
+- **Synchronizing Instance Method:** a thread acquires **the lock of this object**, any new thread cannot call any of **
+  the synchronized methods** of the same object.
+- **Synchronizing Static Method:** a thread acquires **the lock associated with the class**, any other thread will not
+  be able to call any **static synchronized method** but will be able to call **non-static(instance) synchronized
+  method** of an instance of that class. **The object-level lock is still available**.
+- **Synchronized Block Inside Instance Method:** we have to provide a reference of the object (`this`
+  or `any other reference`) so that a thread can acquire the lock and release it after executing the synchronized block.
+- **Synchronized Block Inside The Static Method:** It is similar to synchronizing the block inside the instance method.
+  The only difference is to provide the lock at a **class level using `ClassName.class`** as a parameter for the
+  synchronized block.
 
 ### Volatile
 
@@ -1205,6 +1216,7 @@ wait-set.
 * [What is the difference between atomic / volatile / synchronized?](https://stackoverflow.com/questions/9749746/what-is-the-difference-between-atomic-volatile-synchronized)
 * [Java Concurrency: Volatile](https://medium.com/javarevisited/java-concurrency-volatile-d0e585852d6b)
 * [Java Concurrency: Synchronized](https://medium.com/javarevisited/java-concurrency-synchronized-7828bf5f06cb)
+* [Synchronization in Java: All You Need to Know](https://levelup.gitconnected.com/synchronization-in-java-all-you-need-to-know-7bd27219ce10)
 
 [^ up](#knowledge-notes)
 
