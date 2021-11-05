@@ -40,7 +40,8 @@
     - [Kotlin Generics](#kotlin-generics)
 - [Android](#android)
     - [Multithreading](#multithreading)
-    - [View](#view)
+    - [Views (widgets)](#views-widgets)
+        - [View](#view)
 
 ***
 
@@ -2429,6 +2430,8 @@ For other data transfers, use `Message.setData(Bundle data)`.
 
 ---
 
+## Views (widgets)
+
 ## View
 
 `View` class represents the basic building block for user interface components. A `View` occupies a rectangular area on
@@ -2438,13 +2441,13 @@ layouts, which are invisible containers that hold other `Views` (or other `ViewG
 properties.
 
 ```java
-public class View
-        extends Object implements Drawable.Callback, KeyEvent.Callback, AccessibilityEventSource {
+public class
+View extends Object implements Drawable.Callback, KeyEvent.Callback, AccessibilityEventSource {
     // ...
 }
 ```
 
-### View Hierarchy (not full)
+### View Hierarchy
 
 ![](res/images/android-view-hierarchy.png)
 
@@ -2513,7 +2516,9 @@ public class View
 
 - ### `onLayout()`
 
-  This is called after measuring the views to position them on the screen.
+  This is called after measuring the views to position them on the screen. Called from layout when this view should
+  assign a size and position to each of its children. Derived classes with children should override this method and call
+  layout on each of their children.
 
     ```java
     public class
@@ -2572,6 +2577,8 @@ if the sum of all the children's unconstrained sizes is too big or too small.
 
 * [Android developers: View](https://developer.android.com/reference/android/view/View)
 * [The Life Cycle of a View in Android](https://proandroiddev.com/the-life-cycle-of-a-view-in-android-6a2c4665b95e)
+* [Draw Custom Views in Android](https://betterprogramming.pub/draw-custom-views-in-android-a321fa157d60)
+* [Создание собственной View под Android – может ли что-то пойти не так?](https://habr.com/ru/post/321890/)
 
 [^ up](#knowledge-notes)
 
