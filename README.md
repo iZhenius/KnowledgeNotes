@@ -41,6 +41,7 @@
 - [Android](#android)
     - [App Components](#app-components)
         - [Activity](#activity)
+        - [Service](#service)
     - [Multithreading](#multithreading)
     - [Views (widgets)](#views-widgets)
         - [View](#view)
@@ -88,15 +89,13 @@ interface Brain extends Serializable, Cloneable {
     public default void doRoutine() {
         // carry out normal day-to-day duties
     }
-
-    ;
 }
 ```
 
 - all methods can have `static`, `default` or `abstract` modifiers (since Java 8). Implicitly they are `public abstract`
   .
 - methods can be implemented (can have a code body) if it is declared `static` or `default`. `Abstract` methods cannot
-  have a body only method signature  (since Java 8).
+  have a body only method signature (since Java 8).
 - variables are not allowed. Any data declaration is `public static final` (constants).
 - can extend other interfaces (one or more) but not classes (abstract or not).
 - cannot be instantiated as they are not concrete classes.
@@ -124,7 +123,7 @@ abstract class Car extends SecurityManager implements Serializable, Cloneable {
 - can be without having any methods inside it. But if it has any methods inside it, it must have at least one `abstract`
   method. This rule does not apply to `static` methods.
 - can have both **abstract** and **non abstract** methods, hence the `abstract` modifier is necessary here (unlike
-  in `interface` where only `abstract` methods are allowed ).
+  in `interface` where only `abstract` methods are allowed).
 - `static` members are allowed.
 - can extend other at most one `abstract` or concrete `class` and implement several `interfaces`.
 - any class that does not implement all the `abstract` methods of it's `super` class has to be an `abstract` class
@@ -2287,7 +2286,7 @@ class KotlinGenericsExample {
 
 # Android
 
-## App Components
+# App Components
 
 Each Android app lives in its own security sandbox, protected by the following Android security features:
 
@@ -2394,7 +2393,7 @@ AppCompatActivity extends FragmentActivity implements AppCompatCallback,
 
   The system invokes this callback before an activity is destroyed.
 
-### ///// References (online):
+## ///// References (online):
 
 - [Android developers: Application Fundamentals](https://developer.android.com/guide/components/fundamentals)
 - [Android developers: Introduction to Activities](https://developer.android.com/guide/components/activities/intro-activities)
@@ -2404,7 +2403,231 @@ AppCompatActivity extends FragmentActivity implements AppCompatCallback,
 
 ---
 
-## Multithreading
+## Service
+
+A `Service` is an application component that can perform long-running operations in the background. It does not provide
+a user interface. Once started, a service might continue running for some time, even after the user switches to another
+application.
+
+A service runs in the `main thread` of its hosting process; the service **does not create its own thread** and does not
+run in a separate process unless you specify otherwise.
+
+### Declaring a service in the manifest
+
+You **must declare** all services in your application's manifest file:
+
+```
+<manifest ... >
+  ...
+  <application ... >
+      <service android:description="string resource"
+         android:directBootAware=["true" | "false"]
+         android:enabled=["true" | "false"]
+         android:exported=["true" | "false"]
+         android:foregroundServiceType=["camera" | "connectedDevice" |
+                                        "dataSync" | "location" | "mediaPlayback" |
+                                        "mediaProjection" | "microphone" | "phoneCall"]
+         android:icon="drawable resource"
+         android:isolatedProcess=["true" | "false"]
+         android:label="string resource"
+         android:name="string"
+         android:permission="string"
+         android:process="string" >
+         <intent-filter ...>
+         <meta-data ...>
+      ...
+      </service>
+      ...
+  </application>
+</manifest>
+```
+
+To ensure that your app is secure, always **use an explicit intent** when starting a `Service` and don't declare intent
+filters for your services.
+
+### Types of Services:
+
+- ### Foreground
+
+  Foreground services **must** display a `Notification`. This notification cannot be dismissed unless the service is
+  either stopped or removed from the foreground. Foreground services continue running even when the user isn't
+  interacting with the app. The system knows that it should try really hard to keep that service's process running.
+
+- ### Background
+
+  A background service performs an operation that isn't directly noticed by the user. The system has more freedom in
+  managing its process. It may allow it to be killed (and then restarting the service sometime later) if it needs RAM.
+
+- ### Bound
+
+  A service is bound when an application component binds to it by calling `bindService()`. A bound service offers a
+  client-server interface that allows components to interact with the service, send requests, receive results, and even
+  do so across processes with interprocess communication (IPC). A bound service runs only as long as another application
+  component is bound to it. Multiple components can bind to the service at once, but when all of them unbind, the
+  service is destroyed.
+
+### Service Lifecycle
+
+![](res/images/android-service-lifecycle.png)
+
+### Using the Service class
+
+```java
+
+public class ExampleFragment extends Fragment {
+    //...
+    private ExampleService exampleService;
+    private boolean isExampleServiceBounded = false;
+    private final ServiceConnection exampleServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            ExampleService.ExampleBinder binder = (ExampleService.ExampleBinder) service;
+            exampleService = binder.getService();
+            isExampleServiceBounded = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isExampleServiceBounded = false;
+        }
+    };
+    
+    public void startExampleService() {
+        Intent intent = new Intent(getContext(), ExampleService.class);
+        requireActivity().startService(intent);
+        requireActivity().bindService(intent, exampleServiceConnection, 0);
+    }
+
+    private void stopExampleService() {
+        Intent intent = new Intent(getContext(), ExampleService.class);
+        requireActivity().stopService(intent);
+    }
+
+    private void bindExampleService() {
+        if (ExampleService.isAlive()) {
+            Intent intent = new Intent(getContext(), ExampleService.class);
+            requireActivity().bindService(intent, exampleServiceConnection, 0);
+        }
+    }
+
+    private void unbindExampleService() {
+        if (isExampleServiceBounded) {
+            requireActivity().unbindService(exampleServiceConnection);
+            isExampleServiceBounded = false;
+        }
+    }
+    //...
+}
+
+public class ExampleService extends Service {
+
+    private static ExampleService INSTANCE = null;
+    private final IBinder binder = new ExampleBinder();
+
+    @Override
+    public void onCreate() {
+        // If the service is already running, this method is not called.
+        super.onCreate();
+        INSTANCE = this;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // The system invokes this method by calling startService().
+        // This method can be not implement if you only want to provide binding.
+        // If you implement this, it need to stop by calling stopSelf() or stopService().
+        //return START_STICKY;
+        //return START_NOT_STICKY;
+        //return START_REDELIVER_INTENT;
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        // This is the last call that the service receives.
+        super.onDestroy();
+        INSTANCE = null;
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        // The system invokes this method by calling bindService().
+        // You must always implement this method.
+        //return null;
+        return binder;
+    }
+
+    public static boolean isAlive() {
+        try {
+            return INSTANCE != null && INSTANCE.ping();
+        } catch (NullPointerException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Simply returns `true`.
+     * If the service is still active, this method will be accessible.
+     */
+    private boolean ping() {
+        return true;
+    }
+
+    public class ExampleBinder extends Binder {
+
+        public ExampleService getService() {
+            return ExampleService.this;
+        }
+    }
+}
+```
+
+#### The return value from `onStartCommand()` must be one of the following constants:
+
+- **START_NOT_STICKY** — do not recreate the service.
+- **START_STICKY** — recreate the service and call `onStartCommand()`, but do not redeliver the last intent (`null`
+  intent).
+- **START_REDELIVER_INTENT** — recreate the service and call `onStartCommand()` with the last intent that was delivered
+  to the service.
+
+If a component starts the service by calling `startService()` (which results in a call to `onStartCommand()`), the
+service continues to run until it stops itself with `stopSelf()` or another component stops it by
+calling `stopService()`.
+
+If a component calls `bindService()` to create the service and **`onStartCommand()` is not called**, the service runs
+only as long as the component **is bound to it**. After the service is unbound from all of its clients, the system
+destroys it.
+
+If the service **doesn't also provide binding**, the `Intent` that is delivered with `startService()` is the only mode of
+communication between the application component and the service. However, if you want the service to send a result back,
+the client that starts the service can create a `PendingIntent` for a broadcast (with `getBroadcast()`) and deliver it
+to the service in the `Intent` that starts the service. The service can then use the broadcast to deliver a result.
+
+Multiple requests to start the service result in multiple corresponding calls to the service's `onStartCommand()`.
+
+The Android system stops a service only when memory is low and it must recover system resources for the activity that
+has user focus. If the service is bound to an activity that has user focus, it's less likely to be killed; if the
+service is declared to run in the foreground, it's rarely killed. If the service is started and is long-running, the
+system lowers its position in the list of background tasks over time, and the service becomes highly susceptible to
+killing.
+
+If your app targets API level 26 or higher, the system imposes restrictions. To create a foreground service, the app
+should call `startForegroundService()`. That method creates a background service, but the method signals to the system
+that the service will promote itself to the foreground. Once the service has been created, the service must call
+its `startForeground()` method **within 5 seconds**.
+
+### ///// References (online):
+
+- [Android developers: Services overview](https://developer.android.com/guide/components/services)
+- [Android developers: Service](https://developer.android.com/reference/android/app/Service)
+- [Android developers: Bound services overview](https://developer.android.com/guide/components/bound-services)
+
+[^ up](#knowledge-notes)
+
+---
+
+# Multithreading
 
 When a user opens an application, Android creates its own Linux process. Besides this, the system creates a thread of
 execution for that application called the **main thread** or **UI thread**.
@@ -2415,7 +2638,7 @@ other apps, etc
 
 ![android_multithreading](res/images/android-multithreading.png)
 
-### Thread
+## Thread
 
 The Java virtual machine allows an application to have multiple threads of execution running concurrently.
 
@@ -2446,7 +2669,7 @@ single-threaded model, we need to create different threads to perform our task.
 We can perform any kind of operation inside threads except updating the UI elements. To update a UI element from a
 thread, we need to use either the `Handler` or the `runOnUIThread()` method.
 
-### Looper
+## Looper
 
 The looper is responsible for keeping the thread alive. It is a kind of worker that serves a `MessageQueue` for the
 current thread. `Looper` loops through a message queue and sends messages to corresponding threads to process. **There
@@ -2456,7 +2679,7 @@ with its own `MessageQueue`.
 `Looper.quit()` will immediately terminate the Looper and discard all the messages inside the `MessageQueue`. To make
 sure that all message in the `MessageQueue` will be dispatched before quitting, we can use `Looper.quiteSafely()`.
 
-### Handler
+## Handler
 
 As there is only one thread that updates the UI, which is main thread, we use different other threads to do multiple
 tasks in the background but finally, to update the UI, we need to post the result to the main or UI thread. So, Android
@@ -2468,7 +2691,7 @@ When a handler is created, it can get a `Looper` object in the constructor, whic
 attached to. If you want to use a handler attached to the main thread, you need to use the looper associated with the
 main thread by calling `Looper.getMainLooper()`.
 
-#### How to schedule:
+### How to schedule:
 
 - `post(Runnable)`, `postAtTime(Runnable, long)`, `postDelayed(Runnable, long)` — The post versions allow you to enqueue
   `Runnable` objects to be called by the message queue when they are received.
@@ -2477,7 +2700,7 @@ main thread by calling `Looper.getMainLooper()`.
   , `sendMessageDelayed(Message, long)` — The sendMessage versions allow you to enqueue a Message object containing a
   bundle of data that will be processed by the handler’s handleMessage(Message)
 
-### HandlerThread
+## HandlerThread
 
 HandlerThread has their own `Looper` and `MessageQueue` or simply queue, other than the `Thread`. The looper can then be
 used to create handler classes. Note that `start()` must still be called.
@@ -2507,7 +2730,7 @@ public class HandlerThreadExample {
 }
 ```
 
-### MessageQueue
+## MessageQueue
 
 The `MessageQueue` is a queue that has a list of tasks (messages, runnables) that will be executed in a certain thread.
 Android maintains a `MessageQueue` on the main thread. It is a low-level class holding the list of messages to be
@@ -2515,7 +2738,7 @@ dispatched by a `Looper`. Messages are not added directly to a `MessageQueue`, b
 associated with the `Looper`. **There will be only one MessageQueue per thread**. The order in the Message list is base
 on the timestamp. The message which has the lowest timestamp will be dispatched first.
 
-### Message
+## Message
 
 The message defines a message containing a description and arbitrary data object that can be sent to a `Handler`. We can
 simply say that message is something like a bundle that is used for the transfer of data. While the constructor of
@@ -2535,7 +2758,7 @@ There are different arguments that can be useful:
 
 For other data transfers, use `Message.setData(Bundle data)`.
 
-### ///// References (online):
+## ///// References (online):
 
 * [Multi-Threaded Android: Handler, Thread, Looper, and Message Queue](https://betterprogramming.pub/a-detailed-story-about-handler-thread-looper-message-queue-ac2cd9be0d78)
 * [How Looper, MessageQueue, Handler work in Android](https://pivinci.medium.com/how-looper-messagequeue-handler-runnable-work-in-android-dbbe9db62094)
@@ -2549,7 +2772,7 @@ For other data transfers, use `Message.setData(Bundle data)`.
 
 ---
 
-## Views (widgets)
+# Views (widgets)
 
 ## View
 
