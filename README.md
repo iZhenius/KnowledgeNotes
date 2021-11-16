@@ -45,6 +45,8 @@
     - [Multithreading](#multithreading)
     - [Views (widgets)](#views-widgets)
         - [View](#view)
+- [Algorithms](#algorithms)
+    - [Binary Search](#binary-search)
 
 ***
 
@@ -2398,6 +2400,7 @@ AppCompatActivity extends FragmentActivity implements AppCompatCallback,
 - [Android developers: Application Fundamentals](https://developer.android.com/guide/components/fundamentals)
 - [Android developers: Introduction to Activities](https://developer.android.com/guide/components/activities/intro-activities)
 - [Android developers: Activity](https://developer.android.com/reference/android/app/Activity)
+- [Understand Android Activity's launchMode: standard, singleTop, singleTask and singleInstance](https://inthecheesefactory.com/blog/understand-android-activity-launchmode/en)
 
 [^ up](#knowledge-notes)
 
@@ -2491,7 +2494,7 @@ public class ExampleFragment extends Fragment {
             isExampleServiceBounded = false;
         }
     };
-    
+
     public void startExampleService() {
         Intent intent = new Intent(getContext(), ExampleService.class);
         requireActivity().startService(intent);
@@ -2599,10 +2602,11 @@ If a component calls `bindService()` to create the service and **`onStartCommand
 only as long as the component **is bound to it**. After the service is unbound from all of its clients, the system
 destroys it.
 
-If the service **doesn't also provide binding**, the `Intent` that is delivered with `startService()` is the only mode of
-communication between the application component and the service. However, if you want the service to send a result back,
-the client that starts the service can create a `PendingIntent` for a broadcast (with `getBroadcast()`) and deliver it
-to the service in the `Intent` that starts the service. The service can then use the broadcast to deliver a result.
+If the service **doesn't also provide binding**, the `Intent` that is delivered with `startService()` is the only mode
+of communication between the application component and the service. However, if you want the service to send a result
+back, the client that starts the service can create a `PendingIntent` for a broadcast (with `getBroadcast()`) and
+deliver it to the service in the `Intent` that starts the service. The service can then use the broadcast to deliver a
+result.
 
 Multiple requests to start the service result in multiple corresponding calls to the service's `onStartCommand()`.
 
@@ -2921,6 +2925,111 @@ if the sum of all the children's unconstrained sizes is too big or too small.
 * [The Life Cycle of a View in Android](https://proandroiddev.com/the-life-cycle-of-a-view-in-android-6a2c4665b95e)
 * [Draw Custom Views in Android](https://betterprogramming.pub/draw-custom-views-in-android-a321fa157d60)
 * [Создание собственной View под Android – может ли что-то пойти не так?](https://habr.com/ru/post/321890/)
+
+[^ up](#knowledge-notes)
+
+***
+
+# Algorithms
+
+## Binary Search
+
+Binary search is a textbook algorithm based on the idea to compare the target value to the middle element of the array.
+
+If the target value is equal to the middle element - we're done.
+
+If the target value is smaller - continue to search on the left.
+
+If the target value is larger - continue to search on the right.
+
+> Task Constraints:
+>
+> 1 <= `nums.length` <= 10^4
+>
+> -10^4 < `nums[i]`, `target` < 10^4
+>
+> All the integers in `nums` are unique.
+>
+> `nums` is sorted in ascending order.
+
+```java
+public class MySolution {
+
+    private final int notFoundResult = -1;
+    private int[] nums;
+    private int target;
+    private int minIndex;
+    private int maxIndex;
+
+    public int search(int[] nums, int target) {
+        if (nums.length == 0) {
+            return notFoundResult;
+        } else {
+            initializeSearchVariables(nums, target);
+            return binarySearch();
+        }
+    }
+
+    private void initializeSearchVariables(int[] nums, int target) {
+        this.nums = nums;
+        this.target = target;
+        minIndex = 0;
+        maxIndex = nums.length - 1;
+    }
+
+    private int binarySearch() {
+        int mediumIndex = (minIndex + maxIndex) / 2;
+        int mediumValue = nums[mediumIndex];
+        if (mediumValue == target) {
+            return mediumIndex;
+        } else if (shouldDoBinarySearch()) {
+            setMinMaxIndexes(mediumIndex, isAscendingSearch(mediumValue, target));
+            return binarySearch();
+        } else if (target == nums[minIndex]) {
+            return minIndex;
+        } else if (target == nums[maxIndex]) {
+            return maxIndex;
+        } else {
+            return notFoundResult;
+        }
+    }
+
+    private boolean isAscendingSearch(int mediumValue, int target) {
+        return mediumValue < target;
+    }
+
+    private void setMinMaxIndexes(int mediumIndex, boolean isAscending) {
+        if (isAscending) {
+            minIndex = mediumIndex;
+        } else {
+            maxIndex = mediumIndex;
+        }
+    }
+
+    private boolean shouldDoBinarySearch() {
+        return (maxIndex - minIndex) > 1;
+    }
+}
+```
+
+```java
+public class SolutionFromInternet {
+    public int search(int[] nums, int target) {
+        int pivot, left = 0, right = nums.length - 1;
+        while (left <= right) {
+            pivot = left + (right - left) / 2;
+            if (nums[pivot] == target) return pivot;
+            if (target < nums[pivot]) right = pivot - 1;
+            else left = pivot + 1;
+        }
+        return -1;
+    }
+}
+```
+
+### ///// References (online):
+
+* [Binary Search](https://leetcode.com/explore/learn/card/binary-search/)
 
 [^ up](#knowledge-notes)
 
