@@ -53,6 +53,7 @@
     - [App Components](#app-components)
         - [Activity](#activity)
         - [Service](#service)
+        - [Broadcast Receiver](#broadcast-receiver)
     - [Multithreading](#multithreading)
     - [Views (widgets)](#views-widgets)
         - [View](#view)
@@ -2642,6 +2643,17 @@ its `startForeground()` method **within 5 seconds**.
 
 ---
 
+## Broadcast Receiver
+
+### ///// References (online):
+
+- [Android developers: Broadcasts overview](https://developer.android.com/guide/components/broadcasts)
+- [Android Broadcast Receiver](https://medium.com/@huseyinozkoc/android-broadcast-receiver-tutorial-with-example-230bea21e78)
+
+[^ up](#knowledge-notes)
+
+---
+
 # Multithreading
 
 When a user opens an application, Android creates its own Linux process. Besides this, the system creates a thread of
@@ -2782,6 +2794,8 @@ For other data transfers, use `Message.setData(Bundle data)`.
 * [MessageQueue and Looper in Android](https://medium.com/@ankit.sinhal/messagequeue-and-looper-in-android-3a18c7fc9181)
 * [Handler in Android](https://medium.com/@ankit.sinhal/handler-in-android-d138c1f4980e)
 * [Understanding of AsyncTask in Android](https://medium.com/@ankit.sinhal/understanding-of-asynctask-in-android-8fe61a96a238)
+* [Main Loop (Главный цикл) в Android Часть 1. Пишем свой цикл](https://habr.com/ru/company/cian/blog/588314/)
+* [Main Loop (Главный цикл) в Android Часть 2. Android SDK](https://habr.com/ru/company/cian/blog/589827/)
 
 [^ up](#knowledge-notes)
 
