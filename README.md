@@ -12,8 +12,19 @@
         - [Generics](#java-generics)
     - [Collections](#java-collections)
         - [Interface Collection](#java-interface-collection)
+            - [Interface List](#java-interface-list)
+                - [LinkedList](#java-linkedlist)
+                - [ArrayList](#java-arraylist)
+            - Interface Set
+                - HashSet
+                - LinkedHashSet
+                - TreeSet
         - [Interface Map](#java-interface-map)
             - [HashMap](#java-hashmap)
+            - [HashTable](#java-hashtable)
+            - LinkedHashMap
+            - WeakHashMap
+            - TreeMap
     - [Concurrency](#concurrency)
         - [Thread](#java-thread)
         - [Lock vs Monitor](#lock-vs-monitor)
@@ -2978,7 +2989,7 @@ public class MySolution {
     }
 
     private int binarySearch() {
-        int mediumIndex = (minIndex + maxIndex) / 2;
+        int mediumIndex = minIndex + (maxIndex - minIndex) / 2; // (minIndex + maxIndex) - can make `Int` overflow!!!
         int mediumValue = nums[mediumIndex];
         if (mediumValue == target) {
             return mediumIndex;
