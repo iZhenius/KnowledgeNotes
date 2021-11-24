@@ -94,13 +94,13 @@ $ git push -u origin main
 ```java
 interface Brain extends Serializable, Cloneable {
 
-    public static final int number = 1;
+    int number = 1;
 
     void talk(String name); // public abstract by default
 
-    public abstract void doProgramming();
+    void doProgramming();
 
-    public default void doRoutine() {
+    default void doRoutine() {
         // carry out normal day-to-day duties
     }
 }
@@ -122,7 +122,7 @@ abstract class Car extends SecurityManager implements Serializable, Cloneable {
 
     public static int wheels = 4;
 
-    private boolean isTankFull = false;
+    private final boolean isTankFull = false;
 
     protected void turn(String direction) {
         System.out.println("Turning" + direction);
@@ -237,8 +237,8 @@ class OuterClass { // The outer class can be only `public` or `package-private(d
 ```java
 class OuterClass {
 
-    private static String staticOuterStr = "staticOuterStr";
-    private String outerStr = "outerStr";
+    private static final String staticOuterStr = "staticOuterStr";
+    private final String outerStr = "outerStr";
 
     private static void staticOuterFoo() {
     }
@@ -260,7 +260,7 @@ class OuterClass {
     private class InnerClass {
 
         //static String staticInnerStr = ""; // Cannot have static members
-        private String innerStr = outerStr;
+        private final String innerStr = outerStr;
 
         //static void staticInnerFoo() {}  // Cannot have static members
 
@@ -272,9 +272,9 @@ class OuterClass {
 
     static class StaticInnerClass {
 
-        private static String staticInnerStr = "staticInnerStr";
+        private static final String staticInnerStr = "staticInnerStr";
         //String innerStr = outerStr; // Cannot make a static reference to the non-static
-        private String innerStr = new OuterClass().outerStr; // only from outer class instance
+        private final String innerStr = new OuterClass().outerStr; // only from outer class instance
 
         //static void staticInnerFoo() {}  // Cannot have static members
 
@@ -504,7 +504,7 @@ public class Object {
 
 * [Data types in Java](https://www.geeksforgeeks.org/data-types-in-java/)
 * [Primitive Data Types and What Default Values Are Assigned to Them in Java?](https://medium.com/javarevisited/primitive-data-types-in-java-and-what-default-values-are-assigned-to-them-take-a-look-7d5f0e8083e4)
-* [Are wrappers of a primitive type primitives types too?](https://stackoverflow.com/questions/48304498/are-wrappers-of-a-primitive-type-primitives-types-too)
+* [StackOverflow: Are wrappers of a primitive type primitives types too?](https://stackoverflow.com/questions/48304498/are-wrappers-of-a-primitive-type-primitives-types-too)
 
 [^ up](#knowledge-notes)
 
@@ -872,10 +872,10 @@ public class GenericsExamples {
 
 * [Java Generics Tutorial](https://howtodoinjava.com/java/generics/complete-java-generics-tutorial/)
 * [Java Generics: Why Are They Used?](https://medium.com/javarevisited/java-generics-why-are-they-used-4157734de4fd)
-* [How can I add to List<? extends Number> data structures?](https://stackoverflow.com/questions/2776975/how-can-i-add-to-list-extends-number-data-structures)
+* [StackOverflow: How can I add to List<? extends Number> data structures?](https://stackoverflow.com/questions/2776975/how-can-i-add-to-list-extends-number-data-structures)
 * [An introduction to generic types in Java: covariance and contravariance](https://medium.com/free-code-camp/understanding-java-generic-types-covariance-and-contravariance-88f4c19763d2)
 * [Java Generics FAQs](http://www.angelikalanger.com/GenericsFAQ/JavaGenericsFAQ.html)
-* [Why super keyword in generics is not allowed at class level](https://stackoverflow.com/questions/37411256/why-super-keyword-in-generics-is-not-allowed-at-class-level/37411519#37411519)
+* [StackOverflow: Why super keyword in generics is not allowed at class level](https://stackoverflow.com/questions/37411256/why-super-keyword-in-generics-is-not-allowed-at-class-level/37411519#37411519)
 * [Пришел, увидел, обобщил: погружаемся в Java Generics](https://habr.com/en/company/sberbank/blog/416413/)
 
 [^ up](#knowledge-notes)
@@ -1181,7 +1181,7 @@ wait-set.
 * [What is a Monitor in Computer Science?](https://www.baeldung.com/cs/monitor)
 * [Difference between lock and monitor – Java Concurrency](https://howtodoinjava.com/java/multi-threading/multithreading-difference-between-lock-and-monitor/)
 * [Object level lock vs Class level lock in Java](https://howtodoinjava.com/java/multi-threading/object-vs-class-level-locking/)
-* [Difference: this vs MyClass.class vs MyClass.getClass() in synchronisation](https://stackoverflow.com/questions/51839363/difference-this-vs-myclass-class-vs-myclass-getclass-in-synchronisation)
+* [StackOverflow: Difference: this vs MyClass.class vs MyClass.getClass() in synchronisation](https://stackoverflow.com/questions/51839363/difference-this-vs-myclass-class-vs-myclass-getclass-in-synchronisation)
 * [IllegalMonitorStateException in Java](https://www.baeldung.com/java-illegalmonitorstateexception)
 
 [^ up](#knowledge-notes)
@@ -1230,7 +1230,7 @@ wait-set.
 ### ///// References (online):
 
 * [Difference between atomic, volatile and synchronized in Java](https://javarevisited.blogspot.com/2020/04/difference-between-atomic-volatile-and-synchronized-in-java-multi-threading.html#axzz79ky1D7bi)
-* [What is the difference between atomic / volatile / synchronized?](https://stackoverflow.com/questions/9749746/what-is-the-difference-between-atomic-volatile-synchronized)
+* [StackOverflow: What is the difference between atomic / volatile / synchronized?](https://stackoverflow.com/questions/9749746/what-is-the-difference-between-atomic-volatile-synchronized)
 * [Java Concurrency: Volatile](https://medium.com/javarevisited/java-concurrency-volatile-d0e585852d6b)
 * [Java Concurrency: Synchronized](https://medium.com/javarevisited/java-concurrency-synchronized-7828bf5f06cb)
 * [Synchronization in Java: All You Need to Know](https://levelup.gitconnected.com/synchronization-in-java-all-you-need-to-know-7bd27219ce10)
@@ -1853,7 +1853,7 @@ In Kotlin theAny type represents the super type of all **non-nullable** types.
 /**
  * The root of the Kotlin class hierarchy. Every Kotlin class has `Any` as a superclass.
  */
-public open class Any {
+open class Any {
     /**
      * Indicates whether some other object is "equal to" this one. Implementations must fulfil the following
      * requirements:
@@ -1871,7 +1871,7 @@ public open class Any {
      *
      * Read more about [equality](https://kotlinlang.org/docs/reference/equality.html) in Kotlin.
      */
-    public open operator fun equals(other: Any?): Boolean
+    open operator fun equals(other: Any?): Boolean
 
     /**
      * Returns a hash code value for the object.  The general contract of `hashCode` is:
@@ -1882,12 +1882,12 @@ public open class Any {
      * - If two objects are equal according to the `equals()` method, then calling the
      * `hashCode` method on each of the two objects must produce the same integer result.
      */
-    public open fun hashCode(): Int
+    open fun hashCode(): Int
 
     /**
      * Returns a string representation of the object.
      */
-    public open fun toString(): String
+    open fun toString(): String
 }
 
 ```
@@ -2058,7 +2058,6 @@ class KotlinPropertiesExample {
 
     // Backing fields
     var counter = 0 // the initializer assigns the backing field directly
-        get() = field // redundant getter
         set(value) {
             if (value >= 0)
                 field = value //The field identifier can only be used in the accessors of the property
@@ -2070,7 +2069,7 @@ class KotlinPropertiesExample {
 
     // Backing properties
     private var _table: Map<String, Int>? = null // The private property
-    public val table: Map<String, Int> // The backing property
+    val table: Map<String, Int> // The backing property
         get() {
             if (_table == null) {
                 _table = HashMap() // Type parameters are inferred
@@ -2850,6 +2849,22 @@ View extends Object implements Drawable.Callback, KeyEvent.Callback, Accessibili
 
 ![](res/images/android-view-lifecycle.png)
 
+### Attachment / Detachment
+
+- ### `onAttachedToWindow()`
+
+  Called when the view is attached to a window. This is the phase where the view knows it can be active and has a
+  surface for drawing. So we can start allocating any resources or set up listeners.
+
+  Note that this function is guaranteed to be called before `onDraw(android.graphics.Canvas)`.
+
+- ### `onDetachedFromWindow()`
+
+  This is called when the view is detached from a window. At this point, it no longer has a surface for drawing. This
+  method is called when we call remove view on the `ViewGroup` or when the `Activity` is destroyed etc…
+
+### Traversals
+
 - ### `onMeasure()`
 
   This is called to find out how big a view should be. In the case of ViewGroup, it will go ahead and call measure on
@@ -2944,11 +2959,61 @@ A parent view may call `measure()` more than once on its children. For example, 
 with unspecified dimensions to find out how big they want to be, then call `measure()` on them again with actual numbers
 if the sum of all the children's unconstrained sizes is too big or too small.
 
+### Custom Attributes
+
+First thing to do to add a custom attribute is to declare a styleable in XML-file. You can either add your own
+attribute (remember to prefix it) or reuse an existing one. Reusing attributes is just as easy — just remember to use
+the same namespace, name and type as the original declaration.
+
+In a typical case, you need only two constructors and a bit of initialization code. `obtainStyledAttributes()` is used
+to get an array of values for this view considering default style, the current theme and XML attributes. Then, attribute
+by attribute, you have to get a value by id and set it to the `View`. Notice how the attribute names declared in XML (
+with namespaces) are transformed to field names of the ids in the example.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="GenericView">
+        <attr name="isMaskedOverlay" format="boolean"/>
+        <attr name="isHugeSize" format="boolean"/>
+        <attr name="isContactlessIconVisible" format="boolean"/>
+    </declare-styleable>
+</resources>
+```
+
+```kotlin
+class GenericView : AppCompatImageView(context, attrs, defStyle) {
+    init {
+        context.withStyledAttributes(attrs, R.styleable.GenericView) {
+            if (getBoolean(R.styleable.GenericView_isMaskedOverlay, false)) {
+                setMaskedOverlay()
+            }
+        }
+    }
+}
+```
+
+```java
+public class ImageView extends ImageView {
+    // ...
+    private void initImageView(AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.GenericView, defStyleAttr, defStyleRes);
+        Boolean isMaskedOverlay = (a.getBoolean(R.styleable.GenericView_isMaskedOverlay, false));
+        if (isMaskedOverlay) {
+            setMaskedOverlay();
+        }
+        a.recycle(); // TypedArray objects are a shared resource and must be recycled after use.
+    }
+}
+```
+
 ### ///// References (online):
 
 * [Android developers: View](https://developer.android.com/reference/android/view/View)
 * [The Life Cycle of a View in Android](https://proandroiddev.com/the-life-cycle-of-a-view-in-android-6a2c4665b95e)
 * [Draw Custom Views in Android](https://betterprogramming.pub/draw-custom-views-in-android-a321fa157d60)
+* [Guide to Android custom views: attributes](https://medium.com/@Zielony/guide-to-android-custom-views-attributes-ab28de3e54b7)
+* [StackOverflow: Defining custom attrs](https://stackoverflow.com/questions/3441396/defining-custom-attrs)
 * [Создание собственной View под Android – может ли что-то пойти не так?](https://habr.com/ru/post/321890/)
 
 [^ up](#knowledge-notes)
