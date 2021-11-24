@@ -2406,12 +2406,41 @@ AppCompatActivity extends FragmentActivity implements AppCompatCallback,
 
   The system invokes this callback before an activity is destroyed.
 
+### Launch Modes
+
+- ### "standard" (the default mode)
+
+  Task1: `A -> B -> C -> D -> B -> B` - creates new instance of the activity multiple times
+
+- ### "singleTop"  (or `Intent.FLAG_ACTIVITY_SINGLE_TOP`)
+
+  Task1: `A -> B -> C -> D -> B` - creates new instance of the activity on the top and then method `onNewIntent()` is
+  calling
+
+- ### "singleTask" (or `Intent.FLAG_ACTIVITY_NEW_TASK`)
+
+  Task1: `A -> B -> C -> D`
+
+  Task2: `A -> B` - callback `onNewIntent()` is calling, activities `C`, `D` on top are destroying.
+
+- ### "singleInstance"
+
+  Task1: `A -> B -> C -> E`
+
+  Task2: `D` - callback `onNewIntent()` is calling, activity `D` is always the only activity in task.
+
 ## ///// References (online):
 
 - [Android developers: Application Fundamentals](https://developer.android.com/guide/components/fundamentals)
 - [Android developers: Introduction to Activities](https://developer.android.com/guide/components/activities/intro-activities)
 - [Android developers: Activity](https://developer.android.com/reference/android/app/Activity)
+- [Android developers: Tasks and the back stack](https://developer.android.com/guide/components/activities/tasks-and-back-stack#TaskLaunchModes)
 - [Understand Android Activity's launchMode: standard, singleTop, singleTask and singleInstance](https://inthecheesefactory.com/blog/understand-android-activity-launchmode/en)
+- [Understand Activity Launch Mode With Examples](https://medium.com/@ankit.sinhal/understand-activity-launch-mode-with-examples-721e85b6421e)
+- [The Android Lifecycle cheat sheet — part I: Single Activities](https://medium.com/androiddevelopers/the-android-lifecycle-cheat-sheet-part-i-single-activities-e49fd3d202ab)
+- [The Android Lifecycle cheat sheet — part II: Multiple activities](https://medium.com/androiddevelopers/the-android-lifecycle-cheat-sheet-part-ii-multiple-activities-a411fd139f24)
+- [The Android Lifecycle cheat sheet — part III : Fragments](https://medium.com/androiddevelopers/the-android-lifecycle-cheat-sheet-part-iii-fragments-afc87d4f37fd)
+- [The Android Lifecycle cheat sheet — part IV : ViewModels, Translucent Activities and Launch Modes](https://medium.com/androiddevelopers/the-android-lifecycle-cheat-sheet-part-iv-49946659b094)
 
 [^ up](#knowledge-notes)
 
@@ -3019,6 +3048,57 @@ public class ImageView extends ImageView {
 [^ up](#knowledge-notes)
 
 ***
+
+# Context
+
+## Context
+
+Interface to global information about an application environment. This is an abstract class whose implementation is
+provided by the Android system. It allows access to application-specific resources and classes, as well as up-calls for
+application-level operations such as launching activities, broadcasting and receiving intents, etc.
+
+```java
+public abstract class
+Context extends Object {
+}
+```
+
+## ContextWrapper
+
+Proxying implementation of Context that simply delegates all of its calls to another Context. Can be subclassed to
+modify behavior without changing the original Context.
+
+```java
+public class
+ContextWrapper extends Context {
+}
+```
+
+## ContextThemeWrapper
+
+A context wrapper that allows you to modify or replace the theme of the wrapped context.
+
+```java
+public class
+ContextThemeWrapper extends ContextWrapper {
+}
+```
+
+```java
+public class
+Activity extends ContextThemeWrapper implements LayoutInflater.Factory2, Window.Callback, KeyEvent.Callback, View.OnCreateContextMenuListener, ComponentCallbacks2 {
+}
+```
+
+## ///// References (online):
+
+- [Android developers: Context](https://developer.android.com/reference/android/content/Context)
+- [Android developers: ContextWrapper](https://developer.android.com/reference/android/content/ContextWrapper)
+- [Android developers: ContextThemeWrapper](https://developer.android.com/reference/android/view/ContextThemeWrapper)
+
+[^ up](#knowledge-notes)
+
+---
 
 # Algorithms
 
