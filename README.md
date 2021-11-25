@@ -3011,7 +3011,7 @@ with namespaces) are transformed to field names of the ids in the example.
 ```
 
 ```kotlin
-class GenericView : AppCompatImageView(context, attrs, defStyle) {
+class GenericView : Image(context, attrs, defStyle) {
     init {
         context.withStyledAttributes(attrs, R.styleable.GenericView) {
             if (getBoolean(R.styleable.GenericView_isMaskedOverlay, false)) {
@@ -3034,6 +3034,23 @@ public class ImageView extends ImageView {
         a.recycle(); // TypedArray objects are a shared resource and must be recycled after use.
     }
 }
+```
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:whatever="http://schemas.android.com/apk/res-auto"
+  android:orientation="vertical"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
+
+    <org.example.mypackage.MyCustomView
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center"
+      whatever:isMaskedOverlay="true" />
+</LinearLayout>
 ```
 
 ### ///// References (online):
