@@ -56,10 +56,11 @@
         - [Broadcast Receiver](#broadcast-receiver)
     - [Multithreading](#multithreading)
     - [Views (widgets)](#views-widgets)
-        - [View](#view)
+        - [View Class](#view-class)
     - [Context](#context)
 - [Frameworks](#frameworks)
     - [Moxy](#moxy)
+    - [Dagger](#dagger)
 - [Algorithms](#algorithms)
     - [Binary Search](#binary-search)
 
@@ -2834,7 +2835,7 @@ For other data transfers, use `Message.setData(Bundle data)`.
 
 # Views (widgets)
 
-## View
+## View Class
 
 `View` class represents the basic building block for user interface components. A `View` occupies a rectangular area on
 the screen and is responsible for drawing and event handling. The view is the base class for `widgets`, which are used
@@ -3216,6 +3217,27 @@ You can choose any implementation of Model layer.
 - [Стратегии в Moxy (Часть 2)](https://habr.com/ru/company/redmadrobot/blog/341108/)
 - [MVP на стероидах: заставляем робота писать код за вас](https://habr.com/ru/company/redmadrobot/blog/305798/)
 - [MVP для Android — преимущества использования Moxy в качестве вспомогательной библиотеки](https://habr.com/ru/post/506806/)
+
+[^ up](#knowledge-notes)
+
+---
+
+## Dagger
+
+...
+
+### ///// References (online):
+
+- [Dagger](https://dagger.dev/)
+- [Using Dagger in Android apps](https://developer.android.com/training/dependency-injection/dagger-android)
+- [Dagger basics](https://developer.android.com/training/dependency-injection/dagger-basics)
+- [Dagger 2. Часть первая. Основы, создание графа зависимостей, Scopes](https://habr.com/ru/post/279125/)
+- [Dagger 2. Часть вторая. Custom scopes, Component dependencies, Subcomponents](https://habr.com/ru/post/279641/)
+- [Dagger 2. Часть третья. Новые грани возможного](https://habr.com/ru/post/320676/)
+- [Дружественное введение в Dagger 2. Часть 1](https://habr.com/ru/post/307434/)
+- [Дружественное введение в Dagger 2. Часть 2](https://habr.com/ru/post/308040/)
+- [Dagger 2 – это элементарно (Часть 1)](https://habr.com/ru/post/466725/)
+- [Dagger 2 – это элементарно (Часть 2)](https://habr.com/ru/post/466769/)
 
 [^ up](#knowledge-notes)
 
