@@ -44,6 +44,7 @@
     - [Kotlin Basics](#kotlin-basics)
         - [Nested Classes](#kotlin-nested-classes)
         - [Class Any](#class-any)
+        - [Data Classes](#data-classes)
     - [Kotlin Syntax Features](#kotlin-syntax-features)
         - [Scope functions](#kotlin-scope-functions)
         - [Properties](#kotlin-properties)
@@ -1913,6 +1914,144 @@ It differs to Java’s Object in 2 main things:
 
 ---
 
+## Data Classes
+
+```kotlin
+data class User(val name: String, val age: Int)
+```
+
+```java
+// Generated Java bytecode
+public final class User {
+    @NotNull
+    private final String name;
+    private final int age;
+
+    @NotNull
+    public final String getName() {
+        return this.name;
+    }
+
+    public final int getAge() {
+        return this.age;
+    }
+
+    public User(@NotNull String name, int age) {
+        Intrinsics.checkNotNullParameter(name, "name");
+        super();
+        this.name = name;
+        this.age = age;
+    }
+
+    @NotNull
+    public final String component1() {
+        return this.name;
+    }
+
+    public final int component2() {
+        return this.age;
+    }
+
+    @NotNull
+    public final User copy(@NotNull String name, int age) {
+        Intrinsics.checkNotNullParameter(name, "name");
+        return new User(name, age);
+    }
+
+    // $FF: synthetic method
+    public static User copy$default(User var0, String var1, int var2, int var3, Object var4) {
+        if ((var3 & 1) != 0) {
+            var1 = var0.name;
+        }
+
+        if ((var3 & 2) != 0) {
+            var2 = var0.age;
+        }
+
+        return var0.copy(var1, var2);
+    }
+
+    @NotNull
+    public String toString() {
+        return "User(name=" + this.name + ", age=" + this.age + ")";
+    }
+
+    public int hashCode() {
+        String var10000 = this.name;
+        return (var10000 != null ? var10000.hashCode() : 0) * 31 + Integer.hashCode(this.age);
+    }
+
+    public boolean equals(@Nullable Object var1) {
+        if (this != var1) {
+            if (var1 instanceof User) {
+                User var2 = (User) var1;
+                return Intrinsics.areEqual(this.name, var2.name) && this.age == var2.age;
+            }
+
+            return false;
+        } else {
+            return true;
+        }
+    }
+}
+```
+
+### The compiler automatically derives the following members from all properties declared in the primary constructor:
+
+- `equals()`;
+
+- `hashCode()`;
+
+- `toString() `of the form "User(name=John, age=42)";
+
+- `componentN()` functions corresponding to the properties in their order of declaration;
+
+- `copy()`.
+
+> If there are explicit implementations of `equals()`, `hashCode()`, or `toString()` in the data class body
+> or `final` implementations in a superclass, then **these functions are not generated**,
+> and the existing implementations are used.
+
+### Data classes requirements:
+
+- The primary constructor needs to have at least **one** parameter.
+
+- All primary constructor parameters need to be marked as `val` or `var`.
+
+- Data classes cannot be `abstract`, `open`, `sealed`, or `inner`.
+
+### Data classes with properties:
+
+```kotlin
+data class Person(val name: String) {
+    var age: Int = 0
+}
+
+val person1 = Person("John")
+val person2 = Person("John")
+person1.age = 10
+person2.age = 20
+
+println(person1 == person2) // true
+```
+
+Only the property `name` will be used inside the `toString()`, `equals()`, `hashCode()`, and `copy()` implementations,
+and there will only be one component function `component1()`.
+
+> On the JVM, if the generated class needs to have a parameterless constructor,
+> default values for the properties have to be specified.
+> ```kotlin
+> data class User(val name: String = "", val age: Int = 0) // `constructor User()` will be generated
+> ```
+
+### ///// References (online):
+
+* [Kotlin Data classes](https://kotlinlang.org/docs/data-classes.html)
+
+[^ up](#knowledge-notes)
+
+---
+
 # Kotlin Syntax Features
 
 ## Kotlin Scope Functions
@@ -2433,7 +2572,7 @@ AppCompatActivity extends FragmentActivity implements AppCompatCallback,
 
   Task2: `D` - callback `onNewIntent()` is calling, activity `D` is always the only activity in task.
 
-## ///// References (online):
+### ///// References (online):
 
 - [Android developers: Application Fundamentals](https://developer.android.com/guide/components/fundamentals)
 - [Android developers: Introduction to Activities](https://developer.android.com/guide/components/activities/intro-activities)
