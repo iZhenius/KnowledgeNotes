@@ -57,6 +57,9 @@
     - [Multithreading](#multithreading)
     - [Views (widgets)](#views-widgets)
         - [View](#view)
+    - [Context](#context)
+- [Frameworks](#frameworks)
+    - [Moxy](#moxy)
 - [Algorithms](#algorithms)
     - [Binary Search](#binary-search)
 
@@ -3039,17 +3042,17 @@ public class ImageView extends ImageView {
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:whatever="http://schemas.android.com/apk/res-auto"
-  android:orientation="vertical"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent">
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:whatever="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
     <org.example.mypackage.MyCustomView
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:gravity="center"
-      whatever:isMaskedOverlay="true" />
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            whatever:isMaskedOverlay="true"/>
 </LinearLayout>
 ```
 
@@ -3068,7 +3071,7 @@ public class ImageView extends ImageView {
 
 # Context
 
-## Context
+## Context Class
 
 Interface to global information about an application environment. This is an abstract class whose implementation is
 provided by the Android system. It allows access to application-specific resources and classes, as well as up-calls for
@@ -3080,7 +3083,7 @@ Context extends Object {
 }
 ```
 
-## ContextWrapper
+## ContextWrapper Class
 
 Proxying implementation of Context that simply delegates all of its calls to another Context. Can be subclassed to
 modify behavior without changing the original Context.
@@ -3091,7 +3094,7 @@ ContextWrapper extends Context {
 }
 ```
 
-## ContextThemeWrapper
+## ContextThemeWrapper Class
 
 A context wrapper that allows you to modify or replace the theme of the wrapped context.
 
@@ -3115,7 +3118,108 @@ Activity extends ContextThemeWrapper implements LayoutInflater.Factory2, Window.
 
 [^ up](#knowledge-notes)
 
----
+***
+
+# Frameworks
+
+## Moxy
+
+### View
+
+### `interface View implements MvpView`
+
+```kotlin
+interface NewsArticlesView : MvpView {
+
+    @OneExecution
+    fun setToolbarTitle(title: String?)
+
+    @AddToEndSingle
+    fun switchProgressLoading(show: Boolean)
+
+    @AddToEndSingle
+    fun showErrorDialog()
+
+    @AddToEndSingle
+    fun setNewsArticleList(newsArticles: List<NewsArticle>)
+}
+```
+
+### ViewState
+
+### `MvpViewState<View extends MvpView>`
+
+- Method `protected abstract void restoreState(View view)` - is calling for new `View` and for restored `View`.
+
+- `MvpViewState` holds list of `WeakReferences` to `Views`
+
+### Presenter
+
+### `MvpPresenter<View extends MvpView>`
+
+- Method `public View getViewState()` returns an instance of the `ViewState`
+
+- For attaching/detaching `View` to/from `Presenter` use `public void attachView(View view)`
+  and `public void detachView(View view)`
+
+- `Presenter` can hold list of `Views`
+
+- Important method `protected void onFirstViewAttach()` - is using for the first time attaching `View`
+  to `Presenter`
+
+- Method `public boolean isInRestoreState(View view)` - to understand which state `View` has.
+
+### MvpFacade
+
+It is singleton.
+
+Method `public static void init()` is need to call in `onCreate()` method of `Application `class.
+
+### MvpApplication
+
+You may want to extend your `Application` class from `MvpApplication`.
+
+### Model
+
+You can choose any implementation of Model layer.
+
+### StateStrategy
+
+- `AddToEndStrategy` – add new command to the end of the queue. The Default strategy.
+- `AddToEndSingleStrategy` – delete old command (if it exists) and add new command to the end of the queue.
+- `SingleStateStrategy` – clear the queue and then add command to the end of the queue.
+- `SkipStrategy` – don't add the command to the queue but make an effect on the view state if it is existing.
+- `OneExecuteStrategy` — add command to the queue only to make an effect on the view and then the command will be
+  deleted from the queue.
+
+### MvpDelegate
+
+```kotlin
+    private val myPresenter: MyPresenter by moxyPresenter {
+    MyComponent.get().myPresenter
+}
+```
+
+### Annotations
+
+- `@InjectPresenter` – for managing the lifecycle of the `Presenter`.
+    - `@InjectViewState` – for linking the `ViewState` to `Presenter`.
+    - `@StateStrategyType` – for managing the add and release command strategy from queue of the commands in `ViewState`
+      .
+    - `@GenerateViewState` – for generating a bytecode of the `ViewState` of the `View` interface.
+
+### ///// References (online):
+
+- [Moxy](https://github.com/Arello-Mobile/Moxy)
+- [Moxy — реализация MVP под Android с щепоткой магии](https://habr.com/ru/post/276189/)
+- [Стратегии в Moxy (часть 1)](https://habr.com/ru/company/redmadrobot/blog/325816/)
+- [Стратегии в Moxy (Часть 2)](https://habr.com/ru/company/redmadrobot/blog/341108/)
+- [MVP на стероидах: заставляем робота писать код за вас](https://habr.com/ru/company/redmadrobot/blog/305798/)
+- [MVP для Android — преимущества использования Moxy в качестве вспомогательной библиотеки](https://habr.com/ru/post/506806/)
+
+[^ up](#knowledge-notes)
+
+***
 
 # Algorithms
 
