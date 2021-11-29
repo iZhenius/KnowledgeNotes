@@ -3196,7 +3196,7 @@ You can choose any implementation of Model layer.
 ### MvpDelegate
 
 ```kotlin
-    private val myPresenter: MyPresenter by moxyPresenter {
+private val myPresenter: MyPresenter by moxyPresenter {
     MyComponent.get().myPresenter
 }
 ```
@@ -3204,10 +3204,9 @@ You can choose any implementation of Model layer.
 ### Annotations
 
 - `@InjectPresenter` – for managing the lifecycle of the `Presenter`.
-    - `@InjectViewState` – for linking the `ViewState` to `Presenter`.
-    - `@StateStrategyType` – for managing the add and release command strategy from queue of the commands in `ViewState`
-      .
-    - `@GenerateViewState` – for generating a bytecode of the `ViewState` of the `View` interface.
+- `@InjectViewState` – for linking the `ViewState` to `Presenter`.
+- `@StateStrategyType` – for managing the add and release command strategy from queue of the commands in `ViewState`.
+- `@GenerateViewState` – for generating a bytecode of the `ViewState` of the `View` interface.
 
 ### ///// References (online):
 
