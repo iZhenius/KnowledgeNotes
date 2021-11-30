@@ -59,6 +59,7 @@
     - [Views (widgets)](#views-widgets)
         - [View Class](#view-class)
     - [Context](#context)
+    - [ProGuard](#proguard)
 - [Frameworks](#frameworks)
     - [Moxy](#moxy)
     - [Dagger](#dagger)
@@ -3257,6 +3258,27 @@ Activity extends ContextThemeWrapper implements LayoutInflater.Factory2, Window.
 - [Android developers: ContextThemeWrapper](https://developer.android.com/reference/android/view/ContextThemeWrapper)
 
 [^ up](#knowledge-notes)
+
+---
+
+# ProGuard
+
+И крутая опция в proguard-rules.pro:
+-whyareyoukeeping class com.github.kolya.myapplication.objects.PaymentData
+В результате билда в консоль пишет :
+
+```
+Task :app:minifyReleaseWithR8
+com.github.kolya.myapplication.objects.PaymentData
+|- is referenced in keep rule:
+|  /home/nick/TempProjects/MyApplication3/app/proguard-rules.pro:22:1
+```
+Типо находит строку правила почему оставило и не обфусцировало определенный класс
+
+## ///// References (online):
+
+- [Reading ProGuard’s Outputs](https://jebware.com/blog/?p=484)
+- [ProGuard Playground](https://playground.proguard.com)
 
 ***
 
