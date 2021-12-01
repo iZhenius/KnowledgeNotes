@@ -64,6 +64,7 @@
 - [Frameworks](#frameworks)
     - [Moxy](#moxy)
     - [Dagger](#dagger)
+    - [DI Approach Comparison](#di-approach-comparison)
 - [Algorithms](#algorithms)
     - [Binary Search](#binary-search)
 
@@ -87,6 +88,7 @@ $ git push -u origin main
 ```
 
 ## Git Clone
+
 ```shell
 $ cd <directory-of-the-all-projects>
 $ git clone https://url
@@ -3274,8 +3276,7 @@ Activity extends ContextThemeWrapper implements LayoutInflater.Factory2, Window.
 # ProGuard
 
 И крутая опция в proguard-rules.pro:
--whyareyoukeeping class com.github.kolya.myapplication.objects.PaymentData
-В результате билда в консоль пишет :
+-whyareyoukeeping class com.github.kolya.myapplication.objects.PaymentData В результате билда в консоль пишет :
 
 ```
 Task :app:minifyReleaseWithR8
@@ -3283,6 +3284,7 @@ com.github.kolya.myapplication.objects.PaymentData
 |- is referenced in keep rule:
 |  /home/nick/TempProjects/MyApplication3/app/proguard-rules.pro:22:1
 ```
+
 Типо находит строку правила почему оставило и не обфусцировало определенный класс
 
 ## ///// References (online):
@@ -3389,6 +3391,70 @@ private val myPresenter: MyPresenter by moxyPresenter {
 - [MVP для Android — преимущества использования Moxy в качестве вспомогательной библиотеки](https://habr.com/ru/post/506806/)
 
 [^ up](#knowledge-notes)
+
+---
+
+## DI Approach Comparison
+
+### Dagger
+
+#### Dagger’s benefits:
+
+- The “official” framework by Google
+- Most popular
+- Biggest feature set
+- Compile-time validation
+
+#### Dagger’s drawbacks:
+
+- Build time overhead
+- Complex
+- Poor official documentation
+
+### Hilt
+
+#### Hilt’s benefits:
+
+- Provides better default “template” compared to Dagger
+- Less space for mistakes compared to Dagger
+- Decent documentation
+
+#### Hilt’s drawbacks:
+
+- Risk of additional build time overhead
+
+### Koin
+
+#### Koin’s benefits:
+
+- Simple
+- Almost no build time overhead
+- Good documentation
+- Good support
+
+#### Koin’s drawbacks:
+
+- No compile-time validation (i.e. runtime errors)
+- Limited feature set compared to Dagger and Hilt (e.g. as for today, no ability to add binding for Activity object)
+- Risk of user-facing performance issues if runtime reflection is used (optional)
+- Can’t be used in Java projects
+
+### Pure DI
+
+#### Pure DI’s benefits:
+
+- No performance concerns
+- Simple to understand and modify
+
+#### Pure DI’s drawbacks:
+
+- Initial implementation requires special knowledge and skills
+- More manually written code than when using DI frameworks
+- Not “sexy” enough for many developers
+
+### ///// References (online):
+
+- [Dagger vs Hilt vs Koin vs Pure Dependency Injection](https://www.techyourchance.com/dagger-vs-hilt-vs-koin-vs-pure-dependency-injection)
 
 ---
 
