@@ -46,6 +46,7 @@
         - [Nested Classes](#kotlin-nested-classes)
         - [Class Any](#class-any)
         - [Data Classes](#data-classes)
+        - [Sealed Classes](#sealed-classes)
     - [Kotlin Syntax Features](#kotlin-syntax-features)
         - [Scope functions](#kotlin-scope-functions)
         - [Properties](#kotlin-properties)
@@ -2065,13 +2066,133 @@ and there will only be one component function `component1()`.
 
 ---
 
+## Sealed Classes
+
+`Sealed classes` and `interfaces` represent restricted class hierarchies that provide more control over inheritance. All
+direct subclasses of a sealed class are known at compile time. No other subclasses may appear after a module with
+the `sealed class` is compiled.
+
+The same works for `sealed interfaces` and their implementations: once a module with a `sealed interface` is compiled,
+no new implementations can appear.
+
+```kotlin
+sealed interface Error
+
+sealed class IOError() : Error
+
+class FileReadError(val f: String) : IOError()
+class DatabaseError(val source: String) : IOError()
+
+object RuntimeError : Error
+```
+
+```java
+// Java compiled bytecode
+
+// Error.java
+public interface Error {
+}
+
+// IOError.java
+public abstract class IOError implements Error {
+    private IOError() {
+    }
+
+    // $FF: synthetic method
+    public IOError(DefaultConstructorMarker $constructor_marker) {
+        this();
+    }
+}
+
+// FileReadError.java
+public final class FileReadError extends IOError {
+    @NotNull
+    private final String f;
+
+    @NotNull
+    public final String getF() {
+        return this.f;
+    }
+
+    public FileReadError(@NotNull String f) {
+        Intrinsics.checkNotNullParameter(f, "f");
+        super((DefaultConstructorMarker) null);
+        this.f = f;
+    }
+}
+
+// DatabaseError.java
+public final class DatabaseError extends IOError {
+    @NotNull
+    private final String source;
+
+    @NotNull
+    public final String getSource() {
+        return this.source;
+    }
+
+    public DatabaseError(@NotNull String source) {
+        Intrinsics.checkNotNullParameter(source, "source");
+        super((DefaultConstructorMarker) null);
+        this.source = source;
+    }
+}
+
+// RuntimeError.java
+public final class RuntimeError implements Error {
+    @NotNull
+    public static final RuntimeError INSTANCE;
+
+    private RuntimeError() {
+    }
+
+    static {
+        RuntimeError var0 = new RuntimeError();
+        INSTANCE = var0;
+    }
+}
+```
+
+Direct subclasses of `sealed classes` and `interfaces` must be declared **in the same package**. They may be top-level
+or nested inside any number of other named classes, named interfaces, or named objects.
+
+Subclasses of `sealed classes` can't be **local** nor **anonymous objects**.
+
+In some sense, `sealed classes` are similar to `enum classes`: the set of values for an `enum` type is also restricted,
+but each enum constant exists only as a **single** instance, whereas a subclass of a sealed class can have **multiple**
+instances, each with its own state.
+
+A `sealed class` is `abstract` by itself, it cannot be instantiated directly and can have `abstract` members.
+
+Constructors of `sealed classes` can have one of two visibilities: `protected` (by default) or `private`.
+
+`Enum classes` can't extend a `sealed class` (as well as any other class), but they can implement `sealed interfaces`.
+
+These restrictions don't apply to **indirect** subclasses. If a direct subclass of a `sealed class` is not marked
+as `sealed`, it can be extended in any ways that its modifiers allow.
+
+```kotlin
+sealed interface Error // has implementations only in same package and module
+
+sealed class IOError() : Error // extended only in same package and module
+open class CustomError() : Error // can be extended wherever it's visible
+```
+
+### ///// References (online):
+
+- [Sealed Classes](https://kotlinlang.org/docs/sealed-classes.html)
+
+[^ up](#knowledge-notes)
+
+---
+
 # Kotlin Syntax Features
 
 ## Kotlin Scope Functions
 
-| Function | Object reference | Return value | Is extension function | Usage |
-| --- | --- | --- | --- | --- |
-| `.let{it} ` | `it` | Lambda result | Yes | 1) to invoke one or more functions on results of call chains; 2)  to execute a code block only with non-null values; 3) to introduce local variables with a limited scope for improving code readability. |
+| Function    | Object reference | Return value  | Is extension function | Usage                                                                                                                                                                                                             |
+|-------------|------------------|---------------|-----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `.let{it} ` | `it`             | Lambda result | Yes                   | 1) to invoke one or more functions on results of call chains;<br/>2)  to execute a code block only with non-null values;<br/>3) to introduce local variables with a limited scope for improving code readability. |
 
 ```kotlin
 val str: String? = "Hello"
@@ -2083,9 +2204,9 @@ val length: Int? = str?.let { nonNullStr -> // it - nonNullStr is `String` && no
 println(length) // 5 or `null` if str == `null`
 ```
 
-| Function | Object reference | Return value | Is extension function | Usage |
-| --- | --- | --- | --- | --- |
-| `.run{this}` | `this` | Lambda result | Yes | 1) useful when your lambda contains both the object initialization and the computation of the return value. |
+| Function     | Object reference | Return value  | Is extension function | Usage                                                                                                       |
+|--------------|------------------|---------------|-----------------------|-------------------------------------------------------------------------------------------------------------|
+| `.run{this}` | `this`           | Lambda result | Yes                   | 1) useful when your lambda contains both the object initialization and the computation of the return value. |
 
 ```kotlin
 val service = MultiportService("https://example.kotlinlang.org", 80)
@@ -2096,9 +2217,9 @@ val result: QueryResult = service.run { // this: MultiportService
 }
 ```
 
-| Function | Object reference | Return value | Is extension function | Usage |
-| --- | --- | --- | --- | --- |
-| `run{}` | － | Lambda result | No | 1) useful for executing a block of several statements where an expression is required. |
+| Function | Object reference | Return value  | Is extension function | Usage                                                                                  |
+|----------|------------------|---------------|-----------------------|----------------------------------------------------------------------------------------|
+| `run{}`  | －                | Lambda result | No                    | 1) useful for executing a block of several statements where an expression is required. |
 
 ```kotlin
 val hexNumberRegex: Regex = run { // no reference to context object
@@ -2110,9 +2231,9 @@ val hexNumberRegex: Regex = run { // no reference to context object
 }
 ```
 
-| Function | Object reference | Return value | Is extension function | Usage |
-| --- | --- | --- | --- | --- |
-| `with{this}` | `this` | Lambda result | No | 1) for calling functions on the context object without providing the lambda result; 2) introducing a helper object whose properties or functions will be used for calculating a return value. |
+| Function     | Object reference | Return value  | Is extension function | Usage                                                                                                                                                                                             |
+|--------------|------------------|---------------|-----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `with{this}` | `this`           | Lambda result | No                    | 1) for calling functions on the context object without providing the lambda result;<br/>2) introducing a helper object whose properties or functions will be used for calculating a return value. |
 
 ```kotlin
 val numbers = mutableListOf("one", "two", "three")
@@ -2130,9 +2251,9 @@ val firstAndLast: String = with(numbers) { // this: MutableList<String>
 }
 ```
 
-| Function | Object reference | Return value | Is extension function | Usage |
-| --- | --- | --- | --- | --- |
-| `.apply{this}` | `this` | Context object | Yes | 1)  for code blocks that don't return a value and mainly operate on the members of the receiver object. |
+| Function       | Object reference | Return value   | Is extension function | Usage                                                                                                   |
+|----------------|------------------|----------------|-----------------------|---------------------------------------------------------------------------------------------------------|
+| `.apply{this}` | `this`           | Context object | Yes                   | 1)  for code blocks that don't return a value and mainly operate on the members of the receiver object. |
 
 ```kotlin
 val adam = Person("Adam").apply { // this: Person
@@ -2142,9 +2263,9 @@ val adam = Person("Adam").apply { // this: Person
 }
 ```
 
-| Function | Object reference | Return value | Is extension function | Usage |
-| --- | --- | --- | --- | --- |
-| `.also{it}` | `it` | Context object | Yes | 1) use for actions that need a reference rather to the object than to its properties and functions; 2) use when you don't want to shadow `this` reference from an outer scope. |
+| Function    | Object reference | Return value   | Is extension function | Usage                                                                                                                                                                              |
+|-------------|------------------|----------------|-----------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `.also{it}` | `it`             | Context object | Yes                   | 1) use for actions that need a reference rather to the object than to its properties and functions;<br/>2) use when you don't want to shadow `this` reference from an outer scope. |
 
 ```kotlin
 val numbers = mutableListOf("one", "two", "three")
@@ -2156,9 +2277,9 @@ numbers
     .add("four")
 ```
 
-| Function | Object reference | Return value | Is extension function | Usage |
-| --- | --- | --- | --- | --- |
-| `.takeIf{it}?` | `it` | Context object, `null` | Yes | 1) use as a filtering function for a single object. |
+| Function       | Object reference | Return value           | Is extension function | Usage                                               |
+|----------------|------------------|------------------------|-----------------------|-----------------------------------------------------|
+| `.takeIf{it}?` | `it`             | Context object, `null` | Yes                   | 1) use as a filtering function for a single object. |
 
 ```kotlin
 val str = "Hello"
@@ -2166,9 +2287,9 @@ val caps = str.takeIf { it.isNotEmpty() }?.uppercase() ?: "null"
 println(caps) // "HELLO"
 ```
 
-| Function | Object reference | Return value | Is extension function | Usage |
-| --- | --- | --- | --- | --- |
-| `.takeUnless{it}?` | `it` | Context object, `null` | Yes | 1) use as a filtering function for a single object. |
+| Function           | Object reference | Return value           | Is extension function | Usage                                               |
+|--------------------|------------------|------------------------|-----------------------|-----------------------------------------------------|
+| `.takeUnless{it}?` | `it`             | Context object, `null` | Yes                   | 1) use as a filtering function for a single object. |
 
 ```kotlin
 val str = "Hello"
