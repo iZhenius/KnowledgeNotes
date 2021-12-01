@@ -2,6 +2,7 @@
 
 - [Git](#git)
     - [Git Initial](#git-initial)
+    - [Git Clone](#git-clone)
 - [Java](#java)
     - [Basics](#java-basics)
         - [AbstractClass vs Interface](#abstract-class-vs-interface)
@@ -70,7 +71,7 @@
 
 # Git
 
-# Git Initial
+## Git Initial
 
 ```shell
 $ git config --global user.email "user@mail.com"
@@ -83,6 +84,15 @@ $ git commit -m "Initial commit"
 $ git remote add origin git@github.com:username/projectname.git
   (or git remote add origin https://github.com/username/projectname.git)
 $ git push -u origin main
+```
+
+## Git Clone
+```shell
+$ cd <directory-of-the-all-projects>
+$ git clone https://url
+  (or GIT_SSL_NO_VERIFY=true git clone https://url if certificate is bad)
+$ cd <directory-of-the-clone>
+$ git config http.sslVerify false
 ```
 
 [^ up](#knowledge-notes)
