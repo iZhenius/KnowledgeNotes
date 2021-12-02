@@ -5,6 +5,7 @@
     - [Git Clone](#git-clone)
 - [Java](#java)
     - [Basics](#java-basics)
+        - [Method Definition](#method-definition)
         - [AbstractClass vs Interface](#abstract-class-vs-interface)
         - [Nested Classes](#java-nested-classes)
         - [Class Object](#class-object)
@@ -51,6 +52,7 @@
         - [Scope functions](#kotlin-scope-functions)
         - [Properties](#kotlin-properties)
         - [Delegated Properties](#kotlin-delegated-properties)
+        - [Extensions](#kotlin-extensions)
     - [Kotlin Generics](#kotlin-generics)
 - [Android](#android)
     - [App Components](#app-components)
@@ -105,6 +107,53 @@ $ git config http.sslVerify false
 # Java
 
 # Java Basics
+
+## Method Definition
+
+![](res/images/java-method-defenition.png)
+
+### A method consists of six parts:
+
+- **Access modifier** — optionally we can specify from wherein the code one can access the method;
+- **Return type** — _Required_ — the type of the value returned by the method, if any;
+- **Method identifier** —  _Required_ — the name we give to the method;
+- **Parameter list** — an optional comma-separated list of inputs for the method;
+- **Exception list** — an optional list of exceptions the method can throw;
+- **Body** —  _Required_ — definition of the logic (can be empty).
+
+> **Method signature**  — the **method's name** and the **parameter types**.
+>
+> The **parameter names** don't influence the method signature.
+
+> **Method Overloading** — two or more methods with the **different method signatures**.
+>
+> You cannot declare more than one method with the **same name** and the **same number** and **type
+> of arguments**, because the compiler cannot tell them apart.
+
+> **Type Erasure** changes the effective signature, with generic parameters.
+
+```java
+public class OverloadingErrors<T extends Serializable> {
+
+    public void printElement(T t) { // cause collision
+        System.out.println("Signature is: printElement(T)");
+    }
+
+    public void printElement(Serializable o) {
+        System.out.println("Signature is: printElement(Serializable)");
+    }
+}
+```
+
+### ///// References (online):
+
+- [The Java™ Tutorials: Defining Methods](https://docs.oracle.com/javase/tutorial/java/javaOO/methods.html)
+- [Methods in Java](https://www.baeldung.com/java-methods)
+- [Does a Method’s Signature Include the Return Type in Java?](https://www.baeldung.com/java-method-signature-return-type)
+
+[^ up](#knowledge-notes)
+
+---
 
 ## Abstract Class vs Interface
 
@@ -2516,6 +2565,64 @@ var MyClass.extDelegated: Int by ::topLevelInt
 
 ---
 
+## Kotlin Extensions
+
+Extensions **do not modify** the classes they extend. By defining an extension, you are **not inserting**
+new members into a class, only making new functions callable with the dot-notation on variables of this type.
+
+Extension functions are dispatched **statically**, which means they are not virtual by receiver type. An extension
+function being called is determined by the type of the expression on which the function is invoked, not by the type of
+the result from evaluating that expression at runtime.
+
+### Extension Function
+
+```kotlin
+fun <T> MutableList<T>.swap(index1: Int, index2: Int) {
+    val tmp = this[index1] // 'this' corresponds to the list
+    this[index1] = this[index2]
+    this[index2] = tmp
+}
+```
+
+### Extension Property
+
+```kotlin
+val <T> List<T>.lastIndex: Int // initializers are not allowed for extension properties
+    get() = size - 1
+```
+
+### Companion object extensions
+
+```kotlin
+class MyClass {
+    companion object {}  // will be called "Companion"
+}
+
+fun MyClass.Companion.printCompanion() {
+    println("companion")
+}
+
+fun main() {
+    MyClass.printCompanion()
+}
+```
+
+### Note on visibility:
+
+- An extension declared at the **top level of a file** has access to the other `private` top-level declarations in the
+  same file.
+
+- If an extension is declared **outside its receiver type**, it cannot access the receiver's `private` or `protected`
+  members.
+
+### ///// References (online):
+
+- [Kotlin Extensions](https://kotlinlang.org/docs/extensions.html)
+
+[^ up](#knowledge-notes)
+
+---
+
 ## Kotlin Generics
 
 ```kotlin
@@ -3417,11 +3524,11 @@ com.github.kolya.myapplication.objects.PaymentData
 
 # Frameworks
 
-## Moxy
+# Moxy
 
-### View
+## View
 
-### `interface View implements MvpView`
+## `interface View implements MvpView`
 
 ```kotlin
 interface NewsArticlesView : MvpView {
@@ -3440,17 +3547,17 @@ interface NewsArticlesView : MvpView {
 }
 ```
 
-### ViewState
+## ViewState
 
-### `MvpViewState<View extends MvpView>`
+## `MvpViewState<View extends MvpView>`
 
 - Method `protected abstract void restoreState(View view)` - is calling for new `View` and for restored `View`.
 
 - `MvpViewState` holds list of `WeakReferences` to `Views`
 
-### Presenter
+## Presenter
 
-### `MvpPresenter<View extends MvpView>`
+## `MvpPresenter<View extends MvpView>`
 
 - Method `public View getViewState()` returns an instance of the `ViewState`
 
@@ -3464,21 +3571,21 @@ interface NewsArticlesView : MvpView {
 
 - Method `public boolean isInRestoreState(View view)` - to understand which state `View` has.
 
-### MvpFacade
+## MvpFacade
 
 It is singleton.
 
 Method `public static void init()` is need to call in `onCreate()` method of `Application `class.
 
-### MvpApplication
+## MvpApplication
 
 You may want to extend your `Application` class from `MvpApplication`.
 
-### Model
+## Model
 
 You can choose any implementation of Model layer.
 
-### StateStrategy
+## StateStrategy
 
 - `AddToEndStrategy` – add new command to the end of the queue. The Default strategy.
 - `AddToEndSingleStrategy` – delete old command (if it exists) and add new command to the end of the queue.
@@ -3487,7 +3594,7 @@ You can choose any implementation of Model layer.
 - `OneExecuteStrategy` — add command to the queue only to make an effect on the view and then the command will be
   deleted from the queue.
 
-### MvpDelegate
+## MvpDelegate
 
 ```kotlin
 private val myPresenter: MyPresenter by moxyPresenter {
@@ -3495,14 +3602,14 @@ private val myPresenter: MyPresenter by moxyPresenter {
 }
 ```
 
-### Annotations
+## Annotations
 
 - `@InjectPresenter` – for managing the lifecycle of the `Presenter`.
 - `@InjectViewState` – for linking the `ViewState` to `Presenter`.
 - `@StateStrategyType` – for managing the add and release command strategy from queue of the commands in `ViewState`.
 - `@GenerateViewState` – for generating a bytecode of the `ViewState` of the `View` interface.
 
-### ///// References (online):
+## ///// References (online):
 
 - [Moxy](https://github.com/Arello-Mobile/Moxy)
 - [Moxy — реализация MVP под Android с щепоткой магии](https://habr.com/ru/post/276189/)
@@ -3515,75 +3622,75 @@ private val myPresenter: MyPresenter by moxyPresenter {
 
 ---
 
-## DI Approach Comparison
+# DI Approach Comparison
 
-### Dagger
+## Dagger
 
-#### Dagger’s benefits:
+### Dagger’s benefits:
 
 - The “official” framework by Google
 - Most popular
 - Biggest feature set
 - Compile-time validation
 
-#### Dagger’s drawbacks:
+### Dagger’s drawbacks:
 
 - Build time overhead
 - Complex
 - Poor official documentation
 
-### Hilt
+## Hilt
 
-#### Hilt’s benefits:
+### Hilt’s benefits:
 
 - Provides better default “template” compared to Dagger
 - Less space for mistakes compared to Dagger
 - Decent documentation
 
-#### Hilt’s drawbacks:
+### Hilt’s drawbacks:
 
 - Risk of additional build time overhead
 
-### Koin
+## Koin
 
-#### Koin’s benefits:
+### Koin’s benefits:
 
 - Simple
 - Almost no build time overhead
 - Good documentation
 - Good support
 
-#### Koin’s drawbacks:
+### Koin’s drawbacks:
 
 - No compile-time validation (i.e. runtime errors)
 - Limited feature set compared to Dagger and Hilt (e.g. as for today, no ability to add binding for Activity object)
 - Risk of user-facing performance issues if runtime reflection is used (optional)
 - Can’t be used in Java projects
 
-### Pure DI
+## Pure DI
 
-#### Pure DI’s benefits:
+### Pure DI’s benefits:
 
 - No performance concerns
 - Simple to understand and modify
 
-#### Pure DI’s drawbacks:
+### Pure DI’s drawbacks:
 
 - Initial implementation requires special knowledge and skills
 - More manually written code than when using DI frameworks
 - Not “sexy” enough for many developers
 
-### ///// References (online):
+## ///// References (online):
 
 - [Dagger vs Hilt vs Koin vs Pure Dependency Injection](https://www.techyourchance.com/dagger-vs-hilt-vs-koin-vs-pure-dependency-injection)
 
 ---
 
-## Dagger
+# Dagger
 
 ...
 
-### ///// References (online):
+## ///// References (online):
 
 - [Dagger](https://dagger.dev/)
 - [Using Dagger in Android apps](https://developer.android.com/training/dependency-injection/dagger-android)
@@ -3602,7 +3709,7 @@ private val myPresenter: MyPresenter by moxyPresenter {
 
 # Algorithms
 
-## Binary Search
+# Binary Search
 
 Binary search is a textbook algorithm based on the idea to compare the target value to the middle element of the array.
 
@@ -3697,7 +3804,7 @@ public class SolutionFromInternet {
 }
 ```
 
-### ///// References (online):
+## ///// References (online):
 
 * [Binary Search](https://leetcode.com/explore/learn/card/binary-search/)
 
