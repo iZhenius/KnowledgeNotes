@@ -14,9 +14,9 @@
         - [Generics](#java-generics)
     - [Collections](#java-collections)
         - [Interface Collection](#java-interface-collection)
-            - [Interface List](#java-interface-list)
-                - [LinkedList](#java-linkedlist)
-                - [ArrayList](#java-arraylist)
+            - Interface List
+                - LinkedList
+                - ArrayList
             - Interface Set
                 - HashSet
                 - LinkedHashSet
@@ -59,6 +59,7 @@
         - [Activity](#activity)
         - [Service](#service)
         - [Broadcast Receiver](#broadcast-receiver)
+    - [Fragments](#fragments)
     - [Multithreading](#multithreading)
     - [Views (widgets)](#views-widgets)
         - [View Class](#view-class)
@@ -3065,6 +3066,124 @@ its `startForeground()` method **within 5 seconds**.
 [^ up](#knowledge-notes)
 
 ---
+
+# Fragments
+
+A `Fragment` represents a reusable portion of your app's UI. A `fragment` defines and manages its own layout, has its
+own lifecycle, and can handle its own input events. `Fragments` cannot live on their own--they must be hosted by an
+`activity` or another `fragment`. The fragment’s view hierarchy becomes part of, or attaches to, the host’s view
+hierarchy.
+
+`Activities` are an ideal place to put global elements around your app's user interface, such as a navigation drawer.
+Conversely, `fragments` are better suited to define and manage the UI of a single screen or portion of a screen.
+
+The `activity` is then responsible for displaying the correct navigation UI while the `fragment` displays the list with
+the proper layout.
+
+You can use multiple instances of the same `fragment` class within the same `activity`, in multiple `activities`, or
+even as a child of another `fragment`. With this in mind, you should only provide a `fragment` with the logic necessary
+to manage its own UI. **You should avoid depending on or manipulating one `fragment` from another**.
+
+### Create fragment
+
+To create a `fragment`, extend the **AndroidX** `Fragment` class, and override its methods to insert your app logic,
+similar to the way you would create an `Activity` class.
+
+```java
+class ExampleFragment extends Fragment {
+    public ExampleFragment() {
+        super(R.layout.example_fragment);
+    }
+}
+```
+
+### Add a fragment to an activity
+
+Generally, your `fragment` must be embedded within an AndroidX `FragmentActivity` or `AppCompatActivity` to contribute a
+portion of UI to that activity's layout.
+
+It is strongly recommended to **always use** a `FragmentContainerView` as the container for fragments, as
+`FragmentContainerView` includes fixes specific to fragments that other view groups such as `FrameLayout` do not
+provide.
+
+- ### Add a fragment via XML
+
+  To declaratively add a fragment to your activity layout's XML, use a `FragmentContainerView` element.
+
+    ```xml
+    <!-- res/layout/example_activity.xml -->
+    <androidx.fragment.app.FragmentContainerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/fragment_container_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="com.example.ExampleFragment" />
+    ```
+  The `android:name` attribute specifies the class name of the `Fragment` to instantiate. You can use the `class`
+  attribute instead of `android:name` as an alternative way to specify which `Fragment` to instantiate.
+
+- ### Add a fragment programmatically
+
+  To programmatically add a fragment to your activity's layout, the layout should include a `FragmentContainerView` to
+  serve as a fragment container.
+
+    ```xml
+    <!-- res/layout/example_activity.xml -->
+    <androidx.fragment.app.FragmentContainerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/fragment_container_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    ```
+  The `android:name` attribute isn't used on the `FragmentContainerView` here, so no specific fragment is automatically
+  instantiated. Instead, a `FragmentTransaction` is used to instantiate a fragment and add it to the activity's layout.
+
+  In your `FragmentActivity` or `AppCompatActivity`, you can get an instance of the `FragmentManager`, which can be used
+  to create a `FragmentTransaction`.
+
+    ```java
+    public class ExampleActivity extends AppCompatActivity {
+        public ExampleActivity() {
+            super(R.layout.example_activity);
+        }
+    
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            if (savedInstanceState == null) { // `null` - to ensure that the fragment is added only once
+  
+                Bundle bundle = new Bundle();
+                bundle.putInt("some_int", 0);
+  
+                getSupportFragmentManager().beginTransaction()
+                        .setReorderingAllowed(true)
+                        //.add(R.id.fragment_container_view, ExampleFragment.class, null)
+                        .add(R.id.fragment_container_view, ExampleFragment.class, bundle) // provide `Bundle` if your fragment requires some initial data
+                        .commit();
+            }
+        }
+    }
+    ```
+  ```java
+    class ExampleFragment extends Fragment {
+          public ExampleFragment() {
+            super(R.layout.example_fragment);
+          }
+  
+          @Override
+          public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+            int someInt = requireArguments().getInt("some_int");
+            // ...
+          }
+    }
+    ```
+
+## ///// References (online):
+
+- [Android developers: Fragments](https://developer.android.com/guide/fragments)
+- [Android developers: Create a fragment](https://developer.android.com/guide/fragments/create)
+
+***
 
 # Multithreading
 
