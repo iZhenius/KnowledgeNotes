@@ -60,6 +60,7 @@
         - [Service](#service)
         - [Broadcast Receiver](#broadcast-receiver)
     - [Fragments](#fragments)
+    - [Navigation Component](#navigation-component)
     - [Multithreading](#multithreading)
     - [Views (widgets)](#views-widgets)
         - [View Class](#view-class)
@@ -3178,10 +3179,377 @@ provide.
     }
     ```
 
+### Ways to communicate between Fragments and Activity:
+
+- #### greenrobot/EventBus
+
+- #### square/Otto - deprecated
+
+- #### ReactiveX/RxJava
+
+    ```kotlin
+    // Use object so we have a singleton instance
+    object RxBus {
+        
+        private val publisher = PublishSubject.create<Any>()
+        fun publish(event: Any) {
+            publisher.onNext(event)
+        }
+        // Listen should return an Observable and not the publisher
+        // Using ofType we filter only events that match that class type
+        fun <T> listen(eventType: Class<T>): Observable<T> = publisher.ofType(eventType)
+    }
+    // OnBoardingFragment.kt
+    startButton.onClick {
+        RxBus.publish(OnBoardingFinishEvent())
+    }
+    // OnBoardingActivity.kt
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+            
+        RxBus.listen(OnBoardingFinishEvent::class.java).subscribe {
+            // finish
+        }
+    }
+    ```
+
+- #### Interface
+
+    ```kotlin
+    interface OnBoardingFragmentDelegate {
+        fun onboardingFragmentDidClickStartButton(fragment: OnboardingFragment)
+    }
+    
+    class OnBoardingFragment: Fragment() {
+        var delegate: OnboardingFragmentDelegate? = null
+        override fun onAttach(context: Context?) {
+            super.onAttach(context)
+            if (context is OnboardingFragmentDelegate) {
+                delegate = context
+            }
+        }
+        override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
+            startButton.onClick {
+                delegate?.onboardingFragmentDidClickStartButton(this)
+            }
+        }
+    }
+    
+    class OnBoardingActivity: AppCompatActivity(), OnboardingFragmentDelegate {
+        override fun onboardingFragmentDidClickStartButton(fragment: OnboardingFragment) {
+            onboardingService.hasShown = true
+            startActivity<LoginActivity>()
+        }
+    }
+    ```
+
+- #### ViewModel
+
+    ```kotlin
+    class OnBoardingSharedViewModel: ViewModel() {
+        val finish = MutableLiveData<Unit>()
+    }
+    
+    class OnBoardingActivity: AppCompatActivity(), OnboardingFragmentDelegate {
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            val viewModel = ViewModelProviders.of(this).get(OnboardingSharedViewModel::class.java)
+            viewModel.finish.observe(this, Observer {
+                startActivity<LoginActivity>()
+            })
+        }
+    }
+    
+    class OnBoardingFragment: Fragment() {
+        override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
+            val viewModel = ViewModelProviders.of(activity).get(OnboardingSharedViewModel::class.java)
+            startButton.onClick {
+                viewModel.finish.value = Unit
+            }
+        }
+    }
+    ```
+
+- #### Lambda
+
+    ```kotlin
+    class OnBoardingFragment: Fragment() {
+        var didClickStartButton: (() -> Unit)? = null
+        override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
+            startButton.onClick {
+                didClickStartButton?.invoke()
+            }
+        }
+    }
+    class OnBoardingActivity: AppCompatActivity() {
+        // It does not work for now as there is no `OnBoardingFragment` in `onAttachFragment()`
+        override fun onAttachFragment(fragment: Fragment?) {
+            super.onAttachFragment(fragment)
+            (fragment as? OnBoardingFragment).let {
+                it?.didClickStartButton = {
+                    // finish
+                }
+            }
+        }
+    }
+    ```
+
+- #### Listener in Bundle
+
 ## ///// References (online):
 
 - [Android developers: Fragments](https://developer.android.com/guide/fragments)
 - [Android developers: Create a fragment](https://developer.android.com/guide/fragments/create)
+- [Android developers: Communicating with fragments](https://developer.android.com/guide/fragments/communicate)
+- [8 ways to communicate between Fragment and Activity in Android apps](https://medium.com/fantageek/8-ways-to-communicate-between-fragment-and-activity-in-android-apps-235b60005d04)
+- [From Fragments to Activity: the Lambda Way](https://medium.com/groupon-eng/from-fragments-to-activity-the-lambda-way-32c768c72aa9)
+
+***
+
+# Navigation Component
+
+## The Navigation component consists of three key parts:
+
+- **Navigation graph** — An _XML_-resource that contains all navigation-related information in one centralized location.
+  This includes all of the individual content areas within your app (called _destinations_).
+- **NavHost** — An empty container that displays destinations from your navigation graph. The Navigation component
+  contains a default `NavHost` implementation, `NavHostFragment`, that displays fragment destinations.
+- **NavController** — An object that manages app navigation within a `NavHost`. The `NavController` orchestrates the
+  swapping of destination content in the `NavHost`.
+
+## The Navigation component some benefits:
+
+- **Handling fragment transactions**.
+- **Handling Up and Back actions** correctly by default.
+- **Providing standardized resources** for animations and transitions.
+- **Implementing and handling deep linking**.
+- **Including Navigation UI patterns**, such as navigation drawers and bottom navigation, with minimal additional work.
+- **Safe Args** - a `Gradle` plugin that provides type safety when navigating and passing data between destinations.
+- **ViewModel support** - you can scope a `ViewModel` to a navigation graph to share UI-related data between the graph's
+  destinations.
+
+## Get Started With The Navigation Component
+
+1. ### Create a navigation graph
+
+    - **New > Android Resource File**
+    - **Type a name** such as "nav_graph"
+    - **Select Navigation** from the Resource type
+
+    ```xml
+    <?xml version="1.0" encoding="utf-8"?>
+    <navigation xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/nav_graph"
+                app:startDestination="@+id/home_dest">
+
+    <!-- ...tags for fragments and activities here -->
+    </navigation>
+    ```
+
+   The `<navigation>` element is the root element of a navigation graph. As you add destinations and connecting actions
+   to your graph, you can see the corresponding `<destination>` and `<action>` elements here as child elements. If you
+   have **nested graphs**, they appear as child <navigation> elements.
+
+2. ### Add a NavHost to an activity via XML
+
+   One of the core parts of the Navigation component is the **navigation host**. The navigation host is an empty
+   container where destinations are swapped in and out as a user navigates through your app.
+
+   A navigation host must derive from `NavHost`. The Navigation component's default `NavHost` implementation,
+   `NavHostFragment`, handles swapping fragment destinations.
+
+   ```java
+   public class NavHostFragment extends Fragment implements NavHost {
+        // ...
+        // Create a new `NavHostFragment` instance with an inflated `NavGraph` resource.
+        @NonNull
+        public static NavHostFragment create(@NavigationRes int graphResId) {
+            return create(graphResId, null);
+        }
+        // ...
+   }
+   ```
+
+   `NavHostFragment` provides an area within your layout for self-contained navigation to occur.
+   `NavHostFragment` is intended to be used as the content area within a layout resource defining your app's chrome
+   around it, e.g.
+
+   Each `NavHostFragment` has a `NavController` that defines valid navigation within the navigation host. This includes
+   the navigation graph as well as navigation state such as current location and back stack that will be saved and
+   restored along with the `NavHostFragment` itself. `NavHostFragments` register their navigation controller at the root
+   of their view subtree such that any descendant can obtain the controller instance through the `Navigation` helper
+   class's methods such as `Navigation.findNavController(View)`.
+
+   The XML example below shows a `NavHostFragment` as part of an app's main activity:
+
+    ```xml
+    <?xml version="1.0" encoding="utf-8"?>
+    <androidx.constraintlayout.widget.ConstraintLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".MainActivity">
+    
+        <androidx.appcompat.widget.Toolbar
+        .../>
+    
+        <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/nav_host_fragment"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+    
+                android:name="androidx.navigation.fragment.NavHostFragment" 
+                app:navGraph="@navigation/nav_graph"
+                app:defaultNavHost="true"/>
+    
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+        .../>
+    
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    ```
+
+   #### Note the following:
+
+    - The `android:name` attribute contains the class name of your `NavHost` implementation.
+    - The `app:navGraph` attribute associates the `NavHostFragment` with a navigation graph. The navigation graph
+      specifies all of the destinations in this `NavHostFragment` to which users can navigate.
+    - The `app:defaultNavHost="true"` attribute ensures that your `NavHostFragment` intercepts the system Back button.
+      Note that only one `NavHost` can be the default.
+
+3. ### Add destinations to the navigation graph
+
+   You can create a destination from an existing `fragment` or `activity`. You can create a **new destination** or
+   create a **placeholder** to later replace with a `fragment` or `activity`.
+
+4. ### Anatomy of a destination
+
+    ```xml
+    <?xml version="1.0" encoding="utf-8"?>
+    <navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/a">
+    
+        <fragment android:id="@+id/a"
+                  android:name="com.example.myapplication.FragmentA"
+                  android:label="a"
+                  tools:layout="@layout/a">
+            <action android:id="@+id/action_a_to_b"
+                    app:destination="@id/b"
+                    app:enterAnim="@anim/nav_default_enter_anim"
+                    app:exitAnim="@anim/nav_default_exit_anim"
+                    app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                    app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        </fragment>
+    
+        <fragment android:id="@+id/b"
+                  android:name="com.example.myapplication.FragmentB"
+                  android:label="b"
+                  tools:layout="@layout/b">
+            <action android:id="@+id/action_b_to_a"
+                    app:destination="@id/a"
+                    app:enterAnim="@anim/nav_default_enter_anim"
+                    app:exitAnim="@anim/nav_default_exit_anim"
+                    app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                    app:popExitAnim="@anim/nav_default_pop_exit_anim"
+                    app:popUpTo="@+id/a"
+                    app:popUpToInclusive="true"/>
+        </fragment>
+    </navigation>
+    ```
+
+   #### The attributes of the destination:
+
+    - The `Type` field indicates whether the destination is implemented as a `fragment`, `activity`, or other
+      custom `class` in your source code.
+    - The `Label` field contains the user-readable name of the destination. This might be surfaced to the UI.
+    - The `ID` field contains the ID of the destination which is used to refer to the destination in code.
+    - The `android:name` or `Class` dropdown shows the name of the class that is associated with the destination.
+    - The `tools:layout` specifies what layout should be shown in the graphical editor.
+
+5. ### Designate a screen as the start destination
+
+   The start destination is the first screen users see when opening your app, and it's the last screen users see when
+   exiting your app. Set a start destination via `app:startDestination` attribute.
+
+6. ### Connect destinations
+
+   An `action` is a logical connection between destinations. `Actions` are represented in the navigation graph as
+   arrows. `Actions` usually connect one destination to another, though you can also create `global actions` that take
+   you to a specific destination from anywhere in your app.
+
+   #### The attributes of the actions:
+
+    - The `Type` field contains `action`.
+    - The `ID` field contains the ID for the action.
+    - The `Destination` field contains the ID for the destination `fragment` or `activity`.
+
+7. ### Navigate to a destination
+
+   Your `NavController` is associated with a `NavHostFragment`. Thus whichever method you use, you must be sure that the
+   `fragment`, `view`, or view ID is either a `NavHostFragment` itself, or has a `NavHostFragment` as a parent.
+   Otherwise you will get an `IllegalStateException`.
+
+   ```java
+   NavHostFragment navHostFragment =
+        (NavHostFragment) supportFragmentManager.findFragmentById(R.id.nav_host_fragment);
+   NavController navController = navHostFragment.getNavController();
+   navController.navigate(R.id.action_b_to_a);
+   ```
+
+8. ### Ensure type-safety by using Safe Args
+
+   The recommended way to navigate between destinations is to use the Safe Args Gradle plugin. This plugin generates
+   simple object and builder classes that enable type-safe navigation and argument passing between destinations.
+
+   After you enable Safe Args, the plugin generates code that contains classes and methods for each action you've
+   defined. For each action, Safe Args also generates a class for each originating destination, which is the destination
+   from which the action originates. The generated class name is a combination of the originating destination class name
+   and the word "Directions". For example, if the destination is named `SpecifyAmountFragment`, the generated class is
+   named `SpecifyAmountFragmentDirections`.
+
+   ```java
+    @Override
+    public void onClick(View view) {
+         NavDirections action =
+                SpecifyAmountFragmentDirections.actionSpecifyAmountFragmentToConfirmationFragment();
+         Navigation.findNavController(view).navigate(action);
+    }
+   ```
+
+## ///// References (online):
+
+- [Android developers: Navigation](https://developer.android.com/guide/navigation)
+- [Android developers: Get started with the Navigation component](https://developer.android.com/guide/navigation/navigation-getting-started)
+- [Android developers: Principles of navigation](https://developer.android.com/guide/navigation/navigation-principles)
+- [Android developers: Interact programmatically with the Navigation component](https://developer.android.com/guide/navigation/navigation-programmatic#share_ui-related_data_between_destinations_with_viewmodel)
+- [Android developers: Navigate to a destination](https://developer.android.com/guide/navigation/navigation-navigate)
+- [Android developers: Navigation best practices for multi-module projects](https://developer.android.com/guide/navigation/navigation-multi-module)
+- [Android developers: Pass data between destinations](https://developer.android.com/guide/navigation/navigation-pass-data)
+- [Android developers: Learn Jetpack Navigation](https://developer.android.com/codelabs/android-navigation#0)
+- [Android developers: androidx.navigation](https://developer.android.com/reference/androidx/navigation/package-summary)
+- [Android developers: androidx.navigation.ui](https://developer.android.com/reference/androidx/navigation/ui/package-summary)
+- [Navigating with SafeArgs](https://medium.com/androiddevelopers/navigating-with-safeargs-bf26c17b1269)
+- [Navigation Component-дзюцу, vol. 1 — BottomNavigationView](https://habr.com/ru/company/hh/blog/518332/)
+- [Navigation Component-дзюцу, vol. 2 – вложенные графы навигации](https://habr.com/ru/company/hh/blog/519162/)
+- [Navigation Component-дзюцу, vol. 3 — Corner-кейсы](https://habr.com/ru/company/hh/blog/520198/)
+- [Navigation Component-дзюцу, vol. 4 – Переоценка](https://habr.com/ru/company/hh/blog/535534/)
+- [Урок 24. Navigation Architecture Component. Введение](https://startandroid.ru/ru/courses/architecture-components/27-course/architecture-components/557-urok-24-android-navigation-component-vvedenie.html)
+- [Урок 25. Navigation. Передача данных. Type-safe аргументы.](https://startandroid.ru/ru/courses/architecture-components/27-course/architecture-components/558-urok-25-navigation-peredacha-dannyh-typesafe-argumenty.html)
+- [Урок 26. Navigation. Параметры навигации](https://startandroid.ru/ru/courses/architecture-components/27-course/architecture-components/559-urok-26-navigation-parametry-navigacii.html)
+- [Урок 27. Navigation. NavigationUI.](https://startandroid.ru/ru/courses/architecture-components/27-course/architecture-components/560-urok-27-navigation-navigationui.html)
+- [Урок 28. Navigation. Вложенный граф. Global Action. Deep Link.](https://startandroid.ru/ru/courses/architecture-components/27-course/architecture-components/561-urok-28-navigation-vlozhennyj-graf.html)
 
 ***
 
