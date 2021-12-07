@@ -64,6 +64,8 @@
     - [Multithreading](#multithreading)
     - [Views (widgets)](#views-widgets)
         - [View Class](#view-class)
+        - [ViewGroup Class](#viewgroup-class)
+        - [ViewPager2 Class](#viewpager2-class)
     - [Context](#context)
     - [ProGuard](#proguard)
 - [Frameworks](#frameworks)
@@ -3531,6 +3533,7 @@ provide.
 ## ///// References (online):
 
 - [Android developers: Navigation](https://developer.android.com/guide/navigation)
+- [Jetpack Library Releases: Navigation](https://developer.android.com/jetpack/androidx/releases/navigation)
 - [Android developers: Get started with the Navigation component](https://developer.android.com/guide/navigation/navigation-getting-started)
 - [Android developers: Principles of navigation](https://developer.android.com/guide/navigation/navigation-principles)
 - [Android developers: Interact programmatically with the Navigation component](https://developer.android.com/guide/navigation/navigation-programmatic#share_ui-related_data_between_destinations_with_viewmodel)
@@ -3550,6 +3553,8 @@ provide.
 - [Урок 26. Navigation. Параметры навигации](https://startandroid.ru/ru/courses/architecture-components/27-course/architecture-components/559-urok-26-navigation-parametry-navigacii.html)
 - [Урок 27. Navigation. NavigationUI.](https://startandroid.ru/ru/courses/architecture-components/27-course/architecture-components/560-urok-27-navigation-navigationui.html)
 - [Урок 28. Navigation. Вложенный граф. Global Action. Deep Link.](https://startandroid.ru/ru/courses/architecture-components/27-course/architecture-components/561-urok-28-navigation-vlozhennyj-graf.html)
+
+[^ up](#knowledge-notes)
 
 ***
 
@@ -3935,6 +3940,64 @@ public class ImageView extends ImageView {
 
 [^ up](#knowledge-notes)
 
+---
+
+## ViewGroup Class
+
+A `ViewGroup` is a special view that can contain other views (called children.) The view group is the base class for
+layouts and views containers. This class also defines the `ViewGroup.LayoutParams` class which serves as the base class
+for layouts parameters.
+
+Every `ViewGroup` class implements a nested class that extends `ViewGroup.LayoutParams`. This subclass contains property
+types that define the size and position for each child view, as appropriate for the view group.
+
+```java
+public abstract class
+ViewGroup extends View implements ViewParent, ViewManager {
+    // ...
+}
+```
+
+### ///// References (online):
+
+- [Android developers: ViewGroup](https://developer.android.com/reference/android/view/ViewGroup.html)
+
+[^ up](#knowledge-notes)
+
+---
+
+## ViewPager2 Class
+
+Layout manager that allows the user to flip left and right through pages of data.
+
+`ViewPager` is most often used in conjunction with `Fragment`, which is a convenient way to supply and manage the
+lifecycle of each page. There are standard adapters implemented for using fragments with the `ViewPager`, which cover
+the most common use cases.
+
+`ViewPager2` replaces `ViewPager`, addressing most of its predecessor’s pain-points, including right-to-left layout
+support, vertical orientation, modifiable `Fragment` collections, etc.
+
+```java
+public final class
+ViewPager2 extends ViewGroup {
+    // ...
+}
+```
+
+### ///// References (online):
+
+- [Android developers: ViewPager](https://developer.android.com/reference/androidx/viewpager/widget/ViewPager)
+- [Android developers: ViewPager2](https://developer.android.com/reference/androidx/viewpager2/widget/ViewPager2)
+- [Android developers: Create swipe views with tabs using ViewPager2](https://developer.android.com/guide/navigation/navigation-swipe-view-2)
+- [Android developers: Slide between fragments using ViewPager2](https://developer.android.com/training/animation/screen-slide-2)
+- [Android developers: Migrate from ViewPager to ViewPager2](https://developer.android.com/training/animation/vp2-migration)
+- [Jetpack Library Releases: ViewPager2](https://developer.android.com/jetpack/androidx/releases/viewpager2)
+- [Material Design: Tabs](https://material.io/components/tabs)
+- [Material Design: Tabs Implementation](https://material.io/components/tabs/android)
+- [ViewPager2 samples](https://github.com/android/views-widgets-samples/tree/master/ViewPager2)
+
+[^ up](#knowledge-notes)
+
 ***
 
 # Context
@@ -4111,7 +4174,7 @@ private val myPresenter: MyPresenter by moxyPresenter {
 
 # DI Approach Comparison
 
-## Dagger
+## Dagger Comparison
 
 ### Dagger’s benefits:
 
@@ -4126,7 +4189,7 @@ private val myPresenter: MyPresenter by moxyPresenter {
 - Complex
 - Poor official documentation
 
-## Hilt
+## Hilt Comparison
 
 ### Hilt’s benefits:
 
@@ -4138,7 +4201,7 @@ private val myPresenter: MyPresenter by moxyPresenter {
 
 - Risk of additional build time overhead
 
-## Koin
+## Koin Comparison
 
 ### Koin’s benefits:
 
@@ -4154,7 +4217,7 @@ private val myPresenter: MyPresenter by moxyPresenter {
 - Risk of user-facing performance issues if runtime reflection is used (optional)
 - Can’t be used in Java projects
 
-## Pure DI
+## Pure DI Comparison
 
 ### Pure DI’s benefits:
 
