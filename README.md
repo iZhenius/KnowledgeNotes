@@ -3544,6 +3544,7 @@ provide.
 - [Android developers: androidx.navigation](https://developer.android.com/reference/androidx/navigation/package-summary)
 - [Android developers: androidx.navigation.ui](https://developer.android.com/reference/androidx/navigation/ui/package-summary)
 - [Navigating with SafeArgs](https://medium.com/androiddevelopers/navigating-with-safeargs-bf26c17b1269)
+- [How to clear navigation Stack after navigating to another fragment in Android](https://stackoverflow.com/questions/50514758/how-to-clear-navigation-stack-after-navigating-to-another-fragment-in-android)
 - [Navigation Component-дзюцу, vol. 1 — BottomNavigationView](https://habr.com/ru/company/hh/blog/518332/)
 - [Navigation Component-дзюцу, vol. 2 – вложенные графы навигации](https://habr.com/ru/company/hh/blog/519162/)
 - [Navigation Component-дзюцу, vol. 3 — Corner-кейсы](https://habr.com/ru/company/hh/blog/520198/)
