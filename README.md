@@ -67,6 +67,7 @@
         - [ViewGroup Class](#viewgroup-class)
         - [ViewPager2 Class](#viewpager2-class)
     - [Context](#context)
+    - [Material Design](#material-design)
     - [ProGuard](#proguard)
 - [Frameworks](#frameworks)
     - [Moxy](#moxy)
@@ -3916,17 +3917,17 @@ public class ImageView extends ImageView {
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:whatever="http://schemas.android.com/apk/res-auto"
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:whatever="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 
     <org.example.mypackage.MyCustomView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            whatever:isMaskedOverlay="true"/>
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        whatever:isMaskedOverlay="true"/>
 </LinearLayout>
 ```
 
@@ -4049,6 +4050,17 @@ Activity extends ContextThemeWrapper implements LayoutInflater.Factory2, Window.
 - [Android developers: ContextThemeWrapper](https://developer.android.com/reference/android/view/ContextThemeWrapper)
 
 [^ up](#knowledge-notes)
+
+---
+
+# Material Design
+
+<...>
+
+## ///// References (online):
+
+- [Material Design components](https://material.io/components?platform=android)
+- [API classes](https://developer.android.com/reference/com/google/android/material/classes)
 
 ---
 
