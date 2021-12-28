@@ -62,6 +62,7 @@
     - [Fragments](#fragments)
     - [Navigation Component](#navigation-component)
     - [Multithreading](#multithreading)
+    - [Android Classes](#android-classes)
     - [Views (widgets)](#views-widgets)
         - [View Class](#view-class)
         - [ViewGroup Class](#viewgroup-class)
@@ -3702,6 +3703,18 @@ For other data transfers, use `Message.setData(Bundle data)`.
 * [Understanding of AsyncTask in Android](https://medium.com/@ankit.sinhal/understanding-of-asynctask-in-android-8fe61a96a238)
 * [Main Loop (Главный цикл) в Android Часть 1. Пишем свой цикл](https://habr.com/ru/company/cian/blog/588314/)
 * [Main Loop (Главный цикл) в Android Часть 2. Android SDK](https://habr.com/ru/company/cian/blog/589827/)
+
+[^ up](#knowledge-notes)
+
+---
+
+# Android Classes
+
+<...>
+
+## ///// References (online):
+
+* [Android Developers: Classes](https://developer.android.com/reference/classes)
 
 [^ up](#knowledge-notes)
 
