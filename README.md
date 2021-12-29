@@ -55,6 +55,7 @@
         - [Extensions](#kotlin-extensions)
     - [Kotlin Generics](#kotlin-generics)
 - [Android](#android)
+    - [Android Roadmap](#android-roadmap)
     - [App Components](#app-components)
         - [Activity](#activity)
         - [Service](#service)
@@ -2689,6 +2690,16 @@ class KotlinGenericsExample {
 ***
 
 # Android
+
+# Android Roadmap
+
+![](res/images/android-roadmap.png)
+
+## ///// References (online):
+
+- [Android Roadmap 2022](https://cdn.hashnode.com/res/hashnode/image/upload/v1640075762841/cUuWc-_HZ.png?auto=compress,format&format=webp)
+
+---
 
 # App Components
 
