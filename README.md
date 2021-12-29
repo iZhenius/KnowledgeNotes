@@ -67,6 +67,7 @@
         - [View Class](#view-class)
         - [ViewGroup Class](#viewgroup-class)
         - [ViewPager2 Class](#viewpager2-class)
+        - [ConstraintLayout Class](#constraintlayout-class)
     - [Context](#context)
     - [Material Design](#material-design)
     - [ProGuard](#proguard)
@@ -4010,6 +4011,26 @@ ViewPager2 extends ViewGroup {
 - [Material Design: Tabs](https://material.io/components/tabs)
 - [Material Design: Tabs Implementation](https://material.io/components/tabs/android)
 - [ViewPager2 samples](https://github.com/android/views-widgets-samples/tree/master/ViewPager2)
+
+[^ up](#knowledge-notes)
+
+---
+
+## ConstraintLayout Class
+
+A `ConstraintLayout` is a `ViewGroup` which allows you to position and size widgets in a flexible way.
+
+```java
+public class
+ConstraintLayout extends ViewGroup {
+}
+```
+
+### ///// References (online):
+
+- [Android developers: ConstraintLayout](https://developer.android.com/reference/androidx/constraintlayout/widget/ConstraintLayout)
+- [Jetpack Library Releases: ConstraintLayout](https://developer.android.com/jetpack/androidx/releases/constraintlayout)
+- [ConstraintLayout – Guidelines, Barriers, Chains and Groups](https://riggaroo.dev/constraintlayout-guidelines-barriers-chains-groups/)
 
 [^ up](#knowledge-notes)
 
