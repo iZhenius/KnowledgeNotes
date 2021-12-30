@@ -69,6 +69,7 @@
         - [ViewGroup Class](#viewgroup-class)
         - [ViewPager2 Class](#viewpager2-class)
         - [ConstraintLayout Class](#constraintlayout-class)
+        - [TextInputLayout Class](#textinputlayout-class)
     - [Context](#context)
     - [Material Design](#material-design)
     - [ProGuard](#proguard)
@@ -3962,6 +3963,7 @@ public class ImageView extends ImageView {
 * [The Life Cycle of a View in Android](https://proandroiddev.com/the-life-cycle-of-a-view-in-android-6a2c4665b95e)
 * [Draw Custom Views in Android](https://betterprogramming.pub/draw-custom-views-in-android-a321fa157d60)
 * [Guide to Android custom views: attributes](https://medium.com/@Zielony/guide-to-android-custom-views-attributes-ab28de3e54b7)
+* [Android Custom View Tutorial](https://www.raywenderlich.com/142-android-custom-view-tutorial)
 * [StackOverflow: Defining custom attrs](https://stackoverflow.com/questions/3441396/defining-custom-attrs)
 * [Создание собственной View под Android – может ли что-то пойти не так?](https://habr.com/ru/post/321890/)
 
@@ -4042,6 +4044,28 @@ ConstraintLayout extends ViewGroup {
 - [Android developers: ConstraintLayout](https://developer.android.com/reference/androidx/constraintlayout/widget/ConstraintLayout)
 - [Jetpack Library Releases: ConstraintLayout](https://developer.android.com/jetpack/androidx/releases/constraintlayout)
 - [ConstraintLayout – Guidelines, Barriers, Chains and Groups](https://riggaroo.dev/constraintlayout-guidelines-barriers-chains-groups/)
+
+[^ up](#knowledge-notes)
+
+---
+
+## TextInputLayout Class
+
+Layout which wraps a `TextInputEditText`, `EditText`, or descendant to show a floating label when the hint is hidden
+while the user inputs text.
+
+```java
+public class
+TextInputLayout extends LinearLayout {
+}
+```
+
+### ///// References (online):
+
+- [Android developers: TextInputLayout](https://developer.android.com/reference/com/google/android/material/textfield/TextInputLayout?hl=en)
+- [TextInputLayout Styling](https://medium.com/omisoft/textinputlayout-styling-8b36a5e0d73c)
+- [StackOverFlow: Outlined Edit Text from Material Design](https://stackoverflow.com/questions/52401242/outlined-edit-text-from-material-design)
+- [StackOverFlow: Custom TextInputLayout android [duplicate]](https://stackoverflow.com/questions/44891219/custom-textinputlayout-android)
 
 [^ up](#knowledge-notes)
 
