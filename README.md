@@ -71,6 +71,7 @@
         - [ConstraintLayout Class](#constraintlayout-class)
         - [TextInputLayout Class](#textinputlayout-class)
     - [Context](#context)
+    - [Android GC](#android-gc)
     - [Material Design](#material-design)
     - [ProGuard](#proguard)
 - [Frameworks](#frameworks)
@@ -4122,6 +4123,20 @@ Activity extends ContextThemeWrapper implements LayoutInflater.Factory2, Window.
 
 ---
 
+# Android GC
+
+<...>
+
+## ///// References (online):
+
+- [Garbage Collector : An Android Story](https://medium.com/flobiz-blog/garbage-collector-an-android-story-9bebea9d44d9)
+- [Collecting the Garbage: A brief history of GC over Android versions](https://proandroiddev.com/collecting-the-garbage-a-brief-history-of-gc-over-android-versions-f7f5583e433c)
+- [Android Runtime — How Dalvik and ART work?](https://proandroiddev.com/android-runtime-how-dalvik-and-art-work-6e57cf1c50e5)
+
+[^ up](#knowledge-notes)
+
+---
+
 # Material Design
 
 <...>
@@ -4130,6 +4145,8 @@ Activity extends ContextThemeWrapper implements LayoutInflater.Factory2, Window.
 
 - [Material Design components](https://material.io/components?platform=android)
 - [API classes](https://developer.android.com/reference/com/google/android/material/classes)
+
+[^ up](#knowledge-notes)
 
 ---
 
@@ -4151,6 +4168,8 @@ com.github.kolya.myapplication.objects.PaymentData
 
 - [Reading ProGuard’s Outputs](https://jebware.com/blog/?p=484)
 - [ProGuard Playground](https://playground.proguard.com)
+
+[^ up](#knowledge-notes)
 
 ***
 
