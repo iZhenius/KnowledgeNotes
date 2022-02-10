@@ -54,6 +54,7 @@
         - [Delegated Properties](#kotlin-delegated-properties)
         - [Extensions](#kotlin-extensions)
     - [Kotlin Generics](#kotlin-generics)
+    - [Kotlin DSL](#kotlin-dsl)
 - [Android](#android)
     - [Android Roadmap](#android-roadmap)
     - [App Components](#app-components)
@@ -2686,6 +2687,36 @@ class KotlinGenericsExample {
 - [Covariance, Contravariance, and Invariance — What do they mean? (Part 1)](https://medium.com/android-news/covariance-contravariance-and-invariance-what-do-they-mean-part-1-351f7865b506)
 - [Covariance, Contravariance, and Invariance — What do they mean? (Part 2)](https://medium.com/android-news/covariance-contravariance-and-invariance-what-do-they-mean-part-2-b2111a6e9bbf)
 - [Generics & Variance in Java vs Kotlin](https://medium.com/learn-kotlin/generics-variance-in-java-vs-kotlin-c964df6f649b)
+
+[^ up](#knowledge-notes)
+
+---
+
+## Kotlin DSL
+
+<...>
+
+### ///// References (online):
+
+- [Gradle + Kotlin = ⚡ 🚀️](https://gradle.org/kotlin/)
+- [Gradle Kotlin DSL Primer](https://docs.gradle.org/current/userguide/kotlin_dsl.html)
+- [Migrating build logic from Groovy to Kotlin](https://docs.gradle.org/current/userguide/migrating_from_groovy_to_kotlin_dsl.html#migration_strategies)
+- [Migrate your build configuration from Groovy to KTS](https://developer.android.com/studio/build/migrate-to-kts)
+- [Writing DSLs in Kotlin (part 1)](https://proandroiddev.com/writing-dsls-in-kotlin-part-1-7f5d2193f277)
+- [Writing DSLs in Kotlin (part 2)](https://proandroiddev.com/writing-dsls-in-kotlin-part-2-cd9dcd0c4715)
+- [Kotlin DSL | Introduction](https://medium.com/kotlin-and-kotlin-for-android/kotlin-dsl-introduction-6123c43ae770)
+- [Kotlin DSL | Base knowledge to build a DSL in Kotlin — Part 1](https://medium.com/kotlin-and-kotlin-for-android/kotlin-dsl-base-knowledge-part-1-c3f778de3632)
+- [Kotlin DSL | Base knowledge to build a DSL in Kotlin — Part 2](https://medium.com/kotlin-and-kotlin-for-android/kotlin-dsl-base-knowledge-part-2-d15ef157c7a9)
+- [Kotlin DSL | Codebase: Project Shapes-DSL](https://medium.com/kotlin-and-kotlin-for-android/kotlin-dsl-base-code-22b1cd8c2958)
+- [Kotlin DSL | Coding a DSL: 1 — Package structure and the ‘Panel’ object](https://medium.com/kotlin-and-kotlin-for-android/kotlin-dsl-coding-a-dsl-1-6639a609dd11)
+- [Kotlin DSL | Coding a DSL: 2 — The ‘Square’ object](https://medium.com/kotlin-and-kotlin-for-android/kotlin-dsl-coding-a-dsl-2-f7771417515d)
+- [Kotlin DSL | Coding a DSL: 3 — The ‘Triangle’ and ‘Rhombus’ objects](https://medium.com/kotlin-and-kotlin-for-android/kotlin-dsl-coding-a-dsl-3-942755f282)
+- [Kotlin DSL | Coding a DSL: 4 — The ‘Empty Space’ and the ‘Composed Shape’ object](https://medium.com/kotlin-and-kotlin-for-android/kotlin-dsl-coding-a-dsl-4-459692e1b33c)
+- [Kotlin DSL | Coding a DSL: 5 — plus and minus operators and inline functions](https://medium.com/kotlin-and-kotlin-for-android/kotlin-dsl-coding-a-dsl-5-eb7861277c1c)
+- [Kotlin DSL | Coding a DSL: 6— The @DslMarker annotation](https://medium.com/kotlin-and-kotlin-for-android/kotlin-dsl-coding-a-dsl-6-ee355be81106)
+- [Kotlin DSL | Experimenting and conclusions](https://medium.com/kotlin-and-kotlin-for-android/kotlin-dsl-experimenting-and-conclusions-834c680149c6)
+- [Kotlin DSL: Gradle scripts in Android made easy](https://medium.com/android-dev-hacks/kotlin-dsl-gradle-scripts-in-android-made-easy-b8e2991e2ba)
+- [Перенос сценариев сборки с Groovy на Kotlin DSL](https://ichi.pro/ru/izucenie-kotlin-dsl-82147672141922)
 
 [^ up](#knowledge-notes)
 
