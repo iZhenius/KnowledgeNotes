@@ -3601,6 +3601,7 @@ provide.
 - [Урок 26. Navigation. Параметры навигации](https://startandroid.ru/ru/courses/architecture-components/27-course/architecture-components/559-urok-26-navigation-parametry-navigacii.html)
 - [Урок 27. Navigation. NavigationUI.](https://startandroid.ru/ru/courses/architecture-components/27-course/architecture-components/560-urok-27-navigation-navigationui.html)
 - [Урок 28. Navigation. Вложенный граф. Global Action. Deep Link.](https://startandroid.ru/ru/courses/architecture-components/27-course/architecture-components/561-urok-28-navigation-vlozhennyj-graf.html)
+- [Single Activity с Navigation Component. Или как я мучался с графами. Boilerplate ч. 1](https://habr.com/ru/post/654599/)
 
 [^ up](#knowledge-notes)
 
