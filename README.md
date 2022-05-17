@@ -1313,6 +1313,7 @@ wait-set.
 * [Java Concurrency: Volatile](https://medium.com/javarevisited/java-concurrency-volatile-d0e585852d6b)
 * [Java Concurrency: Synchronized](https://medium.com/javarevisited/java-concurrency-synchronized-7828bf5f06cb)
 * [Synchronization in Java: All You Need to Know](https://levelup.gitconnected.com/synchronization-in-java-all-you-need-to-know-7bd27219ce10)
+* [Synchronization, Thread-Safety and Locking Techniques in Java and Kotlin](https://proandroiddev.com/synchronization-and-thread-safety-techniques-in-java-and-kotlin-f63506370e6d)
 
 [^ up](#knowledge-notes)
 
