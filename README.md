@@ -3750,6 +3750,7 @@ For other data transfers, use `Message.setData(Bundle data)`.
 * [Understanding of AsyncTask in Android](https://medium.com/@ankit.sinhal/understanding-of-asynctask-in-android-8fe61a96a238)
 * [Main Loop (Главный цикл) в Android Часть 1. Пишем свой цикл](https://habr.com/ru/company/cian/blog/588314/)
 * [Main Loop (Главный цикл) в Android Часть 2. Android SDK](https://habr.com/ru/company/cian/blog/589827/)
+* [Как работает UI в Android. Не все так сложно](https://habr.com/en/post/665806/)
 
 [^ up](#knowledge-notes)
 
