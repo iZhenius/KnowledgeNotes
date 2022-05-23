@@ -107,6 +107,7 @@ $ git push -u origin main
 $ cd <directory-of-the-all-projects>
 $ git clone https://url
   (or GIT_SSL_NO_VERIFY=true git clone https://url if certificate is bad)
+  (or git clone https://userName1:userPassword1@url if could not read Username)
 $ cd <directory-of-the-clone>
 $ git config http.sslVerify false
 ```
