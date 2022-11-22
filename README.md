@@ -74,6 +74,7 @@
         - [RecyclerView Class](#recyclerview-class)
           - [ConcatAdapter Class](#concatadapter-class)
     - [Context](#context)
+    - [Jetpack DataStore](#jetpack-datastore)
     - [Android GC](#android-gc)
     - [Material Design](#material-design)
     - [ProGuard](#proguard)
@@ -4198,6 +4199,36 @@ Activity extends ContextThemeWrapper implements LayoutInflater.Factory2, Window.
 - [Android developers: Context](https://developer.android.com/reference/android/content/Context)
 - [Android developers: ContextWrapper](https://developer.android.com/reference/android/content/ContextWrapper)
 - [Android developers: ContextThemeWrapper](https://developer.android.com/reference/android/view/ContextThemeWrapper)
+
+[^ up](#knowledge-notes)
+
+---
+
+# Jetpack DataStore
+
+Jetpack `DataStore` is a data storage solution that allows you to store key-value pairs or typed objects with protocol buffers. `DataStore` uses Kotlin coroutines and `Flow` to store data asynchronously, consistently, and transactionally.
+
+```kotlin
+interface DataStore<T : Any?>
+```
+
+- ### Preferences DataStore
+
+    stores and accesses data using keys. This implementation does not require a predefined schema, and it does not provide type safety.
+
+- ### Proto DataStore
+    
+    stores data as instances of a custom data type. This implementation requires you to define a schema using protocol buffers, but it provides type safety.
+
+## ///// References (online):
+
+- [Android developers: DataStore](https://developer.android.com/topic/libraries/architecture/datastore)
+- [Jetpack Library Releases: DataStore](https://developer.android.com/jetpack/androidx/releases/datastore?hl=en)
+- [Medium: Introduction to Jetpack DataStore](https://medium.com/androiddevelopers/introduction-to-jetpack-datastore-3dc8d74139e7)
+- [Medium: Welcome DataStore, Good-Bye SharedPreferences -Part 1](https://proandroiddev.com/welcome-datastore-good-bye-sharedpreferences-4bf68e70efdb)
+- [Medium: Welcome DataStore, Good-Bye SharedPreferences -Part 2](https://proandroiddev.com/welcome-datastore-good-bye-sharedpreferences-fdeb831a1e58)
+- [Medium: Welcome DataStore, Good-Bye SharedPreferences -Part 3](https://proandroiddev.com/welcome-datastore-good-bye-sharedpreferences-part-3-7bd46203e91)
+- [Medium: Migrating SharedPreferences with Jetpack DataStore](https://medium.com/sampingan-tech/migrasi-sharedpreferences-dengan-jetpack-datastore-16469e797568)
 
 [^ up](#knowledge-notes)
 
