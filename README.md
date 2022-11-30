@@ -78,6 +78,7 @@
     - [Android GC](#android-gc)
     - [Material Design](#material-design)
     - [ProGuard](#proguard)
+    - [DeepLinks](#deeplinks)
 - [Frameworks](#frameworks)
     - [Moxy](#moxy)
     - [Dagger](#dagger)
@@ -4336,6 +4337,21 @@ com.github.kolya.myapplication.objects.PaymentData
 
 - [Reading ProGuard’s Outputs](https://jebware.com/blog/?p=484)
 - [ProGuard Playground](https://playground.proguard.com)
+
+[^ up](#knowledge-notes)
+
+---
+
+# DeepLinks
+
+To test deep link on device start command in terminal:
+```shell
+adb shell am start -W -a android.intent.action.VIEW -d "example://something"
+```
+
+## ///// References (online):
+
+- [Android Developers: Create Deep Links to App Content](https://developer.android.com/training/app-links/deep-linking)
 
 [^ up](#knowledge-notes)
 
