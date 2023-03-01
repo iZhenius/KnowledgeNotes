@@ -65,7 +65,7 @@
     - [Navigation Component](#navigation-component)
     - [Multithreading](#multithreading)
     - [Android Classes](#android-classes)
-    - [Views (widgets)](#views-widgets)
+    - [Views (widgets)](#views--widgets-)
         - [View Class](#view-class)
         - [ViewGroup Class](#viewgroup-class)
         - [ViewPager2 Class](#viewpager2-class)
@@ -74,6 +74,8 @@
         - [RecyclerView Class](#recyclerview-class)
           - [ConcatAdapter Class](#concatadapter-class)
     - [Context](#context)
+    - [Resources](#resources)
+      - [Quantity Strings (Plurals)](#quantity-strings--plurals-)
     - [Jetpack DataStore](#jetpack-datastore)
     - [Android GC](#android-gc)
     - [Material Design](#material-design)
@@ -1067,6 +1069,8 @@ It is similar to `HashMap`.
 ## ///// References (online):
 
 * [Collections in Java](https://howtodoinjava.com/java-collections/)
+
+[^ up](#knowledge-notes)
 
 ***
 
@@ -2739,6 +2743,8 @@ class KotlinGenericsExample {
 
 - [Android Roadmap 2022](https://cdn.hashnode.com/res/hashnode/image/upload/v1640075762841/cUuWc-_HZ.png?auto=compress,format&format=webp)
 
+[^ up](#knowledge-notes)
+
 ---
 
 # App Components
@@ -3362,6 +3368,8 @@ provide.
 - [Android developers: Communicating with fragments](https://developer.android.com/guide/fragments/communicate)
 - [8 ways to communicate between Fragment and Activity in Android apps](https://medium.com/fantageek/8-ways-to-communicate-between-fragment-and-activity-in-android-apps-235b60005d04)
 - [From Fragments to Activity: the Lambda Way](https://medium.com/groupon-eng/from-fragments-to-activity-the-lambda-way-32c768c72aa9)
+
+[^ up](#knowledge-notes)
 
 ***
 
@@ -4205,6 +4213,44 @@ Activity extends ContextThemeWrapper implements LayoutInflater.Factory2, Window.
 
 ---
 
+# Resources
+
+## Quantity Strings (Plurals)
+
+```xml
+<resources>
+    <plurals name="values">
+        <item quantity="one">%3$s: %1$d test out of %2$d ok</item>
+        <item quantity="other">%3$s: %1$d tests out of %2$d ok</item>
+    </plurals>
+</resources>
+```
+
+
+```java
+int quantity = 5;
+String placeholder2 = "Placeholder_2";
+String placeholder3 = "Placeholder_3";
+
+getResources().getQuantityString(R.plurals.values, quantity, quantity, placeholder2, placeholder3)
+//                               \_______________/ \_______/ \___________________________________/
+//                                     |               |                  |
+//   id: used to get the plurals resource              |                  |
+//   quantity: used to determine the appropriate quantity class           |
+//   formatArgs: used to positionally replace the placeholders %1, %2 and %3
+```
+
+
+## ///// References (online):
+
+- [Android Developers: String resources](https://developer.android.com/guide/topics/resources/string-resource)
+- [StackOverFlow: How to use Android quantity strings (plurals)](https://stackoverflow.com/questions/41950952/how-to-use-android-quantity-strings-plurals)
+- [Language Plural Rules](https://unicode-org.github.io/cldr-staging/charts/latest/supplemental/language_plural_rules.html)
+
+[^ up](#knowledge-notes)
+
+---
+
 # Jetpack DataStore
 
 Jetpack `DataStore` is a data storage solution that allows you to store key-value pairs or typed objects with protocol buffers. `DataStore` uses Kotlin coroutines and `Flow` to store data asynchronously, consistently, and transactionally.
@@ -4518,6 +4564,8 @@ private val myPresenter: MyPresenter by moxyPresenter {
 ## ///// References (online):
 
 - [Dagger vs Hilt vs Koin vs Pure Dependency Injection](https://www.techyourchance.com/dagger-vs-hilt-vs-koin-vs-pure-dependency-injection)
+
+[^ up](#knowledge-notes)
 
 ---
 
