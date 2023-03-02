@@ -87,6 +87,7 @@
     - [DI Approach Comparison](#di-approach-comparison)
 - [Algorithms](#algorithms)
     - [Binary Search](#binary-search)
+- [Regex](#regex)
 
 ***
 
@@ -4690,6 +4691,19 @@ public class SolutionFromInternet {
 ## ///// References (online):
 
 * [Binary Search](https://leetcode.com/explore/learn/card/binary-search/)
+
+[^ up](#knowledge-notes)
+
+***
+
+# Regex
+
+    ...
+
+## ///// References (online):
+
+* [Unicode Regular Expressions](https://www.regular-expressions.info/unicode.html)
+* [Unicode Character Ranges](https://jrgraphix.net/r/Unicode/)
 
 [^ up](#knowledge-notes)
 
