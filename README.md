@@ -76,6 +76,7 @@
     - [Context](#context)
     - [Resources](#resources)
       - [Quantity Strings (Plurals)](#quantity-strings--plurals-)
+    - [Jetpack Compose](#jetpack-compose)
     - [Jetpack DataStore](#jetpack-datastore)
     - [Android GC](#android-gc)
     - [Material Design](#material-design)
@@ -89,7 +90,7 @@
     - [Binary Search](#binary-search)
 - [Regex](#regex)
 
-***
+---
 
 # Git
 
@@ -121,7 +122,7 @@ $ git config http.sslVerify false
 
 [^ up](#knowledge-notes)
 
-***
+---
 
 # Java
 
@@ -967,7 +968,7 @@ public class GenericsExamples {
 
 [^ up](#knowledge-notes)
 
-***
+---
 
 # Java Collections
 
@@ -1073,7 +1074,7 @@ It is similar to `HashMap`.
 
 [^ up](#knowledge-notes)
 
-***
+---
 
 # Concurrency
 
@@ -1518,7 +1519,7 @@ Basically, it is a `HashTable` implementation, that supports concurrent retrieva
 
 [^ up](#knowledge-notes)
 
-***
+---
 
 # JVM
 
@@ -1638,7 +1639,7 @@ the provided Native Interface.
 
 [^ up](#knowledge-notes)
 
-***
+---
 
 ## JVM Memory Model
 
@@ -1707,7 +1708,7 @@ This is where native code for any shared libraries used are stored. This is load
 
 [^ up](#knowledge-notes)
 
-***
+---
 
 ## Stack vs Heap
 
@@ -1863,7 +1864,7 @@ a low priority thread that runs in the background to provide services to user th
 
 [^ up](#knowledge-notes)
 
-***
+---
 
 # Kotlin
 
@@ -2732,7 +2733,7 @@ class KotlinGenericsExample {
 
 [^ up](#knowledge-notes)
 
-***
+---
 
 # Android
 
@@ -3372,14 +3373,14 @@ provide.
 
 [^ up](#knowledge-notes)
 
-***
+---
 
 # Navigation Component
 
 ## The Navigation component consists of three key parts:
 
 - **Navigation graph** — An _XML_-resource that contains all navigation-related information in one centralized location.
-  This includes all of the individual content areas within your app (called _destinations_).
+  This includes all the individual content areas within your app (called _destinations_).
 - **NavHost** — An empty container that displays destinations from your navigation graph. The Navigation component
   contains a default `NavHost` implementation, `NavHostFragment`, that displays fragment destinations.
 - **NavController** — An object that manages app navigation within a `NavHost`. The `NavController` orchestrates the
@@ -3621,7 +3622,7 @@ provide.
 
 [^ up](#knowledge-notes)
 
-***
+---
 
 # Multithreading
 
@@ -4161,7 +4162,7 @@ recyclerView.adapter = concatAdapter
 
 [^ up](#knowledge-notes)
 
-***
+---
 
 # Context
 
@@ -4247,6 +4248,16 @@ getResources().getQuantityString(R.plurals.values, quantity, quantity, placehold
 - [Android Developers: String resources](https://developer.android.com/guide/topics/resources/string-resource)
 - [StackOverFlow: How to use Android quantity strings (plurals)](https://stackoverflow.com/questions/41950952/how-to-use-android-quantity-strings-plurals)
 - [Language Plural Rules](https://unicode-org.github.io/cldr-staging/charts/latest/supplemental/language_plural_rules.html)
+
+[^ up](#knowledge-notes)
+
+---
+
+# Jetpack Compose
+
+## ///// References (online):
+
+- [Android developers: List of Compose modifiers](https://developer.android.com/jetpack/compose/modifiers-list)
 
 [^ up](#knowledge-notes)
 
@@ -4402,7 +4413,7 @@ adb shell am start -W -a android.intent.action.VIEW -d "example://something"
 
 [^ up](#knowledge-notes)
 
-***
+---
 
 # Frameworks
 
@@ -4589,7 +4600,7 @@ private val myPresenter: MyPresenter by moxyPresenter {
 
 [^ up](#knowledge-notes)
 
-***
+---
 
 # Algorithms
 
@@ -4694,7 +4705,7 @@ public class SolutionFromInternet {
 
 [^ up](#knowledge-notes)
 
-***
+---
 
 # Regex
 
@@ -4707,4 +4718,4 @@ public class SolutionFromInternet {
 
 [^ up](#knowledge-notes)
 
-***
+---
