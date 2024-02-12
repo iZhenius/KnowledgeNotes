@@ -4259,6 +4259,7 @@ getResources().getQuantityString(R.plurals.values, quantity, quantity, placehold
 
 - [Android developers: List of Compose modifiers](https://developer.android.com/jetpack/compose/modifiers-list)
 - [Medium: Performance In Jetpack Compose — Stability & Immutability](https://medium.rip/proandroiddev/performance-in-jetpack-compose-stability-immutability-472ee13bef94)
+- [Medium: Understanding @Stable, @Immutable, ImmutableCollection, and PersistentCollection in Jetpack Compose](https://blog.kotlin-academy.com/understanding-stable-immutable-immutablecollection-and-persistentcollection-in-jetpack-compose-5b352f3a265f)
 
 [^ up](#knowledge-notes)
 
